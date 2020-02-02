@@ -5,40 +5,15 @@ const fs = require(`fs`);
 const {
   CommandsNames,
   ExitCode,
-  Time
 } = require(`./constants.js`);
 
-const {
-  getRandomInt,
-  shuffle
-} = require(`./../utils.js`);
+const {generatePosts} = require(`./../utils.js`);
 
 const {
   DEFAULT_COUNT,
   MAX_COUNT,
   FILE_NAME,
-  TITLES,
-  SENTENCES,
-  CATEGORIES,
-} = require(`./../cli/mocks.js`);
-
-const moment = require(`moment`);
-
-const generatePosts = (count) => (
-  Array(count).fill({}).map(() => ({
-    title: TITLES[getRandomInt(0, TITLES.length - 1)],
-    createdDate: moment(Date.now() + getRandomInt(Time.MIN, Time.MAX))
-      .format(`YYYY-MM-DD HH:mm:ss`),
-    announce: `${shuffle(SENTENCES)
-      .slice(0, getRandomInt(1, 5))
-      .join(`. `)}.`,
-    fullText: `${shuffle(SENTENCES)
-      .slice(0, getRandomInt(1, SENTENCES.length))
-      .join(`. `)}.`,
-    category: shuffle(CATEGORIES)
-      .slice(0, getRandomInt(1, CATEGORIES.length)),
-  }))
-);
+} = require(`./../cli/mocksData.js`);
 
 module.exports = {
   name: CommandsNames.GENERATE,
@@ -50,10 +25,12 @@ module.exports = {
       const content = JSON.stringify(generatePosts(postsCount));
       fs.writeFile(FILE_NAME, content, (err) => {
         if (err) {
-          return console.error(`Can't write data to file...`);
+          console.error(`Can't write data to file...`);
+          process.exit(ExitCode.failure);
         }
 
-        return console.info(`Operation success. File created.`);
+        console.info(`Operation success. File created.`);
+        process.exit(ExitCode.success);
       });
 
     } else {

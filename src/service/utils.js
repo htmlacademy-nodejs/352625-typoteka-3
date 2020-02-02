@@ -1,5 +1,15 @@
 'use strict';
 
+const moment = require(`moment`);
+
+const {Time} = require(`./cli/constants.js`);
+
+const {
+  TITLES,
+  SENTENCES,
+  CATEGORIES,
+} = require(`./cli/mocksData.js`);
+
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -15,7 +25,24 @@ const shuffle = (someArray) => {
   return someArray;
 };
 
+const generatePosts = (count) => (
+  Array(count).fill({}).map(() => ({
+    title: TITLES[getRandomInt(0, TITLES.length - 1)],
+    createdDate: moment(Date.now() + getRandomInt(Time.MIN, Time.MAX))
+      .format(`YYYY-MM-DD HH:mm:ss`),
+    announce: `${shuffle(SENTENCES)
+      .slice(0, getRandomInt(1, 5))
+      .join(`. `)}.`,
+    fullText: `${shuffle(SENTENCES)
+      .slice(0, getRandomInt(1, SENTENCES.length))
+      .join(`. `)}.`,
+    category: shuffle(CATEGORIES)
+      .slice(0, getRandomInt(1, CATEGORIES.length)),
+  }))
+);
+
 module.exports = {
   getRandomInt,
-  shuffle
+  shuffle,
+  generatePosts,
 };
