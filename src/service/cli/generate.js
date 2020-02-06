@@ -1,6 +1,8 @@
 'use strict';
 
 const fs = require(`fs`);
+const chalk = require(`chalk`);
+const {promisify} = require(`util`);
 
 const {
   CommandsNames,
@@ -15,27 +17,33 @@ const {
   FILE_NAME,
 } = require(`./../cli/mocksData.js`);
 
+const writePosts = async (path, data) => {
+  const writeFile = promisify(fs.writeFile);
+
+  try {
+    await writeFile(path, data);
+    console.info(chalk.green(`Operation success. File created.`));
+    process.exit(ExitCode.success);
+
+  } catch {
+    console.error(chalk.red(`Can't write data to file...`));
+    process.exit(ExitCode.failure);
+  }
+};
+
 module.exports = {
   name: CommandsNames.GENERATE,
   run(args) {
     const [count] = args;
     const postsCount = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
-    if (postsCount < MAX_COUNT) {
-      const content = JSON.stringify(generatePosts(postsCount));
-      fs.writeFile(FILE_NAME, content, (err) => {
-        if (err) {
-          console.error(`Can't write data to file...`);
-          process.exit(ExitCode.failure);
-        }
-
-        console.info(`Operation success. File created.`);
-        process.exit(ExitCode.success);
-      });
-
-    } else {
-      console.error(`Не больше ${MAX_COUNT} постов`);
+    if (postsCount >= MAX_COUNT) {
+      console.error(chalk.red(`Не больше ${MAX_COUNT} постов`));
       process.exit(ExitCode.failure);
     }
+
+    const content = JSON.stringify(generatePosts(postsCount));
+
+    writePosts(FILE_NAME, content);
   }
 };
