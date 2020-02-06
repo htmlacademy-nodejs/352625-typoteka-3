@@ -24,7 +24,7 @@ const writePosts = async (path, data) => {
     await writeFile(path, data);
     console.info(chalk.green(`Operation success. File created.`));
     process.exit(ExitCode.success);
-    
+
   } catch (error) {
     console.error(chalk.red(`Can't write data to file...`));
     process.exit(ExitCode.failure);
