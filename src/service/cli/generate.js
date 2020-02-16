@@ -1,34 +1,35 @@
 'use strict';
 
-const fs = require(`fs`);
 const chalk = require(`chalk`);
-const {promisify} = require(`util`);
-
-const {
-  CommandsNames,
-  ExitCode,
-} = require(`./constants.js`);
-
-const {generatePosts} = require(`./../utils.js`);
 
 const {
   DEFAULT_COUNT,
   MAX_COUNT,
   FILE_NAME,
-} = require(`./../cli/mocksData.js`);
+  CommandsNames,
+  ExitCode,
+  FILE_SENTENCES_PATH,
+  FILE_CATEGORIES_PATH,
+  FILE_TITLES_PATH,
+} = require(`./constants.js`);
 
-const writePosts = async (path, data) => {
-  const writeFile = promisify(fs.writeFile);
+const {
+  generatePosts,
+  getFileData,
+  writePosts,
+} = require(`./../utils.js`);
 
-  try {
-    await writeFile(path, data);
-    console.info(chalk.green(`Operation success. File created.`));
-    process.exit(ExitCode.success);
+const generateContent = async (countOffer) => {
+  const [sentences, categories, titles] = await Promise.all([
+    getFileData(FILE_SENTENCES_PATH),
+    getFileData(FILE_CATEGORIES_PATH),
+    getFileData(FILE_TITLES_PATH),
+  ]);
 
-  } catch (error) {
-    console.error(chalk.red(`Can't write data to file...`));
-    process.exit(ExitCode.failure);
-  }
+  const content = JSON
+    .stringify(generatePosts(countOffer, sentences, categories, titles));
+
+  writePosts(FILE_NAME, content);
 };
 
 module.exports = {
@@ -39,11 +40,9 @@ module.exports = {
 
     if (postsCount >= MAX_COUNT) {
       console.error(chalk.red(`Не больше ${MAX_COUNT} постов`));
-      process.exit(ExitCode.failure);
+      process.exit(ExitCode.FAILURE);
     }
 
-    const content = JSON.stringify(generatePosts(postsCount));
-
-    writePosts(FILE_NAME, content);
+    generateContent(postsCount);
   }
 };

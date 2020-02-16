@@ -1,14 +1,14 @@
 'use strict';
 
 const moment = require(`moment`);
-
-const {Time} = require(`./cli/constants.js`);
+const fs = require(`fs`);
+const chalk = require(`chalk`);
+const {promisify} = require(`util`);
 
 const {
-  TITLES,
-  SENTENCES,
-  CATEGORIES,
-} = require(`./cli/mocksData.js`);
+  Time,
+  ExitCode,
+} = require(`./cli/constants.js`);
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -25,19 +25,49 @@ const shuffle = (someArray) => {
   return someArray;
 };
 
-const generatePosts = (count) => (
+const makeList = (text) => text
+  .replace(/\r?\n/g, ` `)
+  .split(`. `)
+  .slice(0, -1);
+
+const getFileData = async (path) => {
+  const readFile = promisify(fs.readFile);
+
+  try {
+    return makeList(await readFile(path, `utf8`));
+
+  } catch (error) {
+    console.error(`Can't read data from file... ${error}`);
+    return process.exit(ExitCode.FAILURE);
+  }
+};
+
+const writePosts = async (path, data) => {
+  const writeFile = promisify(fs.writeFile);
+
+  try {
+    await writeFile(path, data);
+    console.info(chalk.green(`Operation success. File created.`));
+
+  } catch (error) {
+    console.error(chalk.red(`Can't write data to file...`));
+    process.exit(ExitCode.FAILURE);
+  }
+};
+
+const generatePosts = (count, sentences, categories, titles) => (
   Array(count).fill({}).map(() => ({
-    title: TITLES[getRandomInt(0, TITLES.length - 1)],
+    title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: moment(Date.now() + getRandomInt(Time.MIN, Time.MAX))
       .format(`YYYY-MM-DD HH:mm:ss`),
-    announce: `${shuffle(SENTENCES)
+    announce: `${shuffle(sentences)
       .slice(0, getRandomInt(1, 5))
       .join(`. `)}.`,
-    fullText: `${shuffle(SENTENCES)
-      .slice(0, getRandomInt(1, SENTENCES.length))
+    fullText: `${shuffle(sentences)
+      .slice(0, getRandomInt(1, sentences.length))
       .join(`. `)}.`,
-    category: shuffle(CATEGORIES)
-      .slice(0, getRandomInt(1, CATEGORIES.length)),
+    category: shuffle(categories)
+      .slice(0, getRandomInt(1, categories.length)),
   }))
 );
 
@@ -45,4 +75,6 @@ module.exports = {
   getRandomInt,
   shuffle,
   generatePosts,
+  getFileData,
+  writePosts
 };
