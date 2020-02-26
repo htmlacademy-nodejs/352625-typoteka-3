@@ -110,7 +110,6 @@ const onClientConnect = async (req, res) => {
 
     default:
       sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
-      break;
   }
 };
 
