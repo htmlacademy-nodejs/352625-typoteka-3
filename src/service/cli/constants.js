@@ -31,7 +31,7 @@ const FILE_SENTENCES_PATH = `./src/data/sentences.txt`;
 const FILE_CATEGORIES_PATH = `./src/data/categories.txt`;
 const FILE_TITLES_PATH = `./src/data/titles.txt`;
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 8080;
 
 const HttpCode = {
   OK: 200,
