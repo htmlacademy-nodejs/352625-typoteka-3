@@ -1,14 +1,11 @@
 'use strict';
 
 const {Router} = require(`express`);
+const PathName = require(`./constants.js`);
+
 const myRouter = new Router();
 
-const MY_PATH_NAME = `my`;
+myRouter.get(`/`, (req, res) => res.send(`/${PathName.MY}`));
+myRouter.get(`/comments`, (req, res) => res.send(`/${PathName.MY}/comments`));
 
-myRouter.get(`/`, (req, res) => res.send(`/${MY_PATH_NAME}`));
-myRouter.get(`/comments`, (req, res) => res.send(`/${MY_PATH_NAME}/comments`));
-
-module.exports = {
-  MY_PATH_NAME,
-  myRouter,
-};
+module.exports = myRouter;
