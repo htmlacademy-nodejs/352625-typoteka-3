@@ -1,10 +1,9 @@
 'use strict';
 
 const {Router} = require(`express`);
-const PathName = require(`./constants.js`);
 
 const searchRouter = new Router();
 
-searchRouter.get(`/`, (req, res) => res.send(`/${PathName.SEARCH}`));
+searchRouter.get(`/`, (req, res) => res.render(`search`));
 
 module.exports = searchRouter;
