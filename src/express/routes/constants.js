@@ -6,6 +6,7 @@ const PathName = {
   REGISTER: `register`,
   LOGIN: `login`,
   SEARCH: `search`,
+  ERROR: `error`,
 };
 
 module.exports = PathName;

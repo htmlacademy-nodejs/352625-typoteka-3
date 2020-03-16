@@ -11,8 +11,12 @@ const loginRouter = require(`./routes/login.js`);
 const searchRouter = require(`./routes/search.js`);
 const offersRouter = require(`./routes/offers.js`);
 const myRouter = require(`./routes/my.js`);
+const errorRouter = require(`./routes/error.js`);
 
 const app = express();
+
+app.set(`views`, `./src/express/templates`);
+app.set(`view engine`, `pug`);
 
 app.use(`/`, homeRouter);
 app.use(`/${PathName.REGISTER}`, registerRouter);
@@ -20,6 +24,7 @@ app.use(`/${PathName.LOGIN}`, loginRouter);
 app.use(`/${PathName.SEARCH}`, searchRouter);
 app.use(`/${PathName.OFFERS}`, offersRouter);
 app.use(`/${PathName.MY}`, myRouter);
+app.use(`/${PathName.ERROR}`, errorRouter);
 
 app.listen(
     DEFAULT_PORT,
