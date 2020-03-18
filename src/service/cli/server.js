@@ -1,14 +1,22 @@
 'use strict';
 
 const chalk = require(`chalk`);
-const http = require(`http`);
+
+const express = require(`express`);
 
 const {
   CommandsNames,
   DEFAULT_PORT,
 } = require(`./constants.js`);
 
-const {onClientConnect} = require(`./../utils.js`);
+const homeRouter = require(`./../routes/home.js`);
+
+const app = express();
+
+app.use(`/`, homeRouter);
+app.use(express.json());
+
+app.set(`json spaces`, 2);
 
 module.exports = {
   name: CommandsNames.SERVER,
@@ -16,15 +24,9 @@ module.exports = {
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
 
-    http.createServer(onClientConnect)
-      .listen(port)
-      .on(`listening`, (err) => {
-        if (err) {
-          return console.error(chalk.red(`Ошибка при создании сервера`), err);
-        }
-
-        return console.info(chalk.green(`Ожидаю соединений на ${port}`));
-      });
-
+    app.listen(
+        port,
+        () => console.log(chalk.green(`Сервер запущен на порту: ${port}`))
+    );
   }
 };
