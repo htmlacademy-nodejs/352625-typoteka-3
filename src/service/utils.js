@@ -8,8 +8,6 @@ const {promisify} = require(`util`);
 const {
   Time,
   ExitCode,
-  FILE_NAME,
-  HttpCode,
 } = require(`./cli/constants.js`);
 
 const getRandomInt = (min, max) => {
@@ -73,51 +71,10 @@ const generatePosts = (count, sentences, categories, titles) => (
   }))
 );
 
-const sendResponse = (res, statusCode, message) => {
-  const template = `
-    <!Doctype html>
-      <html lang="ru">
-      <head>
-        <title>Titles list</title>
-      </head>
-      <body>${message}</body>
-    </html>`.trim();
-
-  res.statusCode = statusCode;
-  res.writeHead(statusCode, {
-    'Content-Type': `text/html; charset=UTF-8`,
-  });
-
-  res.end(template);
-};
-
-const onClientConnect = async (req, res) => {
-  const readFile = promisify(fs.readFile);
-  const notFoundMessageText = `Not found`;
-
-  switch (req.url) {
-    case `/`:
-      try {
-        const fileContent = await readFile(FILE_NAME);
-        const mocks = JSON.parse(fileContent);
-        const message = mocks.map((post) => `<li>${post.title}</li>`).join(``);
-        sendResponse(res, HttpCode.OK, `<ul>${message}</ul>`);
-      } catch (err) {
-        sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
-      }
-
-      break;
-
-    default:
-      sendResponse(res, HttpCode.NOT_FOUND, notFoundMessageText);
-  }
-};
-
 module.exports = {
   getRandomInt,
   shuffle,
   generatePosts,
   getFileData,
   writePosts,
-  onClientConnect,
 };
