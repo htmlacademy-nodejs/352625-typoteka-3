@@ -1,0 +1,21 @@
+###
+
+GET http://localhost:8080/api/articles
+
+###
+
+GET http://localhost:8080/api/articles/K4d9a5
+
+###
+
+GET http://localhost:8080/api/categories
+
+###
+
+GET http://localhost:8080/api/articles/K4d9a5/comments
+
+###
+
+GET http://localhost:8080/api/search?query=такое
+
+###
