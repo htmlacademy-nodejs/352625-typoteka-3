@@ -30,6 +30,7 @@ const Time = {
 const FILE_SENTENCES_PATH = `./src/data/sentences.txt`;
 const FILE_CATEGORIES_PATH = `./src/data/categories.txt`;
 const FILE_TITLES_PATH = `./src/data/titles.txt`;
+const FILE_COMMENTS_PATH = `./src/data/comments.txt`;
 
 const DEFAULT_PORT = 8080;
 
@@ -39,6 +40,21 @@ const HttpCode = {
   INTERNAL_SERVER_ERROR: 500,
   FORBIDDEN: 403,
   UNAUTHORIZED: 401,
+};
+
+const Id = {
+  Length: {
+    POST: 6,
+    COMMENT: 4,
+  },
+  Restrict: {
+    MIN: 0,
+    MAX: 10,
+  },
+  Phrases: {
+    MIN: 2,
+    MAX: 5,
+  }
 };
 
 module.exports = {
@@ -53,6 +69,8 @@ module.exports = {
   FILE_SENTENCES_PATH,
   FILE_CATEGORIES_PATH,
   FILE_TITLES_PATH,
+  FILE_COMMENTS_PATH,
   DEFAULT_PORT,
   HttpCode,
+  Id,
 };

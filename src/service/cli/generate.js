@@ -11,6 +11,7 @@ const {
   FILE_SENTENCES_PATH,
   FILE_CATEGORIES_PATH,
   FILE_TITLES_PATH,
+  FILE_COMMENTS_PATH,
 } = require(`./constants.js`);
 
 const {
@@ -20,14 +21,15 @@ const {
 } = require(`./../utils.js`);
 
 const generateContent = async (countOffer) => {
-  const [sentences, categories, titles] = await Promise.all([
+  const [sentences, categories, titles, comments] = await Promise.all([
     getFileData(FILE_SENTENCES_PATH),
     getFileData(FILE_CATEGORIES_PATH),
     getFileData(FILE_TITLES_PATH),
+    getFileData(FILE_COMMENTS_PATH),
   ]);
 
   const content = JSON
-    .stringify(generatePosts(countOffer, sentences, categories, titles));
+    .stringify(generatePosts(countOffer, sentences, categories, titles, comments));
 
   writePosts(FILE_NAME, content);
 };
