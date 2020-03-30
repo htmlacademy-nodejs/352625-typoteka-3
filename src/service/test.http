@@ -1,21 +1,81 @@
 ###
 
 GET http://localhost:8080/api/articles
+Content-Type: application/json
 
 ###
 
 GET http://localhost:8080/api/articles/K4d9a5
+Content-Type: application/json
 
 ###
 
 GET http://localhost:8080/api/categories
+Content-Type: application/json
 
 ###
 
 GET http://localhost:8080/api/articles/K4d9a5/comments
+Content-Type: application/json
 
 ###
 
 GET http://localhost:8080/api/search?query=такое
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/api/articles
+Content-Type: application/json
+
+{
+  "id": "K4d9a5",
+  "title": "Что такое золотое сечение",
+  "createdDate": "2020-03-10 06:35:58",
+  "announce": "Золотое сечение — соотношение двух величин, гармоническая пропорция. Игры и программирование разные вещи.",
+  "fullText": "Это прочная древесина. Бороться с прокрастинацией несложно. Ёлки — это не просто красивое дерево. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Собрать камни бесконечности легко, если вы прирожденный герой. Этот смартфон — настоящая находка. Это один из лучших рок-музыкантов. Вы можете достичь всего. Золотое сечение — соотношение двух величин, гармоническая пропорция. Первая большая ёлка была установлена только в 1938 году. Игры и программирование разные вещи. Стоит только немного постараться и запастись книгами. Простые ежедневные упражнения помогут достичь успеха. Из под его пера вышло 8 платиновых альбомов. Альбом стал настоящим открытием года. Освоить вёрстку несложно. Маленькими шагами. Не стоит идти в программисты, если вам нравится только игры. Мощные гитарные рифы и скоростные соло-партии не дадут заскучать.",
+  "category": [
+    "Программирование",
+    "Кино",
+    "Деревья"
+  ],
+  "comments": [
+    {
+      "id": "uuDL",
+      "text": "Ноутбуки победили."
+    },
+    {
+      "id": "E2mZ",
+      "text": "Это где ж такие красоты? Совсем немного..."
+    }
+  ]
+}
+
+###
+
+PUT http://localhost:8080/api/articles/K4d9a5
+Content-Type: application/json
+
+{
+  "announce": "Стоит только немного постараться и запастись книгами."
+}
+
+###
+
+PUT http://localhost:8080/api/articles/K4d9a5/comments
+Content-Type: application/json
+
+{
+  "id": "uuDL",
+  "text": "Ноутбуки победили."
+}
+
+###
+
+DELETE http://localhost:8080/api/articles/K4d9a5
+
+###
+
+DELETE http://localhost:8080/api/articles/K4d9a5/comments/OsHU
 
 ###
