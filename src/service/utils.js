@@ -4,10 +4,12 @@ const moment = require(`moment`);
 const fs = require(`fs`);
 const chalk = require(`chalk`);
 const {promisify} = require(`util`);
+const nanoid = require(`nanoid`);
 
 const {
   Time,
   ExitCode,
+  Id,
 } = require(`./cli/constants.js`);
 
 const getRandomInt = (min, max) => {
@@ -55,8 +57,16 @@ const writePosts = async (path, data) => {
   }
 };
 
-const generatePosts = (count, sentences, categories, titles) => (
+const getComments = (count, comments) => (
   Array(count).fill({}).map(() => ({
+    id: nanoid(Id.Length.COMMENT),
+    text: `${shuffle(comments).slice(1, getRandomInt(Id.Phrases.MIN, Id.Phrases.MAX)).join(`. `)}.`,
+  }))
+);
+
+const generatePosts = (count, sentences, categories, titles, comments) => (
+  Array(count).fill({}).map(() => ({
+    id: nanoid(Id.Length.POST),
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: moment(Date.now() + getRandomInt(Time.MIN, Time.MAX))
       .format(`YYYY-MM-DD HH:mm:ss`),
@@ -68,6 +78,7 @@ const generatePosts = (count, sentences, categories, titles) => (
       .join(`. `)}.`,
     category: shuffle(categories)
       .slice(0, getRandomInt(1, categories.length)),
+    comments: getComments(getRandomInt(Id.Restrict.MIN, Id.Restrict.MAX), comments)
   }))
 );
 
