@@ -9,13 +9,17 @@ const PathName = {
 const Empty = {
   ARTICLES: [],
   ARTICLE: {},
-  // COMMENTS: [],
+  COMMENTS: [],
+  COMMENT: {},
   CATEGORIES: [],
-  // SEARCH: `No search results`,
+  DATA: ``,
+  SEARCH: `No search results`,
 };
 
+const SEARCH_PARAM = `?query=`;
 
 module.exports = {
   PathName,
   Empty,
+  SEARCH_PARAM,
 };

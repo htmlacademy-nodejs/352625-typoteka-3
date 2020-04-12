@@ -26,6 +26,7 @@ app.use(express.json());
 app.set(`json spaces`, 2);
 
 module.exports = {
+  app,
   name: CommandsNames.SERVER,
   run(args) {
     const [customPort] = args;

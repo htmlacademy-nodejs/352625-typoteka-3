@@ -15,11 +15,15 @@ searchRouter.get(`/`, async (req, res) => {
   try {
     const fileContent = await readFile(FILE_NAME);
     const result = JSON.parse(fileContent)
-      .filter((elem) => elem.title.includes(req.query.query)) || Empty.SEARCH;
-    res.json(result);
+      .filter((elem) => elem.title.includes(req.query.query));
+
+    if (result.length === 0 || req.query.query === Empty.DATA) {
+      res.json(Empty.SEARCH);
+    } else {
+      res.json(result);
+    }
 
   } catch (error) {
-    res.json(Empty.SEARCH);
     console.error(`No content, ${error}`);
   }
 });
