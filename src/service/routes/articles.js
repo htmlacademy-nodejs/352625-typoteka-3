@@ -2,11 +2,12 @@
 
 const express = require(`express`);
 const {Router} = require(`express`);
-
 const fs = require(`fs`);
 const {promisify} = require(`util`);
-const {FILE_NAME} = require(`./../cli/constants.js`);
-const {Empty} = require(`./../routes/constants.js`);
+
+const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
+const {Empty, PathName} = require(`./../routes/constants.js`);
+const {createLogs, createErrorLogs} = require(`./../utils.js`);
 
 const articlesRouter = new Router();
 
@@ -30,11 +31,17 @@ articlesRouter.get(`/`, async (req, res) => {
   try {
     const fileContent = await readFile(FILE_NAME);
     const result = JSON.parse(fileContent);
-    res.json(result);
+
+    if (!result) {
+      res.status(HttpCode.BAD_REQUEST).json(Empty.OFFERS);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      res.json(result);
+      createLogs(req, res, PathName.ARTICLES);
+    }
 
   } catch (error) {
-    res.json(Empty.ARTICLES);
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
@@ -42,39 +49,53 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
   try {
     const fileContent = await readFile(FILE_NAME);
     const result = JSON.parse(fileContent)
-      .filter((elem) => elem.id === req.params.articleId)[0] || Empty.ARTICLE;
-    res.json(result);
+      .filter((elem) => elem.id === req.params.articleId)[0];
+
+    if (!result) {
+      res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLE);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      res.json(result);
+      createLogs(req, res, PathName.ARTICLES);
+    }
 
   } catch (error) {
-    res.json(Empty.ARTICLE);
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
 articlesRouter.get(`/:articleId/comments`, async (req, res) => {
   try {
     const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
-      .filter((elem) => elem.id === req.params.articleId)[0].comments || Empty.ARTICLE;
-    res.json(result);
+    const targetArticle = JSON.parse(fileContent)
+      .filter((elem) => elem.id === req.params.articleId)[0];
+
+    if (!targetArticle) {
+      res.status(HttpCode.BAD_REQUEST).json(Empty.COMMENTS);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      const result = targetArticle.comments;
+      createLogs(req, res, PathName.ARTICLES);
+      res.json(result);
+    }
 
   } catch (error) {
-    res.json(Empty.ARTICLE);
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
 articlesRouter.post(`/`, async (req, res) => {
   try {
     if (!validateArticle()) {
-      res.status(400).send(`Incorrect Article format`);
+      res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      // some code for adding new article is coming soon...
+      res.send(req.body);
+      createLogs(req, res, PathName.ARTICLES);
     }
-    // some code for adding new Article is coming soon...
-
-    res.send(req.body);
-
   } catch (error) {
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
@@ -85,14 +106,16 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!result) {
-      res.status(400).send(`Invalid Article ID`);
+      res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      // some code for editing article is coming soon...
+      res.send(req.body);
+      createLogs(req, res, PathName.ARTICLES);
     }
-    // some code for editing Article is coming soon...
-
-    res.send(req.body);
 
   } catch (error) {
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
@@ -103,14 +126,16 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!validateComment() || !result) {
-      res.status(400).send(`Invalid Article ID`);
+      res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      // some code for adding new comment is coming soon...
+      res.send(req.body);
+      createLogs(req, res, PathName.ARTICLES);
     }
-    // some code for adding new comment is coming soon...
-
-    res.send(req.body);
 
   } catch (error) {
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
@@ -121,33 +146,46 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!result) {
-      res.status(400).send(`Invalid Article ID`);
+      res.status(HttpCode.BAD_REQUEST).send(`Invalid Article ID`);
+      createLogs(req, res, PathName.ARTICLES);
+    } else {
+      // some code for deleting Article is coming soon...
+      res.send(`Article is deleted`);
+      createLogs(req, res, PathName.ARTICLES);
     }
-    // some code for deleting Article is coming soon...
-
-    res.send(`Article is deleted`);
 
   } catch (error) {
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
 articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
   try {
     const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
-      .filter((elem) => elem.id === req.params.articleId)[0].comments
-      .filter((elem) => elem.id === req.params.commentId)[0];
+    const targetArticle = JSON.parse(fileContent)
+      .filter((elem) => elem.id === req.params.articleId)[0];
 
-    if (!result) {
-      res.status(400).send(`Cannot find comment`);
+    if (!targetArticle) {
+      res.status(HttpCode.BAD_REQUEST).send(`Invalid article ID`);
+      createLogs(req, res, PathName.ARTICLES);
+
+    } else {
+      const targetComment = targetArticle.comments
+        .filter((elem) => elem.id === req.params.commentId)[0];
+
+      if (!targetComment) {
+        res.status(HttpCode.BAD_REQUEST).send(`Invalid comment ID`);
+        createLogs(req, res, PathName.ARTICLES);
+
+      } else {
+        // some code for deleting comment is coming soon...
+        res.send(`Comment is deleted`);
+        createLogs(req, res, PathName.ARTICLES);
+      }
     }
-    // some code for deleting comment is coming soon...
-
-    res.send(`Comment is deleted`);
 
   } catch (error) {
-    console.error(`No content, ${error}`);
+    createErrorLogs(error);
   }
 });
 
