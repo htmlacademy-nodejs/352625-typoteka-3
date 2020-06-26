@@ -9,4 +9,9 @@ const PathName = {
   ERROR: `error`,
 };
 
-module.exports = PathName;
+const DEFAULT_PORT = 8080;
+
+module.exports = {
+  PathName,
+  DEFAULT_PORT
+};

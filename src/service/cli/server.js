@@ -10,7 +10,7 @@ const expressPino = require(`express-pino-logger`)({
 
 const {
   CommandsNames,
-  DEFAULT_PORT,
+  DEFAULT_API_PORT,
 } = require(`./constants.js`);
 
 const {PathName} = require(`./../routes/constants.js`);
@@ -40,7 +40,7 @@ module.exports = {
   name: CommandsNames.SERVER,
   run(args) {
     const [customPort] = args;
-    const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
+    const port = Number.parseInt(customPort, 10) || DEFAULT_API_PORT;
 
     app.listen(
         port,

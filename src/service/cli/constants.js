@@ -32,7 +32,7 @@ const FILE_CATEGORIES_PATH = `./src/data/categories.txt`;
 const FILE_TITLES_PATH = `./src/data/titles.txt`;
 const FILE_COMMENTS_PATH = `./src/data/comments.txt`;
 
-const DEFAULT_PORT = 8080;
+const DEFAULT_API_PORT = 3000;
 
 const HttpCode = {
   OK: 200,
@@ -71,7 +71,7 @@ module.exports = {
   FILE_CATEGORIES_PATH,
   FILE_TITLES_PATH,
   FILE_COMMENTS_PATH,
-  DEFAULT_PORT,
+  DEFAULT_API_PORT,
   HttpCode,
   Id,
 };

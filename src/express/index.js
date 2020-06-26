@@ -3,8 +3,7 @@
 const express = require(`express`);
 const path = require(`path`);
 
-const {DEFAULT_PORT} = require(`./../service/cli/constants.js`);
-const PathName = require(`./routes/constants.js`);
+const {PathName, DEFAULT_PORT} = require(`./routes/constants.js`);
 
 const homeRouter = require(`./routes/home.js`);
 const registerRouter = require(`./routes/register.js`);
