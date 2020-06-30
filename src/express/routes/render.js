@@ -29,7 +29,7 @@ const renderHomePage = async (req, res, urlArticles, urlCategories) => {
       freshItems: getFreshItems(articles),
     });
 
-  } catch (err) {
+  } catch (error) {
     logger.error(`Error occurs: ${error}`);
   }
 };
