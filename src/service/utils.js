@@ -13,6 +13,7 @@ const {
   Time,
   ExitCode,
   Id,
+  Category,
 } = require(`./cli/constants.js`);
 
 const getRandomInt = (min, max) => {
@@ -29,6 +30,29 @@ const shuffle = (someArray) => {
 
   return someArray;
 };
+
+const getDate = () => {
+  const date = Date.now() + getRandomInt(Time.MIN, Time.MAX);
+  return {
+    machine: moment(date).valueOf(),
+    datetime: moment(date).format(),
+    human: moment(date).format(`DD.MM.YYYY, HH:mm`),
+  };
+};
+
+const getUsers = (users) => users
+  .map((user, index) => {
+    const [name, emailPrefix] = user.split(`, `);
+    return {
+      id: emailPrefix,
+      name,
+      email: `${emailPrefix}@gmail.com`,
+      avatar: {
+        regular: `avatar-${index + 1}`,
+        small: `avatar-small-${index + 1}`,
+      }
+    };
+  });
 
 const makeList = (text) => text
   .replace(/\r?\n/g, ` `)
@@ -60,19 +84,25 @@ const writePosts = async (path, data) => {
   }
 };
 
-const getComments = (count, comments) => (
+const getComments = (count, comments, users) => (
   Array(count).fill({}).map(() => ({
     id: nanoid(Id.Length.COMMENT),
     text: `${shuffle(comments).slice(1, getRandomInt(Id.Phrases.MIN, Id.Phrases.MAX)).join(`. `)}.`,
+    author: getUsers(users)[getRandomInt(0, users.length - 1)],
   }))
 );
 
-const generatePosts = (count, sentences, categories, titles, comments) => (
+const getPictureFileName = (pictures) => {
+  return pictures[getRandomInt(0, pictures.length - 1)];
+};
+
+const generatePosts = (count, sentences, categories, titles, comments, users, pictures) => (
   Array(count).fill({}).map(() => ({
     id: nanoid(Id.Length.POST),
+    author: getUsers(users)[getRandomInt(0, users.length - 1)],
+    picture: getPictureFileName(pictures),
     title: titles[getRandomInt(0, titles.length - 1)],
-    createdDate: moment(Date.now() + getRandomInt(Time.MIN, Time.MAX))
-      .format(`YYYY-MM-DD HH:mm:ss`),
+    createdDate: getDate(),
     announce: `${shuffle(sentences)
       .slice(0, getRandomInt(1, 5))
       .join(`. `)}.`,
@@ -80,8 +110,8 @@ const generatePosts = (count, sentences, categories, titles, comments) => (
       .slice(0, getRandomInt(1, sentences.length))
       .join(`. `)}.`,
     category: shuffle(categories)
-      .slice(0, getRandomInt(1, categories.length)),
-    comments: getComments(getRandomInt(Id.Restrict.MIN, Id.Restrict.MAX), comments)
+      .slice(0, getRandomInt(Category.Restrict.MIN, Category.Restrict.MAX)),
+    comments: getComments(getRandomInt(Id.Restrict.MIN, Id.Restrict.MAX), comments, users),
   }))
 );
 
