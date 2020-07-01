@@ -2,18 +2,15 @@
 
 const express = require(`express`);
 const {Router} = require(`express`);
-const fs = require(`fs`);
-const {promisify} = require(`util`);
 
-const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
+const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty, PathName} = require(`./../routes/constants.js`);
 const {createLogs, createErrorLogs} = require(`./../utils.js`);
+const getMock = require(`./../mocks-data.js`);
 
 const articlesRouter = new Router();
 
 articlesRouter.use(express.json());
-
-const readFile = promisify(fs.readFile);
 
 
 const validateArticle = () => {
@@ -29,8 +26,7 @@ const validateComment = () => {
 
 articlesRouter.get(`/`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent);
+    const result = await getMock();
 
     if (!result) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.OFFERS);
@@ -47,8 +43,8 @@ articlesRouter.get(`/`, async (req, res) => {
 
 articlesRouter.get(`/:articleId`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
+    const data = await getMock();
+    const result = data
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!result) {
@@ -66,8 +62,8 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
 
 articlesRouter.get(`/:articleId/comments`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const targetArticle = JSON.parse(fileContent)
+    const data = await getMock();
+    const targetArticle = data
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!targetArticle) {
@@ -84,7 +80,7 @@ articlesRouter.get(`/:articleId/comments`, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/`, async (req, res) => {
+articlesRouter.post(`/`, (req, res) => {
   try {
     if (!validateArticle()) {
       res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
@@ -101,8 +97,8 @@ articlesRouter.post(`/`, async (req, res) => {
 
 articlesRouter.put(`/:articleId`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
+    const data = await getMock();
+    const result = data
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!result) {
@@ -121,8 +117,8 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
 
 articlesRouter.put(`/:articleId/comments`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
+    const data = await getMock();
+    const result = data
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!validateComment() || !result) {
@@ -141,8 +137,8 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
 
 articlesRouter.delete(`/:articleId`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
+    const data = await getMock();
+    const result = data
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!result) {
@@ -161,8 +157,8 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
 
 articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const targetArticle = JSON.parse(fileContent)
+    const data = await getMock();
+    const targetArticle = data
       .filter((elem) => elem.id === req.params.articleId)[0];
 
     if (!targetArticle) {
