@@ -1,22 +1,22 @@
 'use strict';
 
 const {Router} = require(`express`);
-const fs = require(`fs`);
-const {promisify} = require(`util`);
 
-const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
+const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty, PathName} = require(`./../routes/constants.js`);
 const {createLogs, createErrorLogs} = require(`./../utils.js`);
+const getMock = require(`./../mocks-data.js`);
 
 const categoriesRouter = new Router();
 
-const readFile = promisify(fs.readFile);
-
 categoriesRouter.get(`/`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = Array
-      .from(new Set(JSON.parse(fileContent).map((elem) => elem.category[0] || Empty.DATA)));
+    const data = await getMock();
+
+    const result = [...(new Set(data
+      .map((elem) => elem.category || Empty.DATA).flat()
+      .map((category) => JSON.stringify(category))
+    ))].map((text) => JSON.parse(text));
 
     if (result === [Empty.DATA]) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.CATEGORIES);

@@ -96,8 +96,16 @@ const getPictureFileName = (pictures) => {
   return pictures[getRandomInt(0, pictures.length - 1)];
 };
 
-const generatePosts = (count, sentences, categories, titles, comments, users, pictures) => (
-  Array(count).fill({}).map(() => ({
+const getCategories = (categories) => categories
+  .map((category) => ({
+    id: nanoid(Id.Length.CATEGORY),
+    name: category,
+  }));
+
+const generatePosts = (count, sentences, categories, titles, comments, users, pictures) => {
+  const categoriesList = getCategories(categories);
+
+  return Array(count).fill({}).map(() => ({
     id: nanoid(Id.Length.POST),
     author: getUsers(users)[getRandomInt(0, users.length - 1)],
     picture: getPictureFileName(pictures),
@@ -109,11 +117,11 @@ const generatePosts = (count, sentences, categories, titles, comments, users, pi
     fullText: `${shuffle(sentences)
       .slice(0, getRandomInt(1, sentences.length))
       .join(`. `)}.`,
-    category: shuffle(categories)
+    category: shuffle(categoriesList)
       .slice(0, getRandomInt(Category.Restrict.MIN, Category.Restrict.MAX)),
     comments: getComments(getRandomInt(Id.Restrict.MIN, Id.Restrict.MAX), comments, users),
-  }))
-);
+  }));
+};
 
 const createLogs = (req, res, path) => {
   logger.debug(`Client request to url /${path}${req.url}`);

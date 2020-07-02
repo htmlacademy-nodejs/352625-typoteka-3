@@ -50,6 +50,7 @@ const Id = {
   Length: {
     POST: 6,
     COMMENT: 4,
+    CATEGORY: 4,
   },
   Restrict: {
     MIN: 0,
