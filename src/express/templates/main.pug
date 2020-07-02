@@ -10,7 +10,7 @@ block content
       ul.themes
         each category in categories
           li.themes__item
-            a.themes__item-link(href="#")= category
+            a.themes__item-link(href="#")= category.name
               |&#32;
               sup= getArticlesByCategory(articles, category).length
     .main-page__section-flex
@@ -42,7 +42,7 @@ block content
             ul.preview__breadcrumbs
               each category in item.category
                 li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href="#")= category
+                  a.preview__breadcrumbs-link(href="#")= category.name
             .preview__background
               img.preview__background-image(src=`img/${item.picture}@1x.jpg` width="460" height="240" srcset=`img/${item.picture}@1x.jpg 1x, img/${item.picture}@2x.jpg 2x` alt=`Фотография ${item.picture}`)
             time.preview__time(datetime=`${item.createdDate.datetime}`)= item.createdDate.human

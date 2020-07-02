@@ -16,7 +16,8 @@ const Items = {
 const getArticlesByCategory = (articles, category) => {
   return articles
     .filter((article) => article.category
-      .includes(category));
+      .map((item) => item.id)
+      .includes(category.id));
 };
 
 const getFreshItems = (articles, count = Items.FRESH) => {
