@@ -1,7 +1,7 @@
 'use strict';
 
-const {URL_API} = require(`./../../service/cli/constants.js`);
-const {PathName} = require(`./../../service/routes/constants.js`);
+const {URL_API} = require(`./../service/cli/constants.js`);
+const {PathName} = require(`./../service/routes/constants`);
 
 const UriApi = {
   ARTICLES: `${URL_API}/${PathName.ARTICLES}`,

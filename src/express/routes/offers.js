@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {UriApi} = require(`./utils.js`);
+const {UriApi} = require(`./../utils.js`);
 const {renderCategoryPage} = require(`./render.js`);
 
 const offersRouter = new Router();

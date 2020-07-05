@@ -8,7 +8,7 @@ const {
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
-} = require(`./utils.js`);
+} = require(`./../utils.js`);
 
 const {getLogger} = require(`./../../service/logger.js`);
 
