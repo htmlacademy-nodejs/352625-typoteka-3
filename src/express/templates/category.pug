@@ -1,12 +1,12 @@
 extends blocks/layout/regular
 
 block content
+  - const activeCategory = getCategoryById(categories, activeCategoryId);
   main.articles-category
-    h1 Бизнес
+    h1= activeCategory.name
     section.articles-category__theme-list
       h2.visually-hidden Список тем
       ul.themes
-        - const activeCategory = getCategoryById(categories, activeCategoryId);
         each category in categories
           li.themes__item
             a(class= category.id === activeCategory.id ? `themes__item-link themes__item-link--active` : `themes__item-link`
@@ -21,7 +21,7 @@ block content
             ul.preview__breadcrumbs
               each category in item.category
                 li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href="#")= category.name
+                  a.preview__breadcrumbs-link(href=`/offers/category/${category.id}`)= category.name
             .preview__background
               img.preview__background-image(src=`/img/${item.picture}@1x.jpg` width="460" height="240" srcset=`/img/${item.picture}@1x.jpg 1x, /img/${item.picture}@2x.jpg 2x` alt=`Фотография ${item.picture}`)
             time.preview__time(datetime=`${item.createdDate.datetime}`)= item.createdDate.human
