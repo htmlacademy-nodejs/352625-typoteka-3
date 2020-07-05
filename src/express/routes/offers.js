@@ -2,7 +2,6 @@
 
 const {Router} = require(`express`);
 
-const {UriApi} = require(`./../utils.js`);
 const {renderCategoryPage} = require(`./render.js`);
 
 const offersRouter = new Router();
@@ -16,7 +15,7 @@ offersRouter.get(
 
 offersRouter.get(
     `/category/:categoryId`,
-    (req, res) => renderCategoryPage(req, res, UriApi.ARTICLES, UriApi.CATEGORIES)
+    (req, res) => renderCategoryPage(req, res)
 );
 
 offersRouter.get(

@@ -1,7 +1,5 @@
 'use strict';
 
-const axios = require(`axios`).default;
-
 const {
   getArticlesByCategory,
   getCategoryById,
@@ -10,14 +8,16 @@ const {
   getLastComments,
 } = require(`./../utils.js`);
 
+const {getArticles, getCategories} = require(`./../axios.js`);
+
 const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const renderHomePage = async (req, res, urlArticles, urlCategories) => {
+const renderHomePage = async (req, res) => {
   try {
-    const articles = (await axios.get(urlArticles)).data;
-    const categories = (await axios.get(urlCategories)).data;
+    const articles = await getArticles();
+    const categories = await getCategories();
     const mostDiscussedItems = getMostDiscussedItems(articles);
     const lastComments = getLastComments(mostDiscussedItems);
 
@@ -35,11 +35,12 @@ const renderHomePage = async (req, res, urlArticles, urlCategories) => {
   }
 };
 
-const renderCategoryPage = async (req, res, urlArticles, urlCategories) => {
+const renderCategoryPage = async (req, res) => {
   try {
     const activeCategoryId = req.params.categoryId;
-    const articles = (await axios.get(urlArticles)).data;
-    const categories = (await axios.get(urlCategories)).data;
+    const articles = await getArticles();
+    const categories = await getCategories();
+
     res.render(`category`, {
       articles,
       categories,
