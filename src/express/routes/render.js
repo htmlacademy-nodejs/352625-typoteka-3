@@ -4,6 +4,7 @@ const axios = require(`axios`).default;
 
 const {
   getArticlesByCategory,
+  getCategoryById,
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
@@ -34,6 +35,25 @@ const renderHomePage = async (req, res, urlArticles, urlCategories) => {
   }
 };
 
+const renderCategoryPage = async (req, res, urlArticles, urlCategories) => {
+  try {
+    const activeCategoryId = req.params.categoryId;
+    const articles = (await axios.get(urlArticles)).data;
+    const categories = (await axios.get(urlCategories)).data;
+    res.render(`category`, {
+      articles,
+      categories,
+      activeCategoryId,
+      getArticlesByCategory,
+      getCategoryById,
+    });
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+  }
+};
+
 module.exports = {
   renderHomePage,
+  renderCategoryPage
 };

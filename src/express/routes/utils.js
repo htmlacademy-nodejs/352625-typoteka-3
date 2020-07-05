@@ -20,6 +20,10 @@ const getArticlesByCategory = (articles, category) => {
       .includes(category.id));
 };
 
+const getCategoryById = (categories, id) => {
+  return categories.filter((category) => category.id === id)[0];
+};
+
 const getFreshItems = (articles, count = Items.FRESH) => {
   const sortedData = articles.sort((a, b) => b.createdDate.machine - a.createdDate.machine);
 
@@ -47,6 +51,7 @@ const getLastComments = (articles) => {
 module.exports = {
   UriApi,
   getArticlesByCategory,
+  getCategoryById,
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
