@@ -30,6 +30,10 @@ app.use(`/${PathName.OFFERS}`, offersRouter);
 app.use(`/${PathName.MY}`, myRouter);
 app.use(`/${PathName.ERROR}`, errorRouter);
 
+app.use((req, res) => {
+  res.status(404).render(`errors/404`);
+});
+
 app.listen(
     DEFAULT_PORT,
     () => console.log(`Сервер запущен на порту: ${DEFAULT_PORT}`)

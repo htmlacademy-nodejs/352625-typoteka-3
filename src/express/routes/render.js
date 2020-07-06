@@ -14,6 +14,14 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
+const render404Page = (req, res) => {
+  res.status(404).render(`errors/404`);
+};
+
+const render500Page = (req, res) => {
+  res.status(500).render(`errors/500`);
+};
+
 const renderHomePage = async (req, res) => {
   try {
     const articles = await getArticles();
@@ -41,13 +49,18 @@ const renderCategoryPage = async (req, res) => {
     const articles = await getArticles();
     const categories = await getCategories();
 
-    res.render(`category`, {
-      articles,
-      categories,
-      activeCategoryId,
-      getArticlesByCategory,
-      getCategoryById,
-    });
+    if (!categories.find((item) => item.id === activeCategoryId)) {
+      render404Page(req, res);
+
+    } else {
+      res.render(`category`, {
+        articles,
+        categories,
+        activeCategoryId,
+        getArticlesByCategory,
+        getCategoryById,
+      });
+    }
 
   } catch (error) {
     logger.error(`Error occurs: ${error}`);
@@ -55,6 +68,8 @@ const renderCategoryPage = async (req, res) => {
 };
 
 module.exports = {
+  render404Page,
+  render500Page,
   renderHomePage,
-  renderCategoryPage
+  renderCategoryPage,
 };
