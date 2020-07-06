@@ -2,11 +2,9 @@
 
 const {Router} = require(`express`);
 
-const {renderCategoryPage} = require(`./render.js`);
+const {renderCategoryPage, renderTicketPage} = require(`./render.js`);
 
 const offersRouter = new Router();
-
-const OFFER_ID = `offerId`;
 
 offersRouter.get(
     `/add`,
@@ -19,13 +17,13 @@ offersRouter.get(
 );
 
 offersRouter.get(
-    `/edit/:${OFFER_ID}`,
+    `/edit/:offerId`,
     (req, res) => res.render(`ticket-edit`)
 );
 
 offersRouter.get(
-    `/:${OFFER_ID}`,
-    (req, res) => res.render(`ticket`)
+    `/:offerId`,
+    (req, res) => renderTicketPage(req, res)
 );
 
 module.exports = offersRouter;
