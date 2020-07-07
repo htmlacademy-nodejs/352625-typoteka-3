@@ -17,10 +17,12 @@ const logger = getLogger();
 
 const render404Page = (req, res) => {
   res.status(404).render(`errors/404`);
+  logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 };
 
 const render500Page = (req, res) => {
   res.status(500).render(`errors/500`);
+  logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 };
 
 const renderHomePage = async (req, res) => {
@@ -39,6 +41,7 @@ const renderHomePage = async (req, res) => {
       freshItems: getFreshItems(articles),
       getItemIdByCommentId,
     });
+    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     logger.error(`Error occurs: ${error}`);
@@ -62,6 +65,7 @@ const renderCategoryPage = async (req, res) => {
         getArticlesByCategory,
         getCategoryById,
       });
+      logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
     }
 
   } catch (error) {
@@ -79,6 +83,7 @@ const renderTicketPage = async (req, res) => {
       articles,
       getArticlesByCategory,
     });
+    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render404Page(req, res);
