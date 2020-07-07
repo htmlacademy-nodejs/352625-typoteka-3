@@ -89,6 +89,7 @@ const getComments = (count, comments, users) => (
     id: nanoid(Id.Length.COMMENT),
     text: `${shuffle(comments).slice(1, getRandomInt(Id.Phrases.MIN, Id.Phrases.MAX)).join(`. `)}.`,
     author: getUsers(users)[getRandomInt(0, users.length - 1)],
+    createdDate: getDate(),
   }))
 );
 

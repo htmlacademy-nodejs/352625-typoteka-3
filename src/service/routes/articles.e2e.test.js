@@ -11,12 +11,12 @@ const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
 const readFile = promisify(fs.readFile);
 
 const Article = {
-  RIGHT_ID: encodeURI(`qeD86W`),
+  RIGHT_ID: encodeURI(`MaIXv5`),
   WRONG_ID: encodeURI(`ылдвапр`),
 };
 
 const Comment = {
-  RIGHT_ID: encodeURI(`0n3R`),
+  RIGHT_ID: encodeURI(`5G4z`),
   WRONG_ID: encodeURI(`фжыдвл`),
 };
 

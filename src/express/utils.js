@@ -13,6 +13,10 @@ const Items = {
   MOST_DISCUSSED: 4,
 };
 
+const Comments = {
+  FRESH: 4,
+};
+
 const getArticlesByCategory = (articles, category) => {
   return articles
     .filter((article) => article.category
@@ -44,8 +48,21 @@ const getMostDiscussedItems = (articles, count = Items.MOST_DISCUSSED) => {
   }
 };
 
-const getLastComments = (articles) => {
-  return articles.map((item) => item.comments[0]);
+const getLastComments = (articles, count = Comments.FRESH) => {
+  const sortedComments = articles.map((item) => item.comments)
+    .flat()
+    .sort((a, b) => b.createdDate.machine - a.createdDate.machine);
+
+  if (count >= sortedComments.length) {
+    return sortedComments;
+  } else {
+    return sortedComments.slice(0, count);
+  }
+};
+
+const getItemIdByCommentId = (articles, commentId) => {
+  return articles.filter((item) => item.comments
+    .find((comment) => comment.id === commentId))[0].id;
 };
 
 module.exports = {
@@ -55,4 +72,5 @@ module.exports = {
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
+  getItemIdByCommentId,
 };

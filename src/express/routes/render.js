@@ -6,6 +6,7 @@ const {
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
+  getItemIdByCommentId,
 } = require(`./../utils.js`);
 
 const {getArticles, getArticle, getCategories} = require(`./../axios.js`);
@@ -36,6 +37,7 @@ const renderHomePage = async (req, res) => {
       mostDiscussedItems,
       lastComments,
       freshItems: getFreshItems(articles),
+      getItemIdByCommentId,
     });
 
   } catch (error) {

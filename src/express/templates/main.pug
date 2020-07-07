@@ -30,10 +30,11 @@ block content
           span.last__icon.last__icon--cloud
         ul.last__list
           each comment in lastComments
+            - const itemId = getItemIdByCommentId(articles, comment.id)
             li.last__list-item
               img.last__list-image(src=`img/${comment.author.avatar.small}.png` width="20" height="20" alt="Аватар пользователя")
               b.last__list-name= comment.author.name
-              a.last__list-link(href="#")= comment.text
+              a.last__list-link(href=`/offers/${itemId}`)= comment.text
     section.main-page__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list
