@@ -4,6 +4,7 @@ const PathName = {
   ARTICLES: `api/articles`,
   CATEGORIES: `api/categories`,
   SEARCH: `api/search`,
+  AUTH: `api/auth`,
 };
 
 const Empty = {
@@ -18,8 +19,11 @@ const Empty = {
 
 const SEARCH_PARAM = `?query=`;
 
+const AUTH_STATUS = true;
+
 module.exports = {
   PathName,
   Empty,
   SEARCH_PARAM,
+  AUTH_STATUS,
 };
