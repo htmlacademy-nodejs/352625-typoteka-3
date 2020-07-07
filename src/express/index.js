@@ -3,7 +3,7 @@
 const express = require(`express`);
 const path = require(`path`);
 
-const pino = require(`pino`)(`./logs/express.log`);
+const pino = require(`pino`)(`./src/express/logs/express.log`);
 const expressPino = require(`express-pino-logger`)({
   logger: pino
 });

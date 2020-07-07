@@ -2,7 +2,7 @@
 
 const express = require(`express`);
 
-const pino = require(`pino`)(`./logs/service.log`);
+const pino = require(`pino`)(`./src/service/logs/service.log`);
 const expressPino = require(`express-pino-logger`)({
   logger: pino
 });
