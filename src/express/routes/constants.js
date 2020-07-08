@@ -1,7 +1,7 @@
 'use strict';
 
 const PathName = {
-  OFFERS: `offers`,
+  ARTICLES: `articles`,
   MY: `my`,
   REGISTER: `register`,
   LOGIN: `login`,

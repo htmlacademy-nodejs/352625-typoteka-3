@@ -4,26 +4,26 @@ const {Router} = require(`express`);
 
 const {renderCategoryPage, renderTicketPage} = require(`./render.js`);
 
-const offersRouter = new Router();
+const articlesRouter = new Router();
 
-offersRouter.get(
+articlesRouter.get(
     `/add`,
     (req, res) => res.render(`new-ticket`)
 );
 
-offersRouter.get(
+articlesRouter.get(
     `/category/:categoryId`,
     (req, res) => renderCategoryPage(req, res)
 );
 
-offersRouter.get(
+articlesRouter.get(
     `/edit/:offerId`,
     (req, res) => res.render(`ticket-edit`)
 );
 
-offersRouter.get(
+articlesRouter.get(
     `/:offerId`,
     (req, res) => renderTicketPage(req, res)
 );
 
-module.exports = offersRouter;
+module.exports = articlesRouter;
