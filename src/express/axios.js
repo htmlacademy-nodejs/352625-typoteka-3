@@ -9,8 +9,11 @@ const getArticle = async (url) => (await axios.get(encodeURI(`${UriApi.ARTICLES}
 
 const getCategories = async () => (await axios.get(UriApi.CATEGORIES)).data;
 
+const getAuth = async () => (await axios.get(UriApi.AUTH)).data;
+
 module.exports = {
   getArticles,
   getArticle,
   getCategories,
+  getAuth,
 };

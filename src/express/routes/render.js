@@ -9,7 +9,12 @@ const {
   getItemIdByCommentId,
 } = require(`./../utils.js`);
 
-const {getArticles, getArticle, getCategories} = require(`./../axios.js`);
+const {
+  getArticles,
+  getArticle,
+  getCategories,
+  getAuth,
+} = require(`./../axios.js`);
 
 const {getLogger} = require(`./../../service/logger.js`);
 
@@ -27,12 +32,14 @@ const render500Page = (req, res) => {
 
 const renderHomePage = async (req, res) => {
   try {
+    const auth = await getAuth();
     const articles = await getArticles();
     const categories = await getCategories();
     const mostDiscussedItems = getMostDiscussedItems(articles);
     const lastComments = getLastComments(mostDiscussedItems);
 
     res.render(`main`, {
+      auth,
       articles,
       categories,
       getArticlesByCategory,
@@ -50,6 +57,7 @@ const renderHomePage = async (req, res) => {
 
 const renderCategoryPage = async (req, res) => {
   try {
+    const auth = await getAuth();
     const activeCategoryId = req.params.categoryId;
     const articles = await getArticles();
     const categories = await getCategories();
@@ -59,6 +67,7 @@ const renderCategoryPage = async (req, res) => {
 
     } else {
       res.render(`category`, {
+        auth,
         articles,
         categories,
         activeCategoryId,
@@ -75,10 +84,12 @@ const renderCategoryPage = async (req, res) => {
 
 const renderTicketPage = async (req, res) => {
   try {
+    const auth = await getAuth();
     const article = await getArticle(req.params.offerId);
     const articles = await getArticles();
 
     res.render(`ticket`, {
+      auth,
       article,
       articles,
       getArticlesByCategory,

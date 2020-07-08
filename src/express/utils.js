@@ -6,6 +6,7 @@ const {PathName} = require(`./../service/routes/constants`);
 const UriApi = {
   ARTICLES: `${URL_API}/${PathName.ARTICLES}`,
   CATEGORIES: `${URL_API}/${PathName.CATEGORIES}`,
+  AUTH: `${URL_API}/${PathName.AUTH}`,
 };
 
 const Items = {

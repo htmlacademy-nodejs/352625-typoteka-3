@@ -3,9 +3,17 @@ header.header
 
   nav.header__nav
     ul.header__nav-list
-      li.header__list-item
-        a.header__registration(href="/register") Регистрация
-      li.header__list-item
-        a.header__enter(href="/login") Вход с паролем
-
+      if auth.status
+        li.header__list-item
+          p= auth.user.name
+        li.header__list-item
+          a.header__exit(href="#") Выйти
+      else
+        li.header__list-item
+          a.header__registration(href="/register") Регистрация
+        li.header__list-item
+          a.header__enter(href="/login") Вход с паролем
+  if auth.status
+    a.header__avatar.avatar
+      img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
   include ../search
