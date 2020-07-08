@@ -66,6 +66,19 @@ const getItemIdByCommentId = (articles, commentId) => {
     .find((comment) => comment.id === commentId))[0].id;
 };
 
+const getItemByCommentId = (articles, commentId) => {
+  return articles.filter((item) => item.comments
+    .find((comment) => comment.id === commentId))[0];
+};
+
+
+const getCommentsByUserId = (articles, userId) => {
+  return articles
+    .map((item) => item.comments)
+    .flat()
+    .filter((comment) => comment.author.id === userId);
+};
+
 module.exports = {
   UriApi,
   getArticlesByCategory,
@@ -74,4 +87,6 @@ module.exports = {
   getMostDiscussedItems,
   getLastComments,
   getItemIdByCommentId,
+  getItemByCommentId,
+  getCommentsByUserId,
 };

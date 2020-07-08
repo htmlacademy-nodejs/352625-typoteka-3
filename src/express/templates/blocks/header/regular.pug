@@ -14,6 +14,13 @@ header.header
         li.header__list-item
           a.header__enter(href="/login") Вход с паролем
   if auth.status
-    a.header__avatar.avatar
-      img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
+    div.header__dropdown
+      a.header__avatar.avatar.button.button--burger.header__burger
+        img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
+      ul.navigation.header__navigation
+        li.navigation__item
+          a(href="/my") Публикации
+        li.navigation__item
+          a(href="/my/comments") Комментарии
+
   include ../search

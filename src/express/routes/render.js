@@ -6,7 +6,8 @@ const {
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
-  getItemIdByCommentId,
+  getItemByCommentId,
+  getCommentsByUserId,
 } = require(`./../utils.js`);
 
 const {
@@ -46,7 +47,7 @@ const renderHomePage = async (req, res) => {
       mostDiscussedItems,
       lastComments,
       freshItems: getFreshItems(articles),
-      getItemIdByCommentId,
+      getItemByCommentId,
     });
     logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
@@ -102,10 +103,42 @@ const renderTicketPage = async (req, res) => {
   }
 };
 
+const renderMyTicketPage = async (req, res) => {
+  try {
+    const auth = await getAuth();
+    res.render(`my-tickets`, {auth});
+    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+  }
+};
+
+const renderCommentsPage = async (req, res) => {
+  try {
+    const auth = await getAuth();
+    const articles = await getArticles();
+
+    res.render(`comments`, {
+      auth,
+      articles,
+      getCommentsByUserId,
+      getItemByCommentId,
+    });
+    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+  }
+};
+
+
 module.exports = {
   render404Page,
   render500Page,
   renderHomePage,
   renderCategoryPage,
   renderTicketPage,
+  renderMyTicketPage,
+  renderCommentsPage,
 };
