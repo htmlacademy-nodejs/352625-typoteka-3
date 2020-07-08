@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {renderCategoryPage, renderTicketPage} = require(`./render.js`);
+const {renderCategoryPage, renderTicketPage, renderTicketEditPage} = require(`./render.js`);
 
 const articlesRouter = new Router();
 
@@ -17,8 +17,8 @@ articlesRouter.get(
 );
 
 articlesRouter.get(
-    `/edit/:offerId`,
-    (req, res) => res.render(`ticket-edit`)
+    `/edit/:articleId`,
+    (req, res) => renderTicketEditPage(req, res)
 );
 
 articlesRouter.get(

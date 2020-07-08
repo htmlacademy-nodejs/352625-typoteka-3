@@ -9,7 +9,7 @@ block content
         each item in sortedArticles
           li.notes__list-item
             time.notes__item-time(datetime=`${item.createdDate.datetime}`)= item.createdDate.human
-            a.notes__item-text(href=`/articles/${item.id}`)= item.title
+            a.notes__item-text(href=`/articles/edit/${item.id}`)= item.title
             button.notes__button.button.button--close-item(type="button")
               span.visually-hidden Закрыть строку списка
 

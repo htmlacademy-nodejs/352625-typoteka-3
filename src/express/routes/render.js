@@ -103,6 +103,18 @@ const renderTicketPage = async (req, res) => {
   }
 };
 
+const renderTicketEditPage = async (req, res) => {
+  try {
+    const article = await getArticle(req.params.articleId);
+    const categories = await getCategories();
+    res.render(`ticket-edit`, {article, categories});
+
+  } catch (error) {
+    render404Page(req, res);
+    logger.error(`Error occurs: ${error}`);
+  }
+};
+
 const renderMyTicketPage = async (req, res) => {
   try {
     const auth = await getAuth();
@@ -139,6 +151,7 @@ module.exports = {
   renderHomePage,
   renderCategoryPage,
   renderTicketPage,
+  renderTicketEditPage,
   renderMyTicketPage,
   renderCommentsPage,
 };
