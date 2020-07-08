@@ -13,6 +13,7 @@ const {
 const {
   getArticles,
   getArticle,
+  postArticle,
   getCategories,
   getAuth,
 } = require(`./../axios.js`);
@@ -115,6 +116,16 @@ const renderTicketEditPage = async (req, res) => {
   }
 };
 
+const renderNewTicketPage = async (req, res) => {
+  try {
+    const categories = await getCategories();
+    res.render(`new-ticket`, {categories});
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+  }
+};
+
 const renderMyTicketPage = async (req, res) => {
   try {
     const auth = await getAuth();
@@ -144,6 +155,19 @@ const renderCommentsPage = async (req, res) => {
   }
 };
 
+const postFormDataToService = (req, res) => {
+  try {
+    postArticle(req.body);
+
+    res.redirect(`/my`);
+    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+
+    res.redirect(`/articles/add`);
+  }
+};
 
 module.exports = {
   render404Page,
@@ -152,6 +176,8 @@ module.exports = {
   renderCategoryPage,
   renderTicketPage,
   renderTicketEditPage,
+  renderNewTicketPage,
   renderMyTicketPage,
   renderCommentsPage,
+  postFormDataToService,
 };

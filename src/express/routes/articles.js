@@ -2,13 +2,24 @@
 
 const {Router} = require(`express`);
 
-const {renderCategoryPage, renderTicketPage, renderTicketEditPage} = require(`./render.js`);
+const {
+  renderCategoryPage,
+  renderTicketPage,
+  renderTicketEditPage,
+  renderNewTicketPage,
+  postFormDataToService,
+} = require(`./render.js`);
 
 const articlesRouter = new Router();
 
 articlesRouter.get(
     `/add`,
-    (req, res) => res.render(`new-ticket`)
+    (req, res) => renderNewTicketPage(req, res)
+);
+
+articlesRouter.post(
+  `/add`,
+  (req, res) => postFormDataToService(req, res)
 );
 
 articlesRouter.get(
