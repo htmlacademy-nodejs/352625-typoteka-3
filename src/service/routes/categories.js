@@ -27,6 +27,7 @@ categoriesRouter.get(`/`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     createErrorLogs(error);
   }
 });
