@@ -2,6 +2,7 @@
 
 const {Router} = require(`express`);
 
+const {HttpCode} = require(`./../cli/constants.js`);
 const getAuth = require(`./../routes/utils.js`);
 const {PathName, AUTH_STATUS} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
@@ -18,6 +19,7 @@ authRouter.get(`/`, async (req, res) => {
     logger.debug(`${req.method} /${PathName.AUTH} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     logger.error(`Error occurs: ${error}`);
   }
 });
