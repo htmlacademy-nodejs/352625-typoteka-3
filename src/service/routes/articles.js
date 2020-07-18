@@ -29,7 +29,7 @@ articlesRouter.get(`/`, async (req, res) => {
     const result = await getMock();
 
     if (!result) {
-      res.status(HttpCode.BAD_REQUEST).json(Empty.OFFERS);
+      res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
       createLogs(req, res, PathName.ARTICLES);
     } else {
       res.json(result);
@@ -37,6 +37,7 @@ articlesRouter.get(`/`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
     createErrorLogs(error);
   }
 });
@@ -56,6 +57,7 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLE);
     createErrorLogs(error);
   }
 });
@@ -76,6 +78,7 @@ articlesRouter.get(`/:articleId/comments`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.COMMENTS);
     createErrorLogs(error);
   }
 });
@@ -91,6 +94,7 @@ articlesRouter.post(`/`, (req, res) => {
       createLogs(req, res, PathName.ARTICLES);
     }
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
     createErrorLogs(error);
   }
 });
@@ -111,6 +115,7 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
     createErrorLogs(error);
   }
 });
@@ -131,6 +136,7 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
     createErrorLogs(error);
   }
 });
@@ -151,6 +157,7 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
     createErrorLogs(error);
   }
 });
@@ -181,6 +188,7 @@ articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
     }
 
   } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
     createErrorLogs(error);
   }
 });

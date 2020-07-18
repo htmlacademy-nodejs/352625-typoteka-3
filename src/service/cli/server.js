@@ -35,6 +35,10 @@ app.use(express.json());
 
 app.set(`json spaces`, 2);
 
+app.use((req, res) => {
+  res.status(404).send(`Page not exists`);
+});
+
 app.use(expressPino);
 
 module.exports = {
