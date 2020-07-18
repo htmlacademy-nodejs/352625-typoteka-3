@@ -7,10 +7,10 @@ const {FILE_NAME} = require(`./cli/constants.js`);
 
 const readFile = promisify(fs.readFile);
 
-let data = ``;
+let data = null;
 
 const getMock = async () => {
-  if (data === ``) {
+  if (data === null) {
     const fileContent = await readFile(FILE_NAME);
     data = JSON.parse(fileContent);
   }
