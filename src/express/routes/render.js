@@ -53,6 +53,7 @@ const renderHomePage = async (req, res) => {
     logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    render500Page(req, res);
     logger.error(`Error occurs: ${error}`);
   }
 };
@@ -80,6 +81,7 @@ const renderCategoryPage = async (req, res) => {
     }
 
   } catch (error) {
+    render500Page(req, res);
     logger.error(`Error occurs: ${error}`);
   }
 };
@@ -122,6 +124,7 @@ const renderNewTicketPage = async (req, res) => {
     res.render(`new-ticket`, {categories});
 
   } catch (error) {
+    render500Page(req, res);
     logger.error(`Error occurs: ${error}`);
   }
 };
@@ -133,6 +136,7 @@ const renderMyTicketPage = async (req, res) => {
     logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    render500Page(req, res);
     logger.error(`Error occurs: ${error}`);
   }
 };
@@ -151,6 +155,7 @@ const renderCommentsPage = async (req, res) => {
     logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    render500Page(req, res);
     logger.error(`Error occurs: ${error}`);
   }
 };
