@@ -94,7 +94,7 @@ articlesRouter.post(`/`, (req, res) => {
       createLogs(req, res, PathName.ARTICLES);
     }
   } catch (error) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     createErrorLogs(error);
   }
 });
@@ -115,7 +115,7 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
     }
 
   } catch (error) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     createErrorLogs(error);
   }
 });
@@ -136,7 +136,7 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
     }
 
   } catch (error) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     createErrorLogs(error);
   }
 });
@@ -157,7 +157,7 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
     }
 
   } catch (error) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     createErrorLogs(error);
   }
 });
@@ -188,7 +188,7 @@ articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
     }
 
   } catch (error) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(error);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
     createErrorLogs(error);
   }
 });
