@@ -26,7 +26,7 @@ const getArticlesByCategory = (articles, category) => {
 };
 
 const getCategoryById = (categories, id) => {
-  return categories.filter((category) => category.id === id)[0];
+  return categories.find((category) => category.id === id);
 };
 
 const getFreshItems = (articles, count = Items.FRESH) => {
@@ -62,8 +62,8 @@ const getLastComments = (articles, count = Comments.FRESH) => {
 };
 
 const getItemByCommentId = (articles, commentId) => {
-  return articles.filter((item) => item.comments
-    .find((comment) => comment.id === commentId))[0];
+  return articles.find((item) => item.comments
+    .find((comment) => comment.id === commentId));
 };
 
 
