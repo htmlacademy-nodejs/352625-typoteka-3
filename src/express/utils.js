@@ -61,11 +61,6 @@ const getLastComments = (articles, count = Comments.FRESH) => {
   }
 };
 
-const getItemIdByCommentId = (articles, commentId) => {
-  return articles.filter((item) => item.comments
-    .find((comment) => comment.id === commentId))[0].id;
-};
-
 const getItemByCommentId = (articles, commentId) => {
   return articles.filter((item) => item.comments
     .find((comment) => comment.id === commentId))[0];
@@ -86,7 +81,6 @@ module.exports = {
   getFreshItems,
   getMostDiscussedItems,
   getLastComments,
-  getItemIdByCommentId,
   getItemByCommentId,
   getCommentsByUserId,
 };
