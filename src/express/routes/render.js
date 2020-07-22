@@ -164,6 +164,7 @@ const renderCommentsPage = async (req, res) => {
 
 const postFormDataToService = (req, res) => {
   try {
+    console.log(req.body);
     postArticle(req.body);
 
     res.redirect(`/my`);

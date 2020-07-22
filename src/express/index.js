@@ -30,6 +30,7 @@ app.set(`views`, `./src/express/templates`);
 app.set(`view engine`, `pug`);
 
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
+app.use(express.urlencoded({extended: false}));
 
 app.use(`/`, homeRouter);
 app.use(`/${PathName.REGISTER}`, registerRouter);
