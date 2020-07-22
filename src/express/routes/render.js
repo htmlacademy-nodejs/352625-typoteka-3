@@ -50,7 +50,7 @@ const renderHomePage = async (req, res) => {
       freshItems: getFreshItems(articles),
       getItemByCommentId,
     });
-    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render500Page(req, res);
@@ -77,7 +77,7 @@ const renderCategoryPage = async (req, res) => {
         getArticlesByCategory,
         getCategoryById,
       });
-      logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
     }
 
   } catch (error) {
@@ -98,7 +98,7 @@ const renderTicketPage = async (req, res) => {
       articles,
       getArticlesByCategory,
     });
-    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render404Page(req, res);
@@ -111,6 +111,7 @@ const renderTicketEditPage = async (req, res) => {
     const article = await getArticle(req.params.articleId);
     const categories = await getCategories();
     res.render(`ticket-edit`, {article, categories});
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render404Page(req, res);
@@ -122,6 +123,7 @@ const renderNewTicketPage = async (req, res) => {
   try {
     const categories = await getCategories();
     res.render(`new-ticket`, {categories});
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render500Page(req, res);
@@ -129,11 +131,11 @@ const renderNewTicketPage = async (req, res) => {
   }
 };
 
-const renderMyTicketPage = async (req, res) => {
+const renderMyTicketsPage = async (req, res) => {
   try {
     const auth = await getAuth();
     res.render(`my-tickets`, {auth});
-    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render500Page(req, res);
@@ -152,7 +154,7 @@ const renderCommentsPage = async (req, res) => {
       getCommentsByUserId,
       getItemByCommentId,
     });
-    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     render500Page(req, res);
@@ -165,7 +167,7 @@ const postFormDataToService = (req, res) => {
     postArticle(req.body);
 
     res.redirect(`/my`);
-    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     logger.error(`Error occurs: ${error}`);
@@ -182,7 +184,7 @@ module.exports = {
   renderTicketPage,
   renderTicketEditPage,
   renderNewTicketPage,
-  renderMyTicketPage,
+  renderMyTicketsPage,
   renderCommentsPage,
   postFormDataToService,
 };
