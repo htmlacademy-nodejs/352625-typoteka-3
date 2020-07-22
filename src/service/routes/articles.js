@@ -35,7 +35,7 @@ articlesRouter.get(`/`, async (req, res) => {
     } else {
       res.json(result);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
@@ -54,7 +54,7 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
     } else {
       res.json(result);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLE);
@@ -74,7 +74,7 @@ articlesRouter.get(`/:articleId/comments`, async (req, res) => {
       const result = targetArticle.comments;
       res.json(result);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.COMMENTS);
@@ -90,7 +90,7 @@ articlesRouter.post(`/`, (req, res) => {
       // some code for adding new article is coming soon...
       res.send(req.body);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
@@ -110,7 +110,7 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
       // some code for editing article is coming soon...
       res.send(req.body);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
@@ -130,7 +130,7 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
       // some code for adding new comment is coming soon...
       res.send(req.body);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
@@ -150,7 +150,7 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
       // some code for deleting Article is coming soon...
       res.send(`Article is deleted`);
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
@@ -179,7 +179,7 @@ articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
         res.send(`Comment is deleted`);
       }
     }
-    logger.debug(`${req.method} /${PathName.ARTICLES}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);

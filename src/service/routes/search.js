@@ -30,7 +30,7 @@ searchRouter.get(`/`, async (req, res) => {
     } else {
       res.json(result);
     }
-    logger.debug(`${req.method} /${PathName.SEARCH}${req.url} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);

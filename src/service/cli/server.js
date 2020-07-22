@@ -37,7 +37,7 @@ app.set(`json spaces`, 2);
 
 app.use((req, res) => {
   res.status(404).send(`Page not exists`);
-  logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+  logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 });
 
 app.use(expressPino);

@@ -16,7 +16,7 @@ authRouter.get(`/`, async (req, res) => {
     const authData = await getAuth(AUTH_STATUS);
 
     res.json(authData);
-    logger.debug(`${req.method} /${PathName.AUTH} --> res status code ${res.statusCode}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
