@@ -6,7 +6,9 @@ const {promisify} = require(`util`);
 
 const {FILE_NAME} = require(`./../cli/constants.js`);
 const {Empty, PathName} = require(`./../routes/constants.js`);
-const {createLogs, createErrorLogs} = require(`./../utils.js`);
+const {getLogger} = require(`./../logger.js`);
+
+const logger = getLogger();
 
 const searchRouter = new Router();
 
@@ -25,15 +27,14 @@ searchRouter.get(`/`, async (req, res) => {
 
     if (result.length === 0 || req.query.query === Empty.DATA) {
       res.json(Empty.SEARCH);
-      createLogs(req, res, PathName.SEARCH);
     } else {
       res.json(result);
-      createLogs(req, res, PathName.SEARCH);
     }
+    logger.debug(`${req.method} /${PathName.SEARCH}${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-    createErrorLogs(error);
+    logger.error(`Error occurs: ${error}`);
   }
 });
 

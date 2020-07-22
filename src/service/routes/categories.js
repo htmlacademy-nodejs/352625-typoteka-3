@@ -4,8 +4,10 @@ const {Router} = require(`express`);
 
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty, PathName} = require(`./../routes/constants.js`);
-const {createLogs, createErrorLogs} = require(`./../utils.js`);
 const getMock = require(`./../mocks-data.js`);
+const {getLogger} = require(`./../logger.js`);
+
+const logger = getLogger();
 
 const categoriesRouter = new Router();
 
@@ -20,15 +22,14 @@ categoriesRouter.get(`/`, async (req, res) => {
 
     if (result === [Empty.DATA]) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.CATEGORIES);
-      createLogs(req, res, PathName.CATEGORIES);
     } else {
       res.json(result);
-      createLogs(req, res, PathName.CATEGORIES);
     }
+    logger.debug(`${req.method} /${PathName.CATEGORIES}${req.url} --> res status code ${res.statusCode}`);
 
   } catch (error) {
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-    createErrorLogs(error);
+    logger.error(`Error occurs: ${error}`);
   }
 });
 

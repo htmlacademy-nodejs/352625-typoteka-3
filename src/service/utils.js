@@ -124,21 +124,10 @@ const generatePosts = (count, sentences, categories, titles, comments, users, pi
   }));
 };
 
-const createLogs = (req, res, path) => {
-  logger.debug(`Client request to url /${path}${req.url}`);
-  logger.info(`End request with status code ${res.statusCode}`);
-};
-
-const createErrorLogs = (error) => {
-  logger.error(`No content, ${error}`);
-};
-
 module.exports = {
   getRandomInt,
   shuffle,
   generatePosts,
   getFileData,
   writePosts,
-  createLogs,
-  createErrorLogs,
 };
