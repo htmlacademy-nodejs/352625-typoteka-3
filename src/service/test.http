@@ -1,31 +1,31 @@
 ###
 
-GET http://localhost:8080/api/articles
+GET http://localhost:3000/api/articles
 Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/articles/K4d9a5
+GET http://localhost:3000/api/articles/K4d9a5
 Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/categories
+GET http://localhost:3000/api/categories
 Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/articles/K4d9a5/comments
+GET http://localhost:3000/api/articles/K4d9a5/comments
 Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/api/search?query=такое
+GET http://localhost:3000/api/search?query=такое
 Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/articles
+POST http://localhost:3000/api/articles
 Content-Type: application/json
 
 {
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8080/api/articles/K4d9a5
+PUT http://localhost:3000/api/articles/K4d9a5
 Content-Type: application/json
 
 {
@@ -62,7 +62,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8080/api/articles/K4d9a5/comments
+PUT http://localhost:3000/api/articles/K4d9a5/comments
 Content-Type: application/json
 
 {
@@ -72,10 +72,10 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:8080/api/articles/K4d9a5
+DELETE http://localhost:3000/api/articles/K4d9a5
 
 ###
 
-DELETE http://localhost:8080/api/articles/K4d9a5/comments/OsHU
+DELETE http://localhost:3000/api/articles/K4d9a5/comments/OsHU
 
 ###

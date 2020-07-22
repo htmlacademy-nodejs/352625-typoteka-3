@@ -5,7 +5,7 @@ block content
     section.modal.modal--flex
       .popup.popup--new-publication.popup--flex
         .new-publication
-          form(action="/articles/add" method="POST")
+          form(action="/articles/add" method="post")
             .new-publication__header
               h1 Новая публикация
               .new-publication__date-form
@@ -13,7 +13,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for="new-publication-date" aria-label="Календарь")
-                    input#new-publication-date(type="text" name="login" placeholder="21.03.2019")
+                    input#new-publication-date(type="text" name="createdDate" placeholder="21.03.2019" required="")
               button.new-publication__button.button.button--colored(type="submit") Опубликовать
             button.popup__button.button.button--popup-close(type="button" aria-label="Закрыть окно")
               | Закрыть
@@ -22,7 +22,7 @@ block content
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type="text" placeholder="Заголовок" value="" required="")
+                    input(type="text" placeholder="Заголовок" name="title" value="" required="")
                 .form__field.form__field--post-image
                   label
                     input#image-name-field(type="text" value="" placeholder="Фотография" readonly="")

@@ -89,6 +89,9 @@ articlesRouter.post(`/`, (req, res) => {
     } else {
       // some code for adding new article is coming soon...
       res.send(req.body);
+
+      // TEMP observe receiving FormData of newTicket:
+      logger.info(req.body);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
