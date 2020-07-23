@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 
 const {HttpCode} = require(`./../cli/constants.js`);
 const getAuth = require(`./../routes/utils.js`);
-const {PathName, AUTH_STATUS} = require(`./../routes/constants.js`);
+const {AUTH_STATUS} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const logger = getLogger();

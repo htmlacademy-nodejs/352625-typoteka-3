@@ -18,8 +18,8 @@ articlesRouter.get(
 );
 
 articlesRouter.post(
-  `/add`,
-  (req, res) => postFormDataToService(req, res)
+    `/add`,
+    (req, res) => postFormDataToService(req, res)
 );
 
 articlesRouter.get(

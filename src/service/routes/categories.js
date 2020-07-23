@@ -3,7 +3,7 @@
 const {Router} = require(`express`);
 
 const {HttpCode} = require(`./../cli/constants.js`);
-const {Empty, PathName} = require(`./../routes/constants.js`);
+const {Empty} = require(`./../routes/constants.js`);
 const getMock = require(`./../mocks-data.js`);
 const {getLogger} = require(`./../logger.js`);
 

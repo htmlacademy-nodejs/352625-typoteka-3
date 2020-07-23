@@ -36,18 +36,18 @@ describe(`When GET '/${PathName.SEARCH}'`, () => {
   test(`blank search returns '${Empty.SEARCH}'`, async () => {
     const res = await request(app)
       .get(`/${PathName.SEARCH}`);
-    expect(res.body).toBe(Empty.SEARCH);
+    expect(res.body).toStrictEqual(Empty.SEARCH);
   });
 
   test(`blank request '${SEARCH_PARAM}' returns '${Empty.SEARCH}'`, async () => {
     const res = await request(app)
       .get(`/${PathName.SEARCH}${SEARCH_PARAM}`);
-    expect(res.body).toBe(Empty.SEARCH);
+    expect(res.body).toStrictEqual(Empty.SEARCH);
   });
 
   test(`wrong request '${SEARCH_PARAM}${WRONG_SEARCH_URI}' returns '${Empty.SEARCH}'`, async () => {
     const res = await request(app)
       .get(`/${PathName.SEARCH}${SEARCH_PARAM}${WRONG_SEARCH_URI}`);
-    expect(res.body).toBe(Empty.SEARCH);
+    expect(res.body).toStrictEqual(Empty.SEARCH);
   });
 });

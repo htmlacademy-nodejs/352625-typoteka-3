@@ -5,9 +5,6 @@ const fs = require(`fs`);
 const chalk = require(`chalk`);
 const {promisify} = require(`util`);
 const nanoid = require(`nanoid`);
-const {getLogger} = require(`./logger.js`);
-
-const logger = getLogger();
 
 const {
   Time,
