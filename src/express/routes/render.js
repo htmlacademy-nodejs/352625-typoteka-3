@@ -176,6 +176,7 @@ const renderSearchPage = async (req, res) => {
     res.render(`search`, {
       auth,
       result,
+      searchRequest,
     });
     logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 

@@ -17,7 +17,7 @@ block content
           .search.search-page__form
             form(action="/search" method="get")
               label
-                input(type="search" name="search" placeholder="Что ищем?" value="")
+                input(type="search" name="search" placeholder="Что ищем?" value=`${searchRequest}`)
               button.search__button.button.button--transparent(type="submit") Найти
             each item in result
               .search__result
@@ -29,6 +29,6 @@ block content
           .search.search-page__form
             form(action="/search" method="get")
               label
-                input(type="search" name="search" placeholder="Что ищем?" value="")
+                input(type="search" name="search" placeholder="Что ищем?" value=`${searchRequest}`)
               button.search__button.button.button--transparent(type="submit") Найти
             p.search-page__empty Ничего не нашлось
