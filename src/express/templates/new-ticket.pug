@@ -32,8 +32,9 @@ block content
                       | Обзор
                   button.button.button--transparent Удалить
                 .new-publication__checkbox.new-publication__checkbox--auto
-                  input#checkbox-auto(type="checkbox" name="checkbox-auto")
-                  label(for="checkbox-auto") Автомобили
+                  each category in categories
+                    input(id=`${category.id}` type="checkbox" name=`${category.id}`)
+                    label(for=`${category.id}`)= category.name
                 a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
