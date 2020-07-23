@@ -5,7 +5,7 @@ const fs = require(`fs`);
 const {promisify} = require(`util`);
 
 const {FILE_NAME} = require(`./../cli/constants.js`);
-const {Empty, PathName} = require(`./../routes/constants.js`);
+const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const logger = getLogger();

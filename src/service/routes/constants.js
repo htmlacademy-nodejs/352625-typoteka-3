@@ -14,7 +14,7 @@ const Empty = {
   COMMENT: {},
   CATEGORIES: [],
   DATA: ``,
-  SEARCH: `No search results`,
+  SEARCH: [],
 };
 
 const SEARCH_PARAM = `?query=`;

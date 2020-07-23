@@ -14,6 +14,7 @@ const {
   getArticles,
   getArticle,
   postArticle,
+  getSearch,
   getCategories,
   getAuth,
 } = require(`./../axios.js`);
@@ -162,6 +163,28 @@ const renderCommentsPage = async (req, res) => {
   }
 };
 
+const renderSearchPage = async (req, res) => {
+  try {
+    const auth = await getAuth();
+    const searchRequest = req.query.search;
+    let result = null;
+
+    if (searchRequest !== undefined) {
+      result = await getSearch(req.query.search);
+    }
+
+    res.render(`search`, {
+      auth,
+      result,
+    });
+    logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+  }
+};
+
+
 const postFormDataToService = (req, res) => {
   try {
     console.log(req.body);
@@ -187,5 +210,6 @@ module.exports = {
   renderNewTicketPage,
   renderMyTicketsPage,
   renderCommentsPage,
+  renderSearchPage,
   postFormDataToService,
 };
