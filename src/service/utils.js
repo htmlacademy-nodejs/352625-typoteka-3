@@ -5,14 +5,12 @@ const fs = require(`fs`);
 const chalk = require(`chalk`);
 const {promisify} = require(`util`);
 const nanoid = require(`nanoid`);
-const {getLogger} = require(`./logger.js`);
-
-const logger = getLogger();
 
 const {
   Time,
   ExitCode,
   Id,
+  Category,
 } = require(`./cli/constants.js`);
 
 const getRandomInt = (min, max) => {
@@ -29,6 +27,29 @@ const shuffle = (someArray) => {
 
   return someArray;
 };
+
+const getDate = () => {
+  const date = Date.now() + getRandomInt(Time.MIN, Time.MAX);
+  return {
+    machine: moment(date).valueOf(),
+    datetime: moment(date).format(),
+    human: moment(date).format(`DD.MM.YYYY, HH:mm`),
+  };
+};
+
+const getUsers = (users) => users
+  .map((user, index) => {
+    const [name, emailPrefix] = user.split(`, `);
+    return {
+      id: emailPrefix,
+      name,
+      email: `${emailPrefix}@gmail.com`,
+      avatar: {
+        regular: `avatar-${index + 1}`,
+        small: `avatar-small-${index + 1}`,
+      }
+    };
+  });
 
 const makeList = (text) => text
   .replace(/\r?\n/g, ` `)
@@ -60,38 +81,44 @@ const writePosts = async (path, data) => {
   }
 };
 
-const getComments = (count, comments) => (
+const getComments = (count, comments, users) => (
   Array(count).fill({}).map(() => ({
     id: nanoid(Id.Length.COMMENT),
     text: `${shuffle(comments).slice(1, getRandomInt(Id.Phrases.MIN, Id.Phrases.MAX)).join(`. `)}.`,
+    author: getUsers(users)[getRandomInt(0, users.length - 1)],
+    createdDate: getDate(),
   }))
 );
 
-const generatePosts = (count, sentences, categories, titles, comments) => (
-  Array(count).fill({}).map(() => ({
+const getPictureFileName = (pictures) => {
+  return pictures[getRandomInt(0, pictures.length - 1)];
+};
+
+const getCategories = (categories) => categories
+  .map((category) => ({
+    id: nanoid(Id.Length.CATEGORY),
+    name: category,
+  }));
+
+const generatePosts = (count, sentences, categories, titles, comments, users, pictures) => {
+  const categoriesList = getCategories(categories);
+
+  return Array(count).fill({}).map(() => ({
     id: nanoid(Id.Length.POST),
+    author: getUsers(users)[getRandomInt(0, users.length - 1)],
+    picture: getPictureFileName(pictures),
     title: titles[getRandomInt(0, titles.length - 1)],
-    createdDate: moment(Date.now() + getRandomInt(Time.MIN, Time.MAX))
-      .format(`YYYY-MM-DD HH:mm:ss`),
+    createdDate: getDate(),
     announce: `${shuffle(sentences)
       .slice(0, getRandomInt(1, 5))
       .join(`. `)}.`,
     fullText: `${shuffle(sentences)
       .slice(0, getRandomInt(1, sentences.length))
       .join(`. `)}.`,
-    category: shuffle(categories)
-      .slice(0, getRandomInt(1, categories.length)),
-    comments: getComments(getRandomInt(Id.Restrict.MIN, Id.Restrict.MAX), comments)
-  }))
-);
-
-const createLogs = (req, res, path) => {
-  logger.debug(`Client request to url /${path}${req.url}`);
-  logger.info(`End request with status code ${res.statusCode}`);
-};
-
-const createErrorLogs = (error) => {
-  logger.error(`No content, ${error}`);
+    category: shuffle(categoriesList)
+      .slice(0, getRandomInt(Category.Restrict.MIN, Category.Restrict.MAX)),
+    comments: getComments(getRandomInt(Id.Restrict.MIN, Id.Restrict.MAX), comments, users),
+  }));
 };
 
 module.exports = {
@@ -100,6 +127,4 @@ module.exports = {
   generatePosts,
   getFileData,
   writePosts,
-  createLogs,
-  createErrorLogs,
 };

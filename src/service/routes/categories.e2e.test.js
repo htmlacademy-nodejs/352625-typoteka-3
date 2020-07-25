@@ -18,9 +18,13 @@ describe(`When GET '/${PathName.CATEGORIES}'`, () => {
 
   test(`response should be equal to categories of mock offers from '${FILE_NAME}'`, async () => {
     const res = await request(app).get(`/${PathName.CATEGORIES}`);
+
     const mockOffers = JSON.parse(await readFile(FILE_NAME));
-    const categories = Array
-      .from(new Set(mockOffers.map((elem) => elem.category[0] || Empty.DATA)));
+
+    const categories = [...(new Set(mockOffers
+      .map((elem) => elem.category || Empty.DATA).flat()
+      .map((category) => JSON.stringify(category))
+    ))].map((text) => JSON.parse(text));
 
     expect(res.body).toStrictEqual(categories);
   });

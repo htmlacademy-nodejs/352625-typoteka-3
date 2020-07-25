@@ -4,9 +4,12 @@ const {Router} = require(`express`);
 const fs = require(`fs`);
 const {promisify} = require(`util`);
 
+const {HttpCode} = require(`./../cli/constants.js`);
 const {FILE_NAME} = require(`./../cli/constants.js`);
-const {Empty, PathName} = require(`./../routes/constants.js`);
-const {createLogs, createErrorLogs} = require(`./../utils.js`);
+const {Empty} = require(`./../routes/constants.js`);
+const {getLogger} = require(`./../logger.js`);
+
+const logger = getLogger();
 
 const searchRouter = new Router();
 
@@ -25,14 +28,14 @@ searchRouter.get(`/`, async (req, res) => {
 
     if (result.length === 0 || req.query.query === Empty.DATA) {
       res.json(Empty.SEARCH);
-      createLogs(req, res, PathName.SEARCH);
     } else {
       res.json(result);
-      createLogs(req, res, PathName.SEARCH);
     }
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
-    createErrorLogs(error);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
+    logger.error(`Error occurs: ${error}`);
   }
 });
 

@@ -2,7 +2,7 @@
 
 const express = require(`express`);
 
-const pino = require(`pino`)(`./logs/service.log`);
+const pino = require(`pino`)(`./src/service/logs/service.log`);
 const expressPino = require(`express-pino-logger`)({
   logger: pino
 });
@@ -10,7 +10,7 @@ const expressPino = require(`express-pino-logger`)({
 
 const {
   CommandsNames,
-  DEFAULT_PORT,
+  DEFAULT_API_PORT,
 } = require(`./constants.js`);
 
 const {PathName} = require(`./../routes/constants.js`);
@@ -18,6 +18,7 @@ const {PathName} = require(`./../routes/constants.js`);
 const articlesRouter = require(`./../routes/articles.js`);
 const categoriesRouter = require(`./../routes/categories.js`);
 const searchRouter = require(`./../routes/search.js`);
+const authRouter = require(`./../routes/auth.js`);
 
 const {getLogger} = require(`./../logger.js`);
 
@@ -28,10 +29,16 @@ const app = express();
 app.use(`/${PathName.ARTICLES}`, articlesRouter);
 app.use(`/${PathName.CATEGORIES}`, categoriesRouter);
 app.use(`/${PathName.SEARCH}`, searchRouter);
+app.use(`/${PathName.AUTH}`, authRouter);
 
 app.use(express.json());
 
 app.set(`json spaces`, 2);
+
+app.use((req, res) => {
+  res.status(404).send(`Page not exists`);
+  logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+});
 
 app.use(expressPino);
 
@@ -40,7 +47,7 @@ module.exports = {
   name: CommandsNames.SERVER,
   run(args) {
     const [customPort] = args;
-    const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
+    const port = Number.parseInt(customPort, 10) || DEFAULT_API_PORT;
 
     app.listen(
         port,

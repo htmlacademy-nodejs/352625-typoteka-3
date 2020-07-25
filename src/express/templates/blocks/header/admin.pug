@@ -1,35 +1,15 @@
 header.header
   include ../logo/image-only
 
-  button.button.button--colored.header__button-new Новая запись
+  a.button.button--colored.header__button-new(href="/articles/add") Новая запись
 
   div.header__dropdown
     a.button.button--burger.header__burger(href="#") Открыть меню
 
     ul.navigation.header__navigation
       li.navigation__item
-        a(href="/") "/" --- Главная страница
+        a(href="/my") Публикации
       li.navigation__item
-        a(href="/offers/category/design") "/offers/category/design" --- Страница объявления в отдельной категории
-      li.navigation__item
-        a(href="/offers/add") "/offers/add" --- Страница создания нового объявления
-      li.navigation__item
-        a(href="/offers/edit/id123") "/offers/edit/id123" --- Страница для редактирования объявления
-      li.navigation__item
-        a(href="/offers/id123") "/offers/id123" --- Страница с подробной информацией объявления
-      li.navigation__item
-        a(href="/login") "/login" --- Страница входа
-      li.navigation__item
-        a(href="/register") "/register" --- Страница регистрации
-      li.navigation__item
-        a(href="/my") "/my" --- Страница "Мои объявления"
-      li.navigation__item
-        a(href="/my/comments") "/my/comments" --- Страница "Мои комментарии"
-      li.navigation__item
-        a(href="/search") "/search" --- Страница "Результаты поиска"
-      li.navigation__item
-        a(href="/error/404") "/error/404" --- Страница ошибки 404
-      li.navigation__item
-        a(href="/error/500") "/error/500" --- Страница ошибки 500
+        a(href="/my/comments") Комментарии
 
   include ../search
