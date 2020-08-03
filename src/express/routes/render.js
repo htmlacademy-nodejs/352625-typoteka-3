@@ -35,9 +35,7 @@ const render500Page = (req, res) => {
 
 const renderHomePage = async (req, res) => {
   try {
-    const auth = await getAuth();
-    const articles = await getArticles();
-    const categories = await getCategories();
+    const [auth, articles, categories] = await Promise.all([getAuth(), getArticles(), getCategories()]);
     const mostDiscussedItems = getMostDiscussedItems(articles);
     const lastComments = getLastComments(mostDiscussedItems);
 
@@ -61,10 +59,8 @@ const renderHomePage = async (req, res) => {
 
 const renderCategoryPage = async (req, res) => {
   try {
-    const auth = await getAuth();
+    const [auth, articles, categories] = await Promise.all([getAuth(), getArticles(), getCategories()]);
     const activeCategoryId = req.params.categoryId;
-    const articles = await getArticles();
-    const categories = await getCategories();
 
     if (!categories.find((item) => item.id === activeCategoryId)) {
       render404Page(req, res);
@@ -89,9 +85,7 @@ const renderCategoryPage = async (req, res) => {
 
 const renderTicketPage = async (req, res) => {
   try {
-    const auth = await getAuth();
-    const article = await getArticle(req.params.offerId);
-    const articles = await getArticles();
+    const [auth, articles, article] = await Promise.all([getAuth(), getArticles(), getArticle(req.params.offerId)]);
 
     res.render(`ticket`, {
       auth,
@@ -109,8 +103,8 @@ const renderTicketPage = async (req, res) => {
 
 const renderTicketEditPage = async (req, res) => {
   try {
-    const article = await getArticle(req.params.articleId);
-    const categories = await getCategories();
+    const [article, categories] = await Promise.all([getArticle(req.params.articleId), getCategories()]);
+
     res.render(`ticket-edit`, {article, categories});
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -123,6 +117,7 @@ const renderTicketEditPage = async (req, res) => {
 const renderNewTicketPage = async (req, res) => {
   try {
     const categories = await getCategories();
+
     res.render(`new-ticket`, {categories});
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -135,6 +130,7 @@ const renderNewTicketPage = async (req, res) => {
 const renderMyTicketsPage = async (req, res) => {
   try {
     const auth = await getAuth();
+
     res.render(`my-tickets`, {auth});
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -146,8 +142,7 @@ const renderMyTicketsPage = async (req, res) => {
 
 const renderCommentsPage = async (req, res) => {
   try {
-    const auth = await getAuth();
-    const articles = await getArticles();
+    const [auth, articles] = await Promise.all([getAuth(), getArticles()]);
 
     res.render(`comments`, {
       auth,
@@ -166,6 +161,7 @@ const renderCommentsPage = async (req, res) => {
 const renderSearchPage = async (req, res) => {
   try {
     const auth = await getAuth();
+
     const searchRequest = req.query.search;
     let result = null;
 
