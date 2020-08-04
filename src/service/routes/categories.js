@@ -20,11 +20,8 @@ categoriesRouter.get(`/`, async (req, res) => {
       .map((category) => JSON.stringify(category))
     ))].map((text) => JSON.parse(text));
 
-    if (result === [Empty.DATA]) {
-      res.status(HttpCode.BAD_REQUEST).json(Empty.CATEGORIES);
-    } else {
-      res.json(result);
-    }
+    res.json(result);
+
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
