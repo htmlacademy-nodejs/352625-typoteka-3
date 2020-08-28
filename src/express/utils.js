@@ -31,42 +31,28 @@ const getCategoryById = (categories, id) => {
 };
 
 const getFreshItems = (articles, count = Items.FRESH) => {
-  const sortedData = articles.sort((a, b) => b.createdDate.machine - a.createdDate.machine);
-
-  if (count >= articles.length) {
-    return sortedData;
-  } else {
-    return sortedData.slice(0, count);
-  }
+  return articles
+    .sort((a, b) => b.createdDate.machine - a.createdDate.machine)
+    .slice(0, count);
 };
 
 const getMostDiscussedItems = (articles, count = Items.MOST_DISCUSSED) => {
-  const sortedData = articles.sort((a, b) => b.comments.length - a.comments.length);
-
-  if (count >= articles.length) {
-    return sortedData;
-  } else {
-    return sortedData.slice(0, count);
-  }
+  return articles
+    .sort((a, b) => b.comments.length - a.comments.length)
+    .slice(0, count);
 };
 
 const getLastComments = (articles, count = Comments.FRESH) => {
-  const sortedComments = articles.map((item) => item.comments)
+  return articles.map((item) => item.comments)
     .flat()
-    .sort((a, b) => b.createdDate.machine - a.createdDate.machine);
-
-  if (count >= sortedComments.length) {
-    return sortedComments;
-  } else {
-    return sortedComments.slice(0, count);
-  }
+    .sort((a, b) => b.createdDate.machine - a.createdDate.machine)
+    .slice(0, count);
 };
 
 const getItemByCommentId = (articles, commentId) => {
   return articles.find((item) => item.comments
     .find((comment) => comment.id === commentId));
 };
-
 
 const getCommentsByUserId = (articles, userId) => {
   return articles
