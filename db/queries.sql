@@ -56,7 +56,7 @@ SELECT
   authors.lastname AS "Фамилия",
   authors.email AS "E-mail",
   COUNT(comments.id) AS "Кол-во комментариев",
-  categories.list AS "Кол-во категорий"
+  categories.list AS "Список категорий"
 FROM
   articles
     INNER JOIN authors ON articles.author_id = authors.id
@@ -105,12 +105,15 @@ SELECT
   authors.firstname AS "Имя автора",
   authors.lastname AS "Фамилия",
   authors.email AS "E-mail",
-  COUNT(comments.id) AS "Кол-во комментариев",
-  categories.list AS "Кол-во категорий"
+  (
+    SELECT COUNT(*)
+    FROM comments
+    WHERE comments.article_id = articles.id
+  ) AS "Кол-во комментариев",
+  categories.list AS "Список категорий"
 FROM
   articles
     INNER JOIN authors ON articles.author_id = authors.id
-    INNER JOIN comments ON articles.id = comments.article_id
     INNER JOIN
   (
     SELECT
@@ -122,18 +125,7 @@ FROM
     GROUP BY
       articles.id
   ) categories ON articles.id = categories.article_id
-GROUP BY
-  articles.id,
-  articles.title,
-  articles.announce,
-  articles.full_text,
-  articles.created_date,
-  articles.picture,
-  authors.firstname,
-  authors.lastname,
-  authors.email,
-  categories.list
-ORDER BY articles.id;
+WHERE articles.id = 1;
 
 --------------------------------
 -- 6. Получить список из 5 свежих комментариев
@@ -151,12 +143,6 @@ FROM
   comments
     INNER JOIN articles ON articles.id = comments.article_id
     INNER JOIN authors ON comments.author_id = authors.id
-GROUP BY
-  comments.id,
-  articles.id,
-  authors.firstname,
-  authors.lastname,
-  comments.comment
 ORDER BY
   comments.created_date DESC
 LIMIT 5;
@@ -170,21 +156,14 @@ LIMIT 5;
 -- Сначала новые комментарии;
 SELECT
   comments.id AS "Id комментария",
-  articles.id AS "Id публикации",
+  comments.article_id AS "Id публикации",
   authors.firstname AS "Имя автора",
   authors.lastname AS "Фамилия",
   comments.comment AS "Текст комментария"
 FROM
   comments
-    INNER JOIN articles ON articles.id = comments.article_id
     INNER JOIN authors ON comments.author_id = authors.id
-WHERE articles.id = 2
-GROUP BY
-  comments.id,
-  articles.id,
-  authors.firstname,
-  authors.lastname,
-  comments.comment
+WHERE comments.article_id = 2
 ORDER BY
   comments.created_date DESC;
 
