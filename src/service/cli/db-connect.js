@@ -6,15 +6,17 @@ const {getLogger} = require(`./../logger.js`);
 
 const logger = getLogger();
 
-const {Pool} = require(`pg`);
+const Sequelize = require(`sequelize`);
 
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+  }
+);
 
 
 module.exports = {
@@ -24,13 +26,8 @@ module.exports = {
       try {
         logger.info(`Start connection to database...`);
 
-        const client = await pool.connect();
+        const client = await sequelize.authenticate();
         logger.info(`Database connection established.`);
-
-        client.release();
-        pool.end();
-        logger.info(`Connection pool closed.`);
-
       } catch (err) {
         logger.error(`Can't connect to database. ${err}`);
       }
