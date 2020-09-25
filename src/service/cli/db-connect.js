@@ -6,8 +6,6 @@ const {getLogger} = require(`./../logger.js`);
 
 const logger = getLogger();
 
-const chalk = require(`chalk`);
-
 const {Pool} = require(`pg`);
 
 const pool = new Pool({
@@ -34,7 +32,7 @@ module.exports = {
         logger.info(`Connection pool closed.`);
 
       } catch (err) {
-        logger.error(`Can't connect to database. ${err}`)
+        logger.error(`Can't connect to database. ${err}`);
       }
     })();
   }
