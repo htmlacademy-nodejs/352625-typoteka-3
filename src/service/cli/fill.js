@@ -35,7 +35,6 @@ const generateContent = async (count) => {
   ]);
 
   const content = getSqlContent(count, sentences, titles, pictures, users, comments, categories);
-
   writePosts(`${DB_PATH}${FILE_NAME_FILL}`, content);
 };
 

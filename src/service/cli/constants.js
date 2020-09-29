@@ -37,7 +37,7 @@ const FILE_TITLES_PATH = `./src/data/titles.txt`;
 const FILE_COMMENTS_PATH = `./src/data/comments.txt`;
 const FILE_USERS_PATH = `./src/data/users.txt`;
 const FILE_PICTURES_PATH = `./src/data/pictures.txt`;
-const DB_PATH = `./db/`;
+const DB_PATH = `./db/sql/`;
 
 const DEFAULT_API_PORT = 3000;
 const URL_API = `http://localhost:${DEFAULT_API_PORT}`;
