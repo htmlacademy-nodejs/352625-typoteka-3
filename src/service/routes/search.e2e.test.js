@@ -2,15 +2,12 @@
 
 const request = require(`supertest`);
 
+const {db} = require(`./../../../db/db.js`);
 const {app} = require(`./../cli/server.js`);
 const {PathName, Empty, SEARCH_PARAM} = require(`./../routes/constants.js`);
-const fs = require(`fs`);
-const {promisify} = require(`util`);
-const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
+const {HttpCode} = require(`./../cli/constants.js`);
 
-const readFile = promisify(fs.readFile);
-
-const RIGHT_SEARCH = `Как`;
+const RIGHT_SEARCH = `лучший`;
 const RIGHT_SEARCH_URI = encodeURI(RIGHT_SEARCH);
 
 const WRONG_SEARCH = `ылдвапрдлорвап`;
@@ -26,11 +23,14 @@ describe(`When GET '/${PathName.SEARCH}'`, () => {
     const res = await request(app)
       .get(`/${PathName.SEARCH}${SEARCH_PARAM}${RIGHT_SEARCH_URI}`);
 
-    const mockOffers = JSON.parse(await readFile(FILE_NAME));
-    const searchResult = mockOffers
+    const articles = await db.Article.findAll({raw: true});
+
+    const searchResult = articles
       .filter((elem) => elem.title.includes(RIGHT_SEARCH));
 
-    expect(res.body).toStrictEqual(searchResult);
+    const result = JSON.parse(JSON.stringify(searchResult));
+
+    expect(res.body).toStrictEqual(result);
   });
 
   test(`blank search returns '${Empty.SEARCH}'`, async () => {

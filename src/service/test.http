@@ -28,12 +28,17 @@ GET http://localhost:3000/api/articles/100000/comments
 Content-Type: application/json
 
 
-### 7. Get search result (Response code: 200)
-GET http://localhost:3000/api/search?query=такое
+### 7. Get existing search result (Response code: 200)
+GET http://localhost:3000/api/search?query=лучший
 Content-Type: application/json
 
 
-### 8. Post new article (Response code: 200)
+### 8. Get non-existing search result (Response code: 200)
+GET http://localhost:3000/api/search?query=asdfghjlkl
+Content-Type: application/json
+
+
+### 9. Post new article (Response code: 200)
 POST http://localhost:3000/api/articles
 Content-Type: application/json
 
@@ -48,7 +53,7 @@ Content-Type: application/json
 }
 
 
-### 9. Update existing article (Response code: 200)
+### 10. Update existing article (Response code: 200)
 PUT http://localhost:3000/api/articles/1
 Content-Type: application/json
 
@@ -57,7 +62,7 @@ Content-Type: application/json
 }
 
 
-### 10. Update non-existing article (Response code: 400)
+### 11. Update non-existing article (Response code: 400)
 PUT http://localhost:3000/api/articles/100000
 Content-Type: application/json
 
@@ -66,7 +71,7 @@ Content-Type: application/json
 }
 
 
-### 11. Put new comment to existing article (Response code: 200)
+### 12. Put new comment to existing article (Response code: 200)
 PUT http://localhost:3000/api/articles/1/comments
 Content-Type: application/json
 
@@ -76,7 +81,7 @@ Content-Type: application/json
 }
 
 
-### 12. Put new comment to non-existing article (Response code: 400)
+### 13. Put new comment to non-existing article (Response code: 400)
 PUT http://localhost:3000/api/articles/100000/comments
 Content-Type: application/json
 
@@ -86,23 +91,23 @@ Content-Type: application/json
 }
 
 
-### 13. Delete existing article (Response code: 200)
+### 14. Delete existing article (Response code: 200)
 DELETE http://localhost:3000/api/articles/1
 
 
-### 14. Delete non-existing article (Response code: 400)
+### 15. Delete non-existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1000000
 
 
-### 15. Delete existing comment in existing article (Response code: 200)
+### 16. Delete existing comment in existing article (Response code: 200)
 DELETE http://localhost:3000/api/articles/1/comments/1
 
 
-### 16. Delete existing comment in non-existing article (Response code: 400)
+### 17. Delete existing comment in non-existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1000000/comments/1
 
 
-### 17. Delete non-existing comment in existing article (Response code: 400)
+### 18. Delete non-existing comment in existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1/comments/1000000
 
 

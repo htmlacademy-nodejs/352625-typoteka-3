@@ -1,11 +1,9 @@
 'use strict';
 
 const {Router} = require(`express`);
-const fs = require(`fs`);
-const {promisify} = require(`util`);
 
+const {db} = require(`./../../../db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
-const {FILE_NAME} = require(`./../cli/constants.js`);
 const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
@@ -13,12 +11,12 @@ const logger = getLogger();
 
 const searchRouter = new Router();
 
-const readFile = promisify(fs.readFile);
-
 searchRouter.get(`/`, async (req, res) => {
   try {
-    const fileContent = await readFile(FILE_NAME);
-    const result = JSON.parse(fileContent)
+
+    const articles = await db.Article.findAll({raw: true});
+
+    const result = articles
       .filter((elem) => {
         if (!req.query.query) {
           req.query.query = Empty.DATA;
