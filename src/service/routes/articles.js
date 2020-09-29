@@ -3,9 +3,9 @@
 const express = require(`express`);
 const {Router} = require(`express`);
 
+const {db} = require(`./../../../db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./../routes/constants.js`);
-const getMock = require(`./../mocks-data.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const logger = getLogger();
@@ -28,12 +28,12 @@ const validateComment = () => {
 
 articlesRouter.get(`/`, async (req, res) => {
   try {
-    const result = await getMock();
+    const data = await db.Article.findAll({raw: true});
 
-    if (!result) {
+    if (!data || data.length === 0) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
     } else {
-      res.json(result);
+      res.json(data);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -45,14 +45,12 @@ articlesRouter.get(`/`, async (req, res) => {
 
 articlesRouter.get(`/:articleId`, async (req, res) => {
   try {
-    const data = await getMock();
-    const result = data
-      .find((elem) => elem.id === req.params.articleId);
+    const data = await db.Article.findByPk(req.params.articleId, {raw: true});
 
-    if (!result) {
+    if (!data) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLE);
     } else {
-      res.json(result);
+      res.json(data);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -64,15 +62,17 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
 
 articlesRouter.get(`/:articleId/comments`, async (req, res) => {
   try {
-    const data = await getMock();
-    const targetArticle = data
-      .find((elem) => elem.id === req.params.articleId);
+    const data = await db.Comment.findAll({
+      where: {
+        [`article_id`]: req.params.articleId
+      },
+      raw: true
+    });
 
-    if (!targetArticle) {
+    if (!data || data.length === 0) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.COMMENTS);
     } else {
-      const result = targetArticle.comments;
-      res.json(result);
+      res.json(data);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -103,11 +103,9 @@ articlesRouter.post(`/`, (req, res) => {
 
 articlesRouter.put(`/:articleId`, async (req, res) => {
   try {
-    const data = await getMock();
-    const result = data
-      .find((elem) => elem.id === req.params.articleId);
+    const data = await db.Article.findByPk(req.params.articleId, {raw: true});
 
-    if (!result) {
+    if (!data) {
       res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
     } else {
       // TODO: some code for editing article is coming soon...
@@ -123,11 +121,14 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
 
 articlesRouter.put(`/:articleId/comments`, async (req, res) => {
   try {
-    const data = await getMock();
-    const result = data
-      .find((elem) => elem.id === req.params.articleId);
+    const data = await db.Comment.findAll({
+      where: {
+        [`article_id`]: req.params.articleId
+      },
+      raw: true
+    });
 
-    if (!validateComment() || !result) {
+    if (!validateComment() || !data || data.length === 0) {
       res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
     } else {
       // TODO: some code for adding new comment is coming soon...
@@ -143,11 +144,9 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
 
 articlesRouter.delete(`/:articleId`, async (req, res) => {
   try {
-    const data = await getMock();
-    const result = data
-      .find((elem) => elem.id === req.params.articleId);
+    const data = await db.Article.findByPk(req.params.articleId, {raw: true});
 
-    if (!result) {
+    if (!data) {
       res.status(HttpCode.BAD_REQUEST).send(`Invalid Article ID`);
     } else {
       // TODO: some code for deleting Article is coming soon...
@@ -163,18 +162,15 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
 
 articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
   try {
-    const data = await getMock();
-    const targetArticle = data
-      .find((elem) => elem.id === req.params.articleId);
+    const comment = await db.Comment.findByPk(req.params.commentId, {raw: true});
+    const article = await db.Article.findByPk(req.params.articleId, {raw: true});
 
-    if (!targetArticle) {
+    if (!article) {
       res.status(HttpCode.BAD_REQUEST).send(`Invalid article ID`);
 
     } else {
-      const targetComment = targetArticle.comments
-        .find((elem) => elem.id === req.params.commentId);
 
-      if (!targetComment) {
+      if (!comment) {
         res.status(HttpCode.BAD_REQUEST).send(`Invalid comment ID`);
 
       } else {

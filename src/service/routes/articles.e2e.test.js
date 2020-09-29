@@ -2,22 +2,19 @@
 
 const request = require(`supertest`);
 
+const {db} = require(`./../../../db/db.js`);
 const {app} = require(`./../cli/server.js`);
 const {PathName, Empty} = require(`./../routes/constants.js`);
-const fs = require(`fs`);
-const {promisify} = require(`util`);
-const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
-
-const readFile = promisify(fs.readFile);
+const {HttpCode} = require(`./../cli/constants.js`);
 
 const Article = {
-  RIGHT_ID: encodeURI(`MaIXv5`),
-  WRONG_ID: encodeURI(`ылдвапр`),
+  RIGHT_ID: encodeURI(`1`),
+  WRONG_ID: encodeURI(`10000`),
 };
 
 const Comment = {
-  RIGHT_ID: encodeURI(`5G4z`),
-  WRONG_ID: encodeURI(`фжыдвл`),
+  RIGHT_ID: encodeURI(`1`),
+  WRONG_ID: encodeURI(`1000000`),
 };
 
 describe(`When GET '/${PathName.ARTICLES}'`, () => {
@@ -26,10 +23,14 @@ describe(`When GET '/${PathName.ARTICLES}'`, () => {
     expect(res.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to mock articles from '${FILE_NAME}'`, async () => {
+  test(`response should be equal to mock articles from database`, async () => {
     const res = await request(app).get(`/${PathName.ARTICLES}`);
-    const mockArticles = JSON.parse(await readFile(FILE_NAME));
-    expect(res.body).toStrictEqual(mockArticles);
+
+    const data = await db.Article.findAll({raw: true});
+
+    const result = JSON.parse(JSON.stringify(data));
+
+    expect(res.body).toStrictEqual(result);
   });
 });
 
@@ -41,10 +42,12 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
 
   test(`response should be equal to mock article with id='${Article.RIGHT_ID}''`, async () => {
     const res = await request(app).get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
-    const mockArticle = JSON.parse(await readFile(FILE_NAME))
-      .filter((elem) => elem.id === Article.RIGHT_ID)[0];
 
-    expect(res.body).toStrictEqual(mockArticle);
+    const data = await db.Article.findByPk(Article.RIGHT_ID);
+
+    const result = JSON.parse(JSON.stringify(data));
+
+    expect(res.body).toStrictEqual(result);
   });
 });
 
@@ -66,13 +69,18 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments'`, () => 
     expect(res.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to comments from '${FILE_NAME}'`, async () => {
+  test(`response should be equal to comments from db`, async () => {
     const res = await request(app).get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`);
-    const mockComments = JSON.parse(await readFile(FILE_NAME))
-      .filter((elem) => elem.id === Article.RIGHT_ID)[0].comments;
+    const data = await db.Comment.findAll({
+      where: {
+        [`article_id`]: Article.RIGHT_ID
+      },
+      raw: true
+    });
 
-    expect(res.body).toStrictEqual(mockComments);
+    const result = JSON.parse(JSON.stringify(data));
 
+    expect(res.body).toEqual(result);
   });
 });
 
@@ -177,10 +185,10 @@ describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 });
 
 describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.RIGHT_ID}'`, () => {
-//   test(`status code should be ${HttpCode.OK}`, async () => {
-//     const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.RIGHT_ID}`);
-//     expect(res.statusCode).toBe(HttpCode.OK);
-//   });
+  test(`status code should be ${HttpCode.OK}`, async () => {
+    const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.RIGHT_ID}`);
+    expect(res.statusCode).toBe(HttpCode.OK);
+  });
 });
 
 describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.WRONG_ID}'`, () => {
