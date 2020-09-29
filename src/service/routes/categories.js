@@ -2,9 +2,8 @@
 
 const {Router} = require(`express`);
 
+const {db} = require(`./../../../db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
-const {Empty} = require(`./../routes/constants.js`);
-const getMock = require(`./../mocks-data.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const logger = getLogger();
@@ -13,14 +12,9 @@ const categoriesRouter = new Router();
 
 categoriesRouter.get(`/`, async (req, res) => {
   try {
-    const data = await getMock();
+    const data = await db.Category.findAll({raw: true});
 
-    const result = [...(new Set(data
-      .map((elem) => elem.category || Empty.DATA).flat()
-      .map((category) => JSON.stringify(category))
-    ))].map((text) => JSON.parse(text));
-
-    res.json(result);
+    res.json(data);
 
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -29,5 +23,6 @@ categoriesRouter.get(`/`, async (req, res) => {
     logger.error(`Error occurs: ${error}`);
   }
 });
+
 
 module.exports = categoriesRouter;

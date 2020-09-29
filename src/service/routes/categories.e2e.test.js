@@ -2,13 +2,10 @@
 
 const request = require(`supertest`);
 
+const {sequelize, db} = require(`./../../../db/db.js`);
 const {app} = require(`./../cli/server.js`);
-const {PathName, Empty} = require(`./../routes/constants.js`);
-const {FILE_NAME, HttpCode} = require(`./../cli/constants.js`);
-const fs = require(`fs`);
-const {promisify} = require(`util`);
-
-const readFile = promisify(fs.readFile);
+const {PathName} = require(`./../routes/constants.js`);
+const {HttpCode} = require(`./../cli/constants.js`);
 
 describe(`When GET '/${PathName.CATEGORIES}'`, () => {
   test(`status code should be ${HttpCode.OK}`, async () => {
@@ -16,15 +13,11 @@ describe(`When GET '/${PathName.CATEGORIES}'`, () => {
     expect(res.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to categories of mock offers from '${FILE_NAME}'`, async () => {
+  test(`response should be equal to categories from db`, async () => {
     const res = await request(app).get(`/${PathName.CATEGORIES}`);
 
-    const mockOffers = JSON.parse(await readFile(FILE_NAME));
-
-    const categories = [...(new Set(mockOffers
-      .map((elem) => elem.category || Empty.DATA).flat()
-      .map((category) => JSON.stringify(category))
-    ))].map((text) => JSON.parse(text));
+    const categories = await db.Category.findAll({raw: true});
+    await sequelize.close();
 
     expect(res.body).toStrictEqual(categories);
   });

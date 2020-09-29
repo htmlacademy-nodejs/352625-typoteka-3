@@ -2,6 +2,12 @@
 
 const {Sequelize, Op} = require(`sequelize`);
 
+require(`dotenv`).config();
+
+const {getLogger} = require(`./../src/service/logger.js`);
+
+const logger = getLogger();
+
 const {
   avatars,
   authors,
@@ -87,7 +93,7 @@ const initArticlesCategories = async (list) => {
 
 const initDb = async () => {
   await sequelize.sync({force: true}); // TODO: delete {force: true} in production
-  console.info(`The database structure is created.`);
+  logger.info(`The database structure is created.`);
 
   await Avatar.bulkCreate(avatars);
   await Author.bulkCreate(authors);
@@ -96,10 +102,17 @@ const initDb = async () => {
   await Category.bulkCreate(categories);
 
   await initArticlesCategories(article_category);
-  console.info(`The database is filled with mocks.`);
+  logger.info(`The database is filled with mocks.`);
 };
 
 module.exports = {
+  db: {
+    Avatar,
+    Author,
+    Article,
+    Comment,
+    Category,
+  },
   initDb,
   sequelize,
 };
