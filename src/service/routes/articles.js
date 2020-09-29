@@ -16,12 +16,12 @@ articlesRouter.use(express.json());
 
 
 const validateArticle = () => {
-  // validating code is coming soon...
+  // TODO: validating code is coming soon...
   return true;
 };
 
 const validateComment = () => {
-  // validating code is coming soon...
+  // TODO: validating code is coming soon...
   return true;
 };
 
@@ -87,10 +87,10 @@ articlesRouter.post(`/`, (req, res) => {
     if (!validateArticle()) {
       res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
     } else {
-      // some code for adding new article is coming soon...
+      // TODO: some code for adding new article is coming soon...
       res.send(req.body);
 
-      // TEMP observe receiving FormData of newTicket:
+      // TODO: TEMP observe receiving FormData of newTicket:
       logger.info(req.body);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -110,7 +110,7 @@ articlesRouter.put(`/:articleId`, async (req, res) => {
     if (!result) {
       res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
     } else {
-      // some code for editing article is coming soon...
+      // TODO: some code for editing article is coming soon...
       res.send(req.body);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -130,7 +130,7 @@ articlesRouter.put(`/:articleId/comments`, async (req, res) => {
     if (!validateComment() || !result) {
       res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
     } else {
-      // some code for adding new comment is coming soon...
+      // TODO: some code for adding new comment is coming soon...
       res.send(req.body);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -150,7 +150,7 @@ articlesRouter.delete(`/:articleId`, async (req, res) => {
     if (!result) {
       res.status(HttpCode.BAD_REQUEST).send(`Invalid Article ID`);
     } else {
-      // some code for deleting Article is coming soon...
+      // TODO: some code for deleting Article is coming soon...
       res.send(`Article is deleted`);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -178,7 +178,7 @@ articlesRouter.delete(`/:articleId/comments/:commentId`, async (req, res) => {
         res.status(HttpCode.BAD_REQUEST).send(`Invalid comment ID`);
 
       } else {
-        // some code for deleting comment is coming soon...
+        // TODO: some code for deleting comment is coming soon...
         res.send(`Comment is deleted`);
       }
     }
