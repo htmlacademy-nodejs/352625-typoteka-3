@@ -11,6 +11,7 @@ const logger = getLogger();
 const {
   avatars,
   authors,
+  auths,
   articles,
   comments,
   categories,
@@ -34,6 +35,7 @@ const sequelize = new Sequelize(
 
 const Avatar = require(`./models/avatar.js`)(sequelize);
 const Author = require(`./models/author.js`)(sequelize);
+const Auth = require(`./models/auth.js`)(sequelize);
 const Article = require(`./models/article.js`)(sequelize);
 const Comment = require(`./models/comment.js`)(sequelize);
 const Category = require(`./models/category.js`)(sequelize);
@@ -47,6 +49,10 @@ Author.hasMany(Article, {
 });
 
 Author.hasMany(Comment, {
+  foreignKey: `author_id`,
+});
+
+Auth.hasOne(Author, {
   foreignKey: `author_id`,
 });
 
@@ -97,6 +103,7 @@ const initDb = async () => {
 
   await Avatar.bulkCreate(avatars);
   await Author.bulkCreate(authors);
+  await Auth.bulkCreate(auths);
   await Article.bulkCreate(articles);
   await Comment.bulkCreate(comments);
   await Category.bulkCreate(categories);
