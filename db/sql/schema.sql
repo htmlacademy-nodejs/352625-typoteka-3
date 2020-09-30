@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS avatars;
 DROP TABLE IF EXISTS authors;
+DROP TABLE IF EXISTS auths;
 DROP TABLE IF EXISTS articles;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS comments;
@@ -25,6 +26,16 @@ CREATE TABLE authors
     ON UPDATE CASCADE
 );
 
+CREATE TABLE auths
+(
+  author_id INTEGER NOT NULL,
+  is_auth BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (author_id) REFERENCES authors (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  EXCLUDE (is_auth WITH =) WHERE (is_auth)
+);
+
 CREATE TABLE articles
 (
   id SERIAL PRIMARY KEY,
@@ -42,7 +53,7 @@ CREATE TABLE articles
 CREATE TABLE comments
 (
   id SERIAL PRIMARY KEY,
-  comment VARCHAR(100) NOT NULL,
+  text VARCHAR(100) NOT NULL,
   created_date DATE NOT NULL,
   author_id INTEGER NOT NULL,
   article_id INTEGER NOT NULL,
@@ -57,10 +68,10 @@ CREATE TABLE comments
 CREATE TABLE categories
 (
   id SERIAL PRIMARY KEY,
-  category VARCHAR(50) NOT NULL
+  name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE articles_categories
+CREATE TABLE article_category
 (
   article_id INTEGER NOT NULL,
   category_id INTEGER NOT NULL,
