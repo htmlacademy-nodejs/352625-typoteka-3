@@ -19,11 +19,8 @@ const Empty = {
 
 const SEARCH_PARAM = `?query=`;
 
-const AUTH_STATUS = true;
-
 module.exports = {
   PathName,
   Empty,
   SEARCH_PARAM,
-  AUTH_STATUS,
 };

@@ -2,10 +2,10 @@
 
 const request = require(`supertest`);
 
+const {db} = require(`./../../../db/db.js`);
 const {app} = require(`./../cli/server.js`);
-const {PathName, AUTH_STATUS} = require(`./../routes/constants.js`);
+const {PathName} = require(`./../routes/constants.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
-const getAuth = require(`./../routes/utils.js`);
 
 describe(`When GET '/${PathName.AUTH}'`, () => {
   test(`status code should be ${HttpCode.OK}`, async () => {
@@ -16,8 +16,18 @@ describe(`When GET '/${PathName.AUTH}'`, () => {
   test(`response should consist object with special structure`, async () => {
     const res = await request(app).get(`/${PathName.AUTH}`);
 
-    const mockAuth = await getAuth(AUTH_STATUS);
+    const authData = await db.Auth.findAll({
+      where: {
+        [`is_auth`]: true
+      },
+      raw: true
+    });
 
-    expect(res.body).toStrictEqual(mockAuth);
+    const result = {
+      status: authData.length === 0 ? false : authData[0][`is_auth`],
+      userId: authData.length === 0 ? null : authData[0][`id`],
+    };
+
+    expect(res.body).toStrictEqual(result);
   });
 });

@@ -116,6 +116,7 @@ module.exports = {
   db: {
     Avatar,
     Author,
+    Auth,
     Article,
     Comment,
     Category,
