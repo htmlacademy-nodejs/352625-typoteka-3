@@ -3,6 +3,7 @@
 const Tables = {
   AVATARS: `avatars`,
   AUTHORS: `authors`,
+  AUTHS: `auths`,
   ARTICLES: `articles`,
   COMMENTS: `comments`,
   CATEGORIES: `categories`,

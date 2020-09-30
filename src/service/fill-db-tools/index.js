@@ -8,6 +8,8 @@ const getAvatars = require(`./avatars.js`);
 
 const getAuthors = require(`./authors.js`);
 
+const getAuths = require(`./auths.js`);
+
 const getArticles = require(`./articles.js`);
 
 const getComments = require(`./comments.js`);
@@ -19,6 +21,7 @@ const getArticlesCategories = require(`./articles-categories.js`);
 const getSqlContent = (count, sentences, titles, pictures, users, commentsSentences, categoriesSentences) => {
   const avatars = getAvatars(users);
   const authors = getAuthors(users, avatars);
+  const auths = getAuths(users);
   const articles = getArticles(count, sentences, titles, pictures, authors);
 
   const comments = getComments(articles, authors, commentsSentences);
@@ -27,6 +30,7 @@ const getSqlContent = (count, sentences, titles, pictures, users, commentsSenten
 
   let content = insertSqlValues(avatars, Tables.AVATARS);
   content += insertSqlValues(authors, Tables.AUTHORS);
+  content += insertSqlValues(auths, Tables.AUTHS);
   content += insertSqlValues(articles, Tables.ARTICLES);
 
   content += insertSqlValues(comments, Tables.COMMENTS);
