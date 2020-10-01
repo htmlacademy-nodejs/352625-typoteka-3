@@ -43,7 +43,9 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   test(`response should be equal to mock article with id='${Article.RIGHT_ID}''`, async () => {
     const res = await request(app).get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
 
-    const data = await db.Article.findByPk(Article.RIGHT_ID);
+    const data = await db.Article.findByPk(Article.RIGHT_ID, {
+      include: [`author`, `comments`, `categories`],
+    });
 
     const result = JSON.parse(JSON.stringify(data));
 

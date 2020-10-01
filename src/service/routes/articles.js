@@ -45,7 +45,9 @@ articlesRouter.get(`/`, async (req, res) => {
 
 articlesRouter.get(`/:articleId`, async (req, res) => {
   try {
-    const data = await db.Article.findByPk(req.params.articleId, {raw: true});
+    const data = await db.Article.findByPk(req.params.articleId, {
+      include: [`author`, `comments`, `categories`],
+    });
 
     if (!data) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLE);

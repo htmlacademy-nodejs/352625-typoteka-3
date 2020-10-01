@@ -58,10 +58,12 @@ Auth.hasOne(Author, {
 
 Article.belongsTo(Author, {
   foreignKey: `author_id`,
+  as: `author`,
 });
 
 Article.hasMany(Comment, {
   foreignKey: `article_id`,
+  as: `comments`,
 });
 
 Article.belongsToMany(Category, {
