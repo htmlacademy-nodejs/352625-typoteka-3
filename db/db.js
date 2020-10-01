@@ -52,8 +52,9 @@ Author.hasMany(Comment, {
   foreignKey: `author_id`,
 });
 
-Auth.hasOne(Author, {
+Auth.belongsTo(Author, {
   foreignKey: `author_id`,
+  as: `user`,
 });
 
 Article.belongsTo(Author, {

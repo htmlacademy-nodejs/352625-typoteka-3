@@ -32,8 +32,8 @@ const authors = [
 
 const auths = [
   {author_id: 1, is_auth: false},
-  {author_id: 2, is_auth: true},
-  {author_id: 3, is_auth: false},
+  {author_id: 2, is_auth: false},
+  {author_id: 3, is_auth: true},
 ];
 
 const articles = [

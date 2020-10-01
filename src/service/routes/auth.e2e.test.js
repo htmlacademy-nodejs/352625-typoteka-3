@@ -16,17 +16,37 @@ describe(`When GET '/${PathName.AUTH}'`, () => {
   test(`response should consist object with special structure`, async () => {
     const res = await request(app).get(`/${PathName.AUTH}`);
 
-    const authData = await db.Auth.findAll({
+    const authData = await db.Auth.findOne({
       where: {
         [`is_auth`]: true
       },
-      raw: true
+      include: [`user`],
     });
 
-    const result = {
-      status: authData.length === 0 ? false : authData[0][`is_auth`],
-      userId: authData.length === 0 ? null : authData[0][`id`],
-    };
+    let data;
+
+    if (!authData) {
+
+      data = {
+        status: false,
+        user: null,
+        avatar: null,
+      };
+
+    } else {
+      const userAvatar = await db.Avatar.findOne({
+        where: {
+          [`id`]: authData.user[`avatar_id`]
+        }
+      });
+
+      data = {
+        status: authData[`is_auth`],
+        user: authData[`user`],
+        avatar: userAvatar,
+      };
+    }
+    const result = JSON.parse(JSON.stringify(data));
 
     expect(res.body).toStrictEqual(result);
   });
