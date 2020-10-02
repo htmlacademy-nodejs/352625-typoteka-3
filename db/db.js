@@ -40,8 +40,9 @@ const Article = require(`./models/article.js`)(sequelize);
 const Comment = require(`./models/comment.js`)(sequelize);
 const Category = require(`./models/category.js`)(sequelize);
 
-Avatar.hasOne(Author, {
+Author.belongsTo(Avatar, {
   foreignKey: `avatar_id`,
+  as: `avatar`,
 });
 
 Author.hasMany(Article, {
@@ -76,6 +77,7 @@ Article.belongsToMany(Category, {
 
 Comment.belongsTo(Author, {
   foreignKey: `author_id`,
+  as: `author`,
 });
 
 Comment.belongsTo(Article, {

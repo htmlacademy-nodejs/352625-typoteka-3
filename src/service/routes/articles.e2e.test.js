@@ -3,6 +3,7 @@
 const request = require(`supertest`);
 
 const {db} = require(`./../../../db/db.js`);
+const getArticle = require(`./utils/article.js`);
 const {app} = require(`./../cli/server.js`);
 const {PathName, Empty} = require(`./../routes/constants.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
@@ -43,9 +44,7 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   test(`response should be equal to mock article with id='${Article.RIGHT_ID}''`, async () => {
     const res = await request(app).get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
 
-    const data = await db.Article.findByPk(Article.RIGHT_ID, {
-      include: [`author`, `comments`, `categories`],
-    });
+    const data = await getArticle(Article.RIGHT_ID);
 
     const result = JSON.parse(JSON.stringify(data));
 

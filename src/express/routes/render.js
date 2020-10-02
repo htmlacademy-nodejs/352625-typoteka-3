@@ -85,13 +85,11 @@ const renderCategoryPage = async (req, res) => {
 
 const renderTicketPage = async (req, res) => {
   try {
-    const [auth, articles, article] = await Promise.all([getAuth(), getArticles(), getArticle(req.params.offerId)]);
+    const [auth, article] = await Promise.all([getAuth(), getArticle(req.params.offerId)]);
 
     res.render(`ticket`, {
       auth,
-      article,
-      articles,
-      getArticlesByCategory,
+      article
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 

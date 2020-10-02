@@ -2,7 +2,7 @@
 
 const request = require(`supertest`);
 
-const {sequelize, db} = require(`./../../../db/db.js`);
+const getCategories = require(`./utils/categories.js`);
 const {app} = require(`./../cli/server.js`);
 const {PathName} = require(`./../routes/constants.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
@@ -16,9 +16,10 @@ describe(`When GET '/${PathName.CATEGORIES}'`, () => {
   test(`response should be equal to categories from db`, async () => {
     const res = await request(app).get(`/${PathName.CATEGORIES}`);
 
-    const categories = await db.Category.findAll({raw: true});
-    await sequelize.close();
+    const data = await getCategories();
 
-    expect(res.body).toStrictEqual(categories);
+    const result = JSON.parse(JSON.stringify(data));
+
+    expect(res.body).toStrictEqual(result);
   });
 });

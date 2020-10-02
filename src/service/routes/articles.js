@@ -7,6 +7,7 @@ const {db} = require(`./../../../db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
+const getArticle = require(`./utils/article.js`);
 
 const logger = getLogger();
 
@@ -45,9 +46,7 @@ articlesRouter.get(`/`, async (req, res) => {
 
 articlesRouter.get(`/:articleId`, async (req, res) => {
   try {
-    const data = await db.Article.findByPk(req.params.articleId, {
-      include: [`author`, `comments`, `categories`],
-    });
+    const data = await getArticle(req.params.articleId);
 
     if (!data) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLE);

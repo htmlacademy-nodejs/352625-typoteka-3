@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {db} = require(`./../../../db/db.js`);
+const getCategories = require(`./utils/categories.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
@@ -12,7 +12,7 @@ const categoriesRouter = new Router();
 
 categoriesRouter.get(`/`, async (req, res) => {
   try {
-    const data = await db.Category.findAll({raw: true});
+    const data = await getCategories();
 
     res.json(data);
 
@@ -23,6 +23,5 @@ categoriesRouter.get(`/`, async (req, res) => {
     logger.error(`Error occurs: ${error}`);
   }
 });
-
 
 module.exports = categoriesRouter;

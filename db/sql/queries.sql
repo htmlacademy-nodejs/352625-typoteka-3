@@ -26,14 +26,14 @@ ORDER BY (categories.id);
 -- количество публикаций в категории);
 SELECT
   categories.id AS "Id",
-  categories.category AS "Категория",
-  COUNT(articles_categories.article_id) AS "Кол-во публикаций"
+  categories.name AS "Категория",
+  COUNT(article_category.article_id) AS "Кол-во публикаций"
 FROM
   categories
-    INNER JOIN articles_categories ON categories.id = articles_categories.category_id
+    FULL JOIN article_category ON categories.id = article_category.category_id
 GROUP BY
   categories.id,
-  categories.category
+  categories.name
 ORDER BY (categories.id);
 
 --------------------------------
