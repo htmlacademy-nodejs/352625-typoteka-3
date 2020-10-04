@@ -1,12 +1,6 @@
 'use strict';
 
 const {
-  getItemByCommentId,
-  getCommentsByUserId,
-} = require(`./../utils.js`);
-
-const {
-  getArticles,
   getArticle,
   postArticle,
   getSearch,
@@ -15,7 +9,8 @@ const {
   getAuth,
   getMostDiscussed,
   getFreshItems,
-  getComments,
+  getFreshComments,
+  getMyComments,
 } = require(`./../axios.js`);
 
 const {getLogger} = require(`./../../service/logger.js`);
@@ -45,7 +40,7 @@ const renderHomePage = async (req, res) => {
       getCategories(),
       getMostDiscussed(),
       getFreshItems(),
-      getComments(),
+      getFreshComments(),
     ]);
 
     res.render(`main`, {
@@ -74,7 +69,6 @@ const renderCategoryPage = async (req, res) => {
       getCategory(req.params.categoryId),
       getCategories()
     ]);
-    // const activeCategoryId = req.params.categoryId;
 
     if (!categories) {
       render404Page(req, res);
@@ -84,9 +78,6 @@ const renderCategoryPage = async (req, res) => {
         auth,
         activeCategory,
         categories,
-        // activeCategoryId,
-        // getArticlesByCategory,
-        // getCategoryById,
       });
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
     }
@@ -154,14 +145,18 @@ const renderMyTicketsPage = async (req, res) => {
 
 const renderCommentsPage = async (req, res) => {
   try {
-    const [auth, articles] = await Promise.all([getAuth(), getArticles()]);
+    const auth = await getAuth();
 
-    res.render(`comments`, {
-      auth,
-      articles,
-      getCommentsByUserId,
-      getItemByCommentId,
-    });
+    if (!auth.status) {
+      render404Page(req, res);
+    } else {
+      const myComments = await getMyComments(auth.user.id);
+
+      res.render(`comments`, {
+        myComments,
+      });
+    }
+
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {

@@ -21,7 +21,9 @@ const getMostDiscussed = async () => (await axios.get(`${UriApi.ARTICLES}/mostDi
 
 const getFreshItems = async () => (await axios.get(`${UriApi.ARTICLES}/fresh`)).data;
 
-const getComments = async () => (await axios.get(`${UriApi.COMMENTS}`)).data;
+const getFreshComments = async () => (await axios.get(`${UriApi.COMMENTS}/fresh`)).data;
+
+const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byUser/${id}`)).data;
 
 module.exports = {
   getArticles,
@@ -33,5 +35,6 @@ module.exports = {
   getAuth,
   getMostDiscussed,
   getFreshItems,
-  getComments,
+  getFreshComments,
+  getMyComments,
 };

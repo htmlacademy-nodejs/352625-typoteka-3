@@ -82,6 +82,7 @@ Comment.belongsTo(Author, {
 
 Comment.belongsTo(Article, {
   foreignKey: `article_id`,
+  as: `article`,
 });
 
 Category.belongsToMany(Article, {
