@@ -11,17 +11,6 @@ const UriApi = {
   COMMENTS: `${URL_API}/${PathName.COMMENTS}`,
 };
 
-const getArticlesByCategory = (articles, category) => {
-  return articles
-    .filter((article) => article.category
-      .map((item) => item.id)
-      .includes(category.id));
-};
-
-const getCategoryById = (categories, id) => {
-  return categories.find((category) => category.id === id);
-};
-
 const getItemByCommentId = (articles, commentId) => {
   return articles.find((item) => item.comments
     .find((comment) => comment.id === commentId));
@@ -36,8 +25,6 @@ const getCommentsByUserId = (articles, userId) => {
 
 module.exports = {
   UriApi,
-  getArticlesByCategory,
-  getCategoryById,
   getItemByCommentId,
   getCommentsByUserId,
 };

@@ -1,8 +1,6 @@
 'use strict';
 
 const {
-  getArticlesByCategory,
-  getCategoryById,
   getItemByCommentId,
   getCommentsByUserId,
 } = require(`./../utils.js`);
@@ -13,6 +11,7 @@ const {
   postArticle,
   getSearch,
   getCategories,
+  getCategory,
   getAuth,
   getMostDiscussed,
   getFreshItems,
@@ -66,20 +65,28 @@ const renderHomePage = async (req, res) => {
 
 const renderCategoryPage = async (req, res) => {
   try {
-    const [auth, articles, categories] = await Promise.all([getAuth(), getArticles(), getCategories()]);
-    const activeCategoryId = req.params.categoryId;
+    const [
+      auth,
+      activeCategory,
+      categories
+    ] = await Promise.all([
+      getAuth(),
+      getCategory(req.params.categoryId),
+      getCategories()
+    ]);
+    // const activeCategoryId = req.params.categoryId;
 
-    if (!categories.find((item) => item.id === activeCategoryId)) {
+    if (!categories) {
       render404Page(req, res);
 
     } else {
       res.render(`category`, {
         auth,
-        articles,
+        activeCategory,
         categories,
-        activeCategoryId,
-        getArticlesByCategory,
-        getCategoryById,
+        // activeCategoryId,
+        // getArticlesByCategory,
+        // getCategoryById,
       });
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
     }

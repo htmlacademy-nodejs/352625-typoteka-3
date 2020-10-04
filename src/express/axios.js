@@ -13,6 +13,8 @@ const getSearch = async (search) => (await axios.get(encodeURI(`${UriApi.SEARCH}
 
 const getCategories = async () => (await axios.get(UriApi.CATEGORIES)).data;
 
+const getCategory = async (id) => (await axios.get(`${UriApi.CATEGORIES}/${id}`)).data;
+
 const getAuth = async () => (await axios.get(UriApi.AUTH)).data;
 
 const getMostDiscussed = async () => (await axios.get(`${UriApi.ARTICLES}/mostDiscussed`)).data;
@@ -27,6 +29,7 @@ module.exports = {
   postArticle,
   getSearch,
   getCategories,
+  getCategory,
   getAuth,
   getMostDiscussed,
   getFreshItems,

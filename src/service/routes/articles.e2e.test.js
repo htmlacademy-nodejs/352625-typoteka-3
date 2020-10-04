@@ -6,6 +6,8 @@ const {db} = require(`./../../../db/db.js`);
 const getArticle = require(`./utils/article.js`);
 const getArticles = require(`./utils/articles.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
+const getFreshItems = require(`./utils/fresh-items.js`);
+
 const {app} = require(`./../cli/server.js`);
 const {PathName, Empty} = require(`./../routes/constants.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
@@ -47,6 +49,23 @@ describe(`When GET '/${PathName.ARTICLES}/mostDiscussed'`, () => {
     const res = await request(app).get(`/${PathName.ARTICLES}/mostDiscussed`);
 
     const data = await getMostDiscussed();
+
+    const result = JSON.parse(JSON.stringify(data));
+
+    expect(res.body).toStrictEqual(result);
+  });
+});
+
+describe(`When GET '/${PathName.ARTICLES}/fresh'`, () => {
+  test(`status code should be ${HttpCode.OK}`, async () => {
+    const res = await request(app).get(`/${PathName.ARTICLES}/fresh`);
+    expect(res.statusCode).toBe(HttpCode.OK);
+  });
+
+  test(`response should be equal to mock articles from database`, async () => {
+    const res = await request(app).get(`/${PathName.ARTICLES}/fresh`);
+
+    const data = await getFreshItems();
 
     const result = JSON.parse(JSON.stringify(data));
 
