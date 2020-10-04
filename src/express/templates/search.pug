@@ -28,8 +28,8 @@ block content
           else if result.length > 0
             each item in result
               .search__result
-                time.search__date(datetime=`${item.createdDate.datetime}`)= item.createdDate.human
-                a.search__link= item.title
+                time.search__date(datetime=`${item.created_date}`)= item.created_date
+                a(href=`/articles/${item.id}`).search__link= item.title
           else
             p.search-page__empty Ничего не нашлось
 
