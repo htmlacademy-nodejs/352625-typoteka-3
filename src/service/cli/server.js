@@ -19,6 +19,7 @@ const articlesRouter = require(`./../routes/articles.js`);
 const categoriesRouter = require(`./../routes/categories.js`);
 const searchRouter = require(`./../routes/search.js`);
 const authRouter = require(`./../routes/auth.js`);
+const commentsRouter = require(`./../routes/comments.js`);
 
 const {getLogger} = require(`./../logger.js`);
 
@@ -30,6 +31,7 @@ app.use(`/${PathName.ARTICLES}`, articlesRouter);
 app.use(`/${PathName.CATEGORIES}`, categoriesRouter);
 app.use(`/${PathName.SEARCH}`, searchRouter);
 app.use(`/${PathName.AUTH}`, authRouter);
+app.use(`/${PathName.COMMENTS}`, commentsRouter);
 
 app.use(express.json());
 

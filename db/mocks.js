@@ -90,13 +90,13 @@ const comments = [
   },
   {
     text: `Хочу такую же футболку :-)`,
-    created_date: `2019-08-12`,
+    created_date: `2019-09-15`,
     author_id: 1,
     article_id: 2,
   },
   {
     text: `Плюсую, но слишком много буквы!`,
-    created_date: `2019-08-12`,
+    created_date: `2019-10-06`,
     author_id: 2,
     article_id: 2,
   },

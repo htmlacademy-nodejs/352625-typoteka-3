@@ -21,6 +21,9 @@ const getArticle = async (articleId) => {
       `comments->author.id`,
       `comments->author->avatar.id`,
     ],
+    order: [
+      [`comments`, `created_date`, `desc`]
+    ],
 
     include: [{
       model: db.Category,

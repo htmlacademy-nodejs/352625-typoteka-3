@@ -159,7 +159,7 @@ SELECT
   comments.article_id AS "Id публикации",
   authors.firstname AS "Имя автора",
   authors.lastname AS "Фамилия",
-  comments.comment AS "Текст комментария"
+  comments.text AS "Текст комментария"
 FROM
   comments
     INNER JOIN authors ON comments.author_id = authors.id

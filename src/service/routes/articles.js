@@ -7,7 +7,11 @@ const {db} = require(`./../../../db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
+
+const getArticles = require(`./utils/articles.js`);
 const getArticle = require(`./utils/article.js`);
+const getMostDiscussed = require(`./utils/most-discussed.js`);
+const getFreshItems = require(`./utils/fresh-items.js`);
 
 const logger = getLogger();
 
@@ -29,7 +33,7 @@ const validateComment = () => {
 
 articlesRouter.get(`/`, async (req, res) => {
   try {
-    const data = await db.Article.findAll({raw: true});
+    const data = await getArticles();
 
     if (!data || data.length === 0) {
       res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
@@ -43,6 +47,41 @@ articlesRouter.get(`/`, async (req, res) => {
     logger.error(`Error occurs: ${error}`);
   }
 });
+
+articlesRouter.get(`/mostDiscussed`, async (req, res) => {
+  try {
+    const data = await getMostDiscussed();
+
+    if (!data || data.length === 0) {
+      res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
+    } else {
+      res.json(data);
+    }
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
+
+articlesRouter.get(`/fresh`, async (req, res) => {
+  try {
+    const data = await getFreshItems();
+
+    if (!data || data.length === 0) {
+      res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
+    } else {
+      res.json(data);
+    }
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
+
 
 articlesRouter.get(`/:articleId`, async (req, res) => {
   try {

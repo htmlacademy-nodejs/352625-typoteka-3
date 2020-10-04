@@ -3,9 +3,6 @@
 const {
   getArticlesByCategory,
   getCategoryById,
-  getFreshItems,
-  getMostDiscussedItems,
-  getLastComments,
   getItemByCommentId,
   getCommentsByUserId,
 } = require(`./../utils.js`);
@@ -17,6 +14,9 @@ const {
   getSearch,
   getCategories,
   getAuth,
+  getMostDiscussed,
+  getFreshItems,
+  getComments,
 } = require(`./../axios.js`);
 
 const {getLogger} = require(`./../../service/logger.js`);
@@ -35,19 +35,26 @@ const render500Page = (req, res) => {
 
 const renderHomePage = async (req, res) => {
   try {
-    const [auth, articles, categories] = await Promise.all([getAuth(), getArticles(), getCategories()]);
-    const mostDiscussedItems = getMostDiscussedItems(articles);
-    const lastComments = getLastComments(mostDiscussedItems);
+    const [
+      auth,
+      categories,
+      mostDiscussedItems,
+      freshItems,
+      lastComments,
+    ] = await Promise.all([
+      getAuth(),
+      getCategories(),
+      getMostDiscussed(),
+      getFreshItems(),
+      getComments(),
+    ]);
 
     res.render(`main`, {
       auth,
-      articles,
       categories,
-      getArticlesByCategory,
       mostDiscussedItems,
       lastComments,
-      freshItems: getFreshItems(articles),
-      getItemByCommentId,
+      freshItems,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
