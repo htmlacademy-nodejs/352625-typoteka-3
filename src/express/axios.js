@@ -5,6 +5,8 @@ const {UriApi} = require(`./utils.js`);
 
 const getArticles = async () => (await axios.get(UriApi.ARTICLES)).data;
 
+const getMyArticles = async (authorId) => (await axios.get(`${UriApi.ARTICLES}/byUser/${authorId}`)).data;
+
 const getArticle = async (url) => (await axios.get(encodeURI(`${UriApi.ARTICLES}/${url}`))).data;
 
 const postArticle = (data) => axios.post(UriApi.ARTICLES, {json: data});
@@ -27,6 +29,7 @@ const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byUser/
 
 module.exports = {
   getArticles,
+  getMyArticles,
   getArticle,
   postArticle,
   getSearch,

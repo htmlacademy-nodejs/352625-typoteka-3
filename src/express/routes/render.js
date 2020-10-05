@@ -1,6 +1,7 @@
 'use strict';
 
 const {
+  getMyArticles,
   getArticle,
   postArticle,
   getSearch,
@@ -134,7 +135,15 @@ const renderMyTicketsPage = async (req, res) => {
   try {
     const auth = await getAuth();
 
-    res.render(`my-tickets`, {auth});
+    if (!auth.status || typeof auth.user.id !== `number`) {
+      render404Page(req, res);
+    } else {
+      const myArticles = await getMyArticles(auth.user.id);
+
+      res.render(`my-tickets`, {
+        myArticles,
+      });
+    }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -187,7 +196,6 @@ const renderSearchPage = async (req, res) => {
     logger.error(`Error occurs: ${error}`);
   }
 };
-
 
 const postFormDataToService = (req, res) => {
   try {

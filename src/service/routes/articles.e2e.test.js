@@ -2,9 +2,8 @@
 
 const request = require(`supertest`);
 
-const {db} = require(`./../../../db/db.js`);
 const getArticle = require(`./utils/article.js`);
-const getArticles = require(`./utils/articles.js`);
+const {getArticles, getArticlesByUserId} = require(`./utils/articles.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
 const getFreshItems = require(`./utils/fresh-items.js`);
 
@@ -14,12 +13,12 @@ const {HttpCode} = require(`./../cli/constants.js`);
 
 const Article = {
   RIGHT_ID: encodeURI(`1`),
-  WRONG_ID: encodeURI(`10000`),
+  WRONG_ID: encodeURI(`kdsj6lsd`),
 };
 
-const Comment = {
+const Author = {
   RIGHT_ID: encodeURI(`1`),
-  WRONG_ID: encodeURI(`1000000`),
+  WRONG_ID: encodeURI(`jdhfs5mn`),
 };
 
 describe(`When GET '/${PathName.ARTICLES}'`, () => {
@@ -32,6 +31,40 @@ describe(`When GET '/${PathName.ARTICLES}'`, () => {
     const res = await request(app).get(`/${PathName.ARTICLES}`);
 
     const data = await getArticles();
+
+    const result = JSON.parse(JSON.stringify(data));
+
+    expect(res.body).toStrictEqual(result);
+  });
+});
+
+describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}'`, () => {
+  test(`status code should be ${HttpCode.OK}`, async () => {
+    const res = await request(app).get(`/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}`);
+    expect(res.statusCode).toBe(HttpCode.OK);
+  });
+
+  test(`response should be equal to author's articles from database`, async () => {
+    const res = await request(app).get(`/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}`);
+
+    const data = await getArticlesByUserId(Author.RIGHT_ID);
+
+    const result = JSON.parse(JSON.stringify(data));
+
+    expect(res.body).toStrictEqual(result);
+  });
+});
+
+describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}'`, () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+    const res = await request(app).get(`/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}`);
+    expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
+  });
+
+  test(`response should be equal to empty array`, async () => {
+    const res = await request(app).get(`/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}`);
+
+    const data = [];
 
     const result = JSON.parse(JSON.stringify(data));
 
@@ -99,39 +132,6 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   test(`response should be equal to ${Empty.ARTICLE}`, async () => {
     const res = await request(app).get(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
     expect(res.body).toStrictEqual(Empty.ARTICLE);
-  });
-});
-
-describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments'`, () => {
-  test(`status code should be ${HttpCode.OK}`, async () => {
-    const res = await request(app).get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`);
-    expect(res.statusCode).toBe(HttpCode.OK);
-  });
-
-  test(`response should be equal to comments from db`, async () => {
-    const res = await request(app).get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`);
-    const data = await db.Comment.findAll({
-      where: {
-        [`article_id`]: Article.RIGHT_ID
-      },
-      raw: true
-    });
-
-    const result = JSON.parse(JSON.stringify(data));
-
-    expect(res.body).toEqual(result);
-  });
-});
-
-describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments'`, () => {
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
-    const res = await request(app).get(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments`);
-    expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-
-  test(`response should be be equal to '${Empty.COMMENTS}'`, async () => {
-    const res = await request(app).get(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments`);
-    expect(res.body).toStrictEqual(Empty.COMMENTS);
   });
 });
 
@@ -219,27 +219,6 @@ describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
 describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
     const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
-    expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-});
-
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.RIGHT_ID}'`, () => {
-  test(`status code should be ${HttpCode.OK}`, async () => {
-    const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.RIGHT_ID}`);
-    expect(res.statusCode).toBe(HttpCode.OK);
-  });
-});
-
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.WRONG_ID}'`, () => {
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
-    const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments/${Comment.WRONG_ID}`);
-    expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-});
-
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments/${Comment.WRONG_ID}'`, () => {
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
-    const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments/${Comment.WRONG_ID}`);
     expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 });
