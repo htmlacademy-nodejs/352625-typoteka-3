@@ -2,6 +2,17 @@
 
 const {db} = require(`./../../../../db/db.js`);
 
+const getCategoriesFromServerAnswer = (data) => {
+  let categories = [];
+
+  for (const prop in data) {
+    if (data.hasOwnProperty(prop) && prop.includes(`category`)) {
+      categories.push(data[prop]);
+    }
+  }
+  return categories;
+};
+
 const getArticle = async (articleId) => {
 
   return await db.Article.findByPk(articleId, {
@@ -64,7 +75,25 @@ const getArticle = async (articleId) => {
       }]
     }],
   });
-
 };
 
-module.exports = getArticle;
+const addArticle = async (data, authorId) => {
+  const result = data.json;
+
+  const article = await db.Article.create({
+    [`title`]: result[`title`],
+    [`announce`]: result[`announce`],
+    [`full_text`]: result[`full_text`],
+    [`picture`]: result[`picture`],
+    [`created_date`]: result[`created_date`],
+    [`author_id`]: authorId,
+  });
+
+  article.setCategories(getCategoriesFromServerAnswer(result));
+
+  console.log(article);
+
+  return article;
+};
+
+module.exports = {getArticle, addArticle};

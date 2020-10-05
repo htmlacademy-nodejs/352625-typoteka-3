@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {db} = require(`./../../../db/db.js`);
+const getAuth = require(`./utils/auth.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
@@ -12,38 +12,9 @@ const authRouter = new Router();
 
 authRouter.get(`/`, async (req, res) => {
   try {
-    const authData = await db.Auth.findOne({
-      where: {
-        [`is_auth`]: true
-      },
-      include: [`user`],
-    });
+    const data = await getAuth();
 
-    let result;
-
-    if (!authData) {
-
-      result = {
-        status: false,
-        user: null,
-        avatar: null,
-      };
-
-    } else {
-      const userAvatar = await db.Avatar.findOne({
-        where: {
-          [`id`]: authData.user[`avatar_id`]
-        }
-      });
-
-      result = {
-        status: authData[`is_auth`],
-        user: authData[`user`],
-        avatar: userAvatar,
-      };
-    }
-
-    res.json(result);
+    res.json(data);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {

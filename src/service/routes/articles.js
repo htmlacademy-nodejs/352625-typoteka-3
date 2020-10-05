@@ -9,7 +9,8 @@ const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const {getArticles, getArticlesByUserId} = require(`./utils/articles.js`);
-const getArticle = require(`./utils/article.js`);
+const {getArticle, addArticle} = require(`./utils/article.js`);
+const getAuth = require(`./utils/auth.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
 const getFreshItems = require(`./utils/fresh-items.js`);
 
@@ -128,16 +129,15 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
   }
 });
 
-articlesRouter.post(`/`, (req, res) => {
+articlesRouter.post(`/`, async (req, res) => {
   try {
-    if (!validateArticle()) {
+    const auth = await getAuth();
+
+    if (!validateArticle() || !auth.status) {
       res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
     } else {
-      // TODO: some code for adding new article is coming soon...
-      res.send(req.body);
-
-      // TODO: TEMP observe receiving FormData of newTicket:
-      logger.info(req.body);
+      await addArticle(req.body, auth.user.id);
+      res.status(HttpCode.OK).send(`Ok`);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 

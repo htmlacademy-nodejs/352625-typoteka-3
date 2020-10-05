@@ -2,7 +2,7 @@
 
 const request = require(`supertest`);
 
-const getArticle = require(`./utils/article.js`);
+const {getArticle} = require(`./utils/article.js`);
 const {getArticles, getArticlesByUserId} = require(`./utils/articles.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
 const getFreshItems = require(`./utils/fresh-items.js`);
@@ -136,14 +136,24 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 });
 
 describe(`When POST '/${PathName.ARTICLES}'`, () => {
-  const mockArticle = {title: `text`, createdDate: `2020-03-10 06:35:58`};
 
   test(`status code should be ${HttpCode.OK}`, async () => {
+    const mockArticle = {
+      json: {
+        [`title`]: `text`,
+        [`created_date`]: `2020-03-10 06:35:58`,
+        [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+        [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+        [`picture`]: `forest`,
+      }
+    };
+
     const res = await request(app)
       .post(`/${PathName.ARTICLES}`)
       .send(mockArticle);
+
     expect(res.statusCode).toBe(HttpCode.OK);
-    expect(res.body).toStrictEqual(mockArticle);
+
   });
 });
 
