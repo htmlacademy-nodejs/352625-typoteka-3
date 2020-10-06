@@ -152,11 +152,11 @@ articlesRouter.post(`/:articleId`, async (req, res) => {
     let data = null;
     const articleId = parseInt(req.params.articleId, 10);
 
-    // if (articleId) {
-    //   data = await getArticle(articleId);
-    // }
+    if (articleId) {
+      data = await getArticle(articleId);
+    }
 
-    if (!data) {
+    if (data) {
       // TODO: some code for editing article is coming soon...
       await updateArticle(req.body, articleId);
       res.status(HttpCode.OK).send(req.body);
