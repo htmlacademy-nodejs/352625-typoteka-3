@@ -11,6 +11,8 @@ const getArticle = async (url) => (await axios.get(encodeURI(`${UriApi.ARTICLES}
 
 const postArticle = (data) => axios.post(UriApi.ARTICLES, {json: data});
 
+const editArticle = (data, id) => axios.post(`${UriApi.ARTICLES}/${id}`, {json: data});
+
 const getSearch = async (search) => (await axios.get(encodeURI(`${UriApi.SEARCH}${search}`))).data;
 
 const getCategories = async () => (await axios.get(UriApi.CATEGORIES)).data;
@@ -32,6 +34,7 @@ module.exports = {
   getMyArticles,
   getArticle,
   postArticle,
+  editArticle,
   getSearch,
   getCategories,
   getCategory,

@@ -31,8 +31,8 @@ block content
                       input.visually-hidden(type="file" name="picture")
                       | Обзор
                   button.button.button--transparent Удалить
-                .new-publication__checkbox.new-publication__checkbox--auto
-                  each category in categories
+                each category in categories
+                  .new-publication__checkbox.new-publication__checkbox--auto
                     input(id=`${category.id}` type="checkbox" name=`category-${category.name}` value=`${category.id}`)
                     label(for=`${category.id}`)= category.name
                 a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию

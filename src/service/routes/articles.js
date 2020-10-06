@@ -9,7 +9,7 @@ const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const {getArticles, getArticlesByUserId} = require(`./utils/articles.js`);
-const {getArticle, addArticle} = require(`./utils/article.js`);
+const {getArticle, addArticle, updateArticle} = require(`./utils/article.js`);
 const getAuth = require(`./utils/auth.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
 const getFreshItems = require(`./utils/fresh-items.js`);
@@ -147,18 +147,19 @@ articlesRouter.post(`/`, async (req, res) => {
   }
 });
 
-articlesRouter.put(`/:articleId`, async (req, res) => {
+articlesRouter.post(`/:articleId`, async (req, res) => {
   try {
     let data = null;
     const articleId = parseInt(req.params.articleId, 10);
 
-    if (articleId) {
-      data = await db.Article.findByPk(req.params.articleId, {raw: true});
-    }
+    // if (articleId) {
+    //   data = await getArticle(articleId);
+    // }
 
-    if (data) {
+    if (!data) {
       // TODO: some code for editing article is coming soon...
-      res.send(req.body);
+      await updateArticle(req.body, articleId);
+      res.status(HttpCode.OK).send(req.body);
 
     } else {
       res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);

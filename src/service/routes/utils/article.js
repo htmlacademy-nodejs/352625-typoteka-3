@@ -1,5 +1,6 @@
 'use strict';
 
+const moment = require(`moment`);
 const {db} = require(`./../../../../db/db.js`);
 
 const getCategoriesFromServerAnswer = (data) => {
@@ -91,9 +92,26 @@ const addArticle = async (data, authorId) => {
 
   article.setCategories(getCategoriesFromServerAnswer(result));
 
-  console.log(article);
+  return article;
+};
+
+const updateArticle = async (data, articleId) => {
+  const result = data.json;
+
+  const article = await db.Article.update({
+    [`title`]: result[`title`],
+    [`announce`]: result[`announce`],
+    [`full_text`]: result[`full_text`],
+    [`picture`]: result[`picture`],
+    [`created_date`]: moment(result[`created_date`], `DD.MM.YYYY`).toISOString(),
+  }, {
+    where: {id: articleId}
+  });
+
+  // TODO не разобрался как обновлять категории
+  // article.setCategories(getCategoriesFromServerAnswer(result));
 
   return article;
 };
 
-module.exports = {getArticle, addArticle};
+module.exports = {getArticle, addArticle, updateArticle};

@@ -8,6 +8,7 @@ const {
   renderTicketEditPage,
   renderNewTicketPage,
   postFormDataToService,
+  postEditedArticleToService,
 } = require(`./render.js`);
 
 const articlesRouter = new Router();
@@ -35,6 +36,11 @@ articlesRouter.get(
 articlesRouter.get(
     `/:offerId`,
     (req, res) => renderTicketPage(req, res)
+);
+
+articlesRouter.post(
+    `/:articleId`,
+    (req, res) => postEditedArticleToService(req, res)
 );
 
 module.exports = articlesRouter;

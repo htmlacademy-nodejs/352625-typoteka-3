@@ -4,6 +4,7 @@ const {
   getMyArticles,
   getArticle,
   postArticle,
+  editArticle,
   getSearch,
   getCategories,
   getCategory,
@@ -219,6 +220,22 @@ const postFormDataToService = (req, res) => {
   }
 };
 
+const postEditedArticleToService = (req, res) => {
+  try {
+    const articleId = parseInt(req.params.articleId, 10);
+
+    editArticle(req.body, articleId);
+
+    res.redirect(`/articles/${articleId}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+
+    res.redirect(`/articles/edit/${req.params.articleId}`);
+  }
+};
+
 module.exports = {
   render404Page,
   render500Page,
@@ -231,4 +248,5 @@ module.exports = {
   renderCommentsPage,
   renderSearchPage,
   postFormDataToService,
+  postEditedArticleToService,
 };
