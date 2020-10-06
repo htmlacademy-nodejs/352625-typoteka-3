@@ -2,6 +2,7 @@
 
 const {URL_API} = require(`./../service/cli/constants.js`);
 const {PathName, SEARCH_PARAM} = require(`./../service/routes/constants.js`);
+const moment = require(`moment`);
 
 const UriApi = {
   ARTICLES: `${URL_API}/${PathName.ARTICLES}`,
@@ -11,6 +12,11 @@ const UriApi = {
   COMMENTS: `${URL_API}/${PathName.COMMENTS}`,
 };
 
+const getHumanDate = (date) => {
+  return moment(date).format(`DD.MM.YYYY, HH:mm`);
+};
+
 module.exports = {
   UriApi,
+  getHumanDate,
 };

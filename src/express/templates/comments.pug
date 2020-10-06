@@ -10,7 +10,7 @@ block content
             .publication__header
               img.publication__list-image(src=`/img/${comment.author.avatar.small}.png` width="20" height="20" alt="Аватар пользователя")
               b.publication__list-name= `${comment.author.firstname} ${comment.author.lastname}`
-              time.publication__item-time(datetime=`${comment.created_date}`)= comment.created_date
+              time.publication__item-time(datetime=`${comment.created_date}`)= getHumanDate(comment.created_date)
             a.publication__item-text(href=`/articles/${comment.article.id}`)= comment.article.title
             p.publication__text-strong= comment.article.announce
             button.publication__button.button.button--close-item(type="button")

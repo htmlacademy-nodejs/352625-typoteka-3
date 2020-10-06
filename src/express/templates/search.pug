@@ -28,7 +28,7 @@ block content
           else if result.length > 0
             each item in result
               .search__result
-                time.search__date(datetime=`${item.created_date}`)= item.created_date
+                time.search__date(datetime=`${item.created_date}`)= getHumanDate(item.created_date)
                 a(href=`/articles/${item.id}`).search__link= item.title
           else
             p.search-page__empty Ничего не нашлось

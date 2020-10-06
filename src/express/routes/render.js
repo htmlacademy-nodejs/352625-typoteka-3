@@ -14,6 +14,8 @@ const {
   getMyComments,
 } = require(`./../axios.js`);
 
+const {getHumanDate} = require(`./../utils.js`);
+
 const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
@@ -50,6 +52,7 @@ const renderHomePage = async (req, res) => {
       mostDiscussedItems,
       lastComments,
       freshItems,
+      getHumanDate,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -79,6 +82,7 @@ const renderCategoryPage = async (req, res) => {
         auth,
         activeCategory,
         categories,
+        getHumanDate,
       });
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
     }
@@ -95,7 +99,8 @@ const renderTicketPage = async (req, res) => {
 
     res.render(`ticket`, {
       auth,
-      article
+      article,
+      getHumanDate,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -122,7 +127,7 @@ const renderNewTicketPage = async (req, res) => {
   try {
     const categories = await getCategories();
 
-    res.render(`new-ticket`, {categories});
+    res.render(`new-ticket`, {categories, getHumanDate});
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -142,6 +147,7 @@ const renderMyTicketsPage = async (req, res) => {
 
       res.render(`my-tickets`, {
         myArticles,
+        getHumanDate,
       });
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -163,6 +169,7 @@ const renderCommentsPage = async (req, res) => {
 
       res.render(`comments`, {
         myComments,
+        getHumanDate,
       });
     }
 
@@ -189,6 +196,7 @@ const renderSearchPage = async (req, res) => {
       auth,
       result,
       searchRequest,
+      getHumanDate,
     });
     logger.debug(`${req.method} ${req.url} --> res status code ${res.statusCode}`);
 
