@@ -110,4 +110,12 @@ const updateArticle = async (data, articleId) => {
   });
 };
 
-module.exports = {getArticle, addArticle, updateArticle};
+const deleteArticle = async (articleId) => {
+  return await db.Article.destroy({
+    where: {
+      id: articleId
+    }
+  });
+};
+
+module.exports = {getArticle, addArticle, updateArticle, deleteArticle};

@@ -230,16 +230,17 @@ describe(`When POST '/${PathName.ARTICLES}/:ID/comments'`, () => {
   });
 });
 
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
-  test(`status code should be ${HttpCode.OK}`, async () => {
-    const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
+describe(`When POST '/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}'`, () => {
+  // TODO результат теста стирает пост из базы, что неудобно - нужен мок базы данных
+  test.skip(`status code should be ${HttpCode.OK}`, async () => {
+    const res = await request(app).post(`/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}`);
     expect(res.statusCode).toBe(HttpCode.OK);
   });
 });
 
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
+describe(`When DELETE '/${PathName.ARTICLES}/delete/${Article.WRONG_ID}'`, () => {
   test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
-    const res = await request(app).delete(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
+    const res = await request(app).post(`/${PathName.ARTICLES}/delete/${Article.WRONG_ID}`);
     expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 });

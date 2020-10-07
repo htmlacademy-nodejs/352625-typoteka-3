@@ -32,8 +32,11 @@ const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byUser/
 
 const postComment = (data, articleId) => axios.post(`${UriApi.ARTICLES}/${articleId}/comments`, {json: data});
 
-// TODO не получилось реализвать удаление коммента через метод DELETE
+// TODO не получилось реализовать удаление коммента через метод DELETE
 const deleteComment = (commentId) => axios.post(`${UriApi.COMMENTS}/${commentId}`);
+
+// TODO не получилось реализовать удаление поста через метод DELETE
+const deleteArticle = (articleId) => axios.post(`${UriApi.ARTICLES}/delete/${articleId}`);
 
 module.exports = {
   getArticles,
@@ -51,4 +54,5 @@ module.exports = {
   getMyComments,
   postComment,
   deleteComment,
+  deleteArticle,
 };

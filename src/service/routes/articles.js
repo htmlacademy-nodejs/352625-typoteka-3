@@ -3,13 +3,12 @@
 const express = require(`express`);
 const {Router} = require(`express`);
 
-const {db} = require(`./../../../db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const {getArticles, getArticlesByUserId} = require(`./utils/articles.js`);
-const {getArticle, addArticle, updateArticle} = require(`./utils/article.js`);
+const {getArticle, addArticle, updateArticle, deleteArticle} = require(`./utils/article.js`);
 const getAuth = require(`./utils/auth.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
 const getFreshItems = require(`./utils/fresh-items.js`);
@@ -193,22 +192,24 @@ articlesRouter.post(`/:articleId/comments`, async (req, res) => {
   }
 });
 
-articlesRouter.delete(`/:articleId`, async (req, res) => {
+// TODO не получилось реализовать удаление поста через метод DELETE
+articlesRouter.post(`/delete/:articleId`, async (req, res) => {
   try {
     let data = null;
     const articleId = parseInt(req.params.articleId, 10);
 
     if (articleId) {
-      data = await db.Article.findByPk(articleId, {raw: true});
+      data = await getArticle(articleId);
     }
 
     if (data) {
-      // TODO: some code for deleting Article is coming soon...
-      res.send(`Article is deleted`);
+      await deleteArticle(articleId);
+      res.status(HttpCode.OK).send(`Article is deleted`);
 
     } else {
-      res.status(HttpCode.BAD_REQUEST).send(`Invalid Article ID`);
+      res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
     }
+
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {

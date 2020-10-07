@@ -15,6 +15,7 @@ const {
   getMyComments,
   postComment,
   deleteComment,
+  deleteArticle,
 } = require(`./../axios.js`);
 
 const {getHumanDate} = require(`./../utils.js`);
@@ -272,6 +273,21 @@ const deleteCommentFromService = (req, res) => {
   }
 };
 
+const deleteArticleFromService = (req, res) => {
+  try {
+    const articleId = parseInt(req.params.articleId, 10);
+
+    deleteArticle(articleId);
+
+    res.redirect(`/my/`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+    res.redirect(`/my/`);
+  }
+};
+
 module.exports = {
   render404Page,
   render500Page,
@@ -287,4 +303,5 @@ module.exports = {
   postEditedArticleToService,
   postCommentToService,
   deleteCommentFromService,
+  deleteArticleFromService,
 };
