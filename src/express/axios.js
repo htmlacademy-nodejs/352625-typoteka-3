@@ -29,6 +29,8 @@ const getFreshComments = async () => (await axios.get(`${UriApi.COMMENTS}/fresh`
 
 const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byUser/${id}`)).data;
 
+const postComment = (data, articleId) => axios.post(`${UriApi.ARTICLES}/${articleId}/comments`, {json: data});
+
 module.exports = {
   getArticles,
   getMyArticles,
@@ -43,4 +45,5 @@ module.exports = {
   getFreshItems,
   getFreshComments,
   getMyComments,
+  postComment,
 };

@@ -13,6 +13,7 @@ const {getArticle, addArticle, updateArticle} = require(`./utils/article.js`);
 const getAuth = require(`./utils/auth.js`);
 const getMostDiscussed = require(`./utils/most-discussed.js`);
 const getFreshItems = require(`./utils/fresh-items.js`);
+const {addComment} = require(`./utils/comment.js`);
 
 const logger = getLogger();
 
@@ -137,7 +138,7 @@ articlesRouter.post(`/`, async (req, res) => {
       res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
     } else {
       await addArticle(req.body, auth.user.id);
-      res.status(HttpCode.OK).send(`Ok`);
+      res.status(HttpCode.OK).send(req.body);
     }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -157,7 +158,6 @@ articlesRouter.post(`/:articleId`, async (req, res) => {
     }
 
     if (data) {
-      // TODO: some code for editing article is coming soon...
       await updateArticle(req.body, articleId);
       res.status(HttpCode.OK).send(req.body);
 
@@ -172,23 +172,14 @@ articlesRouter.post(`/:articleId`, async (req, res) => {
   }
 });
 
-articlesRouter.put(`/:articleId/comments`, async (req, res) => {
+articlesRouter.post(`/:articleId/comments`, async (req, res) => {
   try {
-    let data = null;
     const articleId = parseInt(req.params.articleId, 10);
+    const auth = await getAuth();
 
-    if (articleId) {
-      data = await db.Comment.findAll({
-        where: {
-          [`article_id`]: articleId
-        },
-        raw: true
-      });
-    }
-
-    if (validateComment() && data) {
-      // TODO: some code for adding new comment is coming soon...
-      res.send(req.body);
+    if (validateComment() && auth.status && Number.isInteger(articleId)) {
+      await addComment(req.body, articleId, auth.user.id);
+      res.status(HttpCode.OK).send(req.body);
 
     } else {
       res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);

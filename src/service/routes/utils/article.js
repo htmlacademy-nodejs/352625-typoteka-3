@@ -98,7 +98,8 @@ const addArticle = async (data, authorId) => {
 const updateArticle = async (data, articleId) => {
   const result = data.json;
 
-  const article = await db.Article.update({
+  // TODO не разобрался как обновлять категории - для Model.update метода Model.setCategories([...]) не существует;
+  return await db.Article.update({
     [`title`]: result[`title`],
     [`announce`]: result[`announce`],
     [`full_text`]: result[`full_text`],
@@ -107,11 +108,6 @@ const updateArticle = async (data, articleId) => {
   }, {
     where: {id: articleId}
   });
-
-  // TODO не разобрался как обновлять категории
-  // article.setCategories(getCategoriesFromServerAnswer(result));
-
-  return article;
 };
 
 module.exports = {getArticle, addArticle, updateArticle};

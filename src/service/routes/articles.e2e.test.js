@@ -136,28 +136,48 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 });
 
 describe(`When POST '/${PathName.ARTICLES}'`, () => {
-  // TODO нужен мок базы данных
-  test.skip(`status code should be ${HttpCode.OK}`, async () => {
-    const mockArticle = {
-      json: {
-        [`title`]: `text`,
-        [`created_date`]: `2020-03-10 06:35:58`,
-        [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
-        [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
-        [`picture`]: `forest`,
-      }
-    };
+  const mockArticle = {
+    json: {
+      [`title`]: `text`,
+      [`created_date`]: `2020-10-07T00:00:00.000Z`,
+      [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+      [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+      [`picture`]: `forest`,
+    }
+  };
 
+  // TODO результат теста пишется в базу, что неудобно - нужен мок базы данных
+  test.skip(`status code should be ${HttpCode.OK}, response should be the same as request object`, async () => {
     const res = await request(app)
       .post(`/${PathName.ARTICLES}`)
       .send(mockArticle);
 
     expect(res.statusCode).toBe(HttpCode.OK);
-
+    expect(res.body).toStrictEqual(mockArticle);
   });
 });
 
 describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
+  const mockArticle = {
+    json: {
+      [`title`]: `text`,
+      [`created_date`]: `07.10.2020`,
+      [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    }
+  };
+
+  // TODO результат теста пишется в базу, что неудобно - нужен мок базы данных
+  test.skip(`status code should be ${HttpCode.OK}, response should be the same as request object`, async () => {
+    const res = await request(app)
+      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
+      .send(mockArticle);
+
+    expect(res.statusCode).toBe(HttpCode.OK);
+    expect(res.body).toStrictEqual(mockArticle);
+  });
+});
+
+describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   const mockArticle = {
     json: {
       [`title`]: `text`,
@@ -167,59 +187,42 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
       [`picture`]: `forest`,
     }
   };
-  // TODO нужен мок базы данных
-  test.skip(`status code should be ${HttpCode.OK}`, async () => {
-    const res = await request(app)
-      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
-      .send(mockArticle);
 
-    expect(res.statusCode).toBe(HttpCode.OK);
-  });
-  // TODO нужен мок базы данных
-  test.skip(`response should be the same as request object`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
     const res = await request(app)
-      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
-      .send(mockArticle);
-
-    expect(res.body).toStrictEqual(mockArticle);
-  });
-});
-
-describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
-  const mockArticle = {title: `text`, createdDate: `2020-03-10 06:35:58`};
-  // TODO нужен мок базы данных
-  test.skip(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
-    const res = await request(app)
-      .put(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
+      .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
       .send(mockArticle);
 
     expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
-  // TODO нужен мок базы данных
-  test.skip(`response should be equal to '${Empty.ARTICLE}'`, async () => {
+
+  test(`response should be equal to '${Empty.ARTICLE}'`, async () => {
     const res = await request(app)
-      .put(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
+      .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
       .send(mockArticle);
 
     expect(res.body).toStrictEqual(Empty.ARTICLE);
   });
 });
 
-describe(`When PUT '/${PathName.ARTICLES}/:ID/comments'`, () => {
-  const mockComment = {id: `id01`, text: `some comment text`};
+describe(`When POST '/${PathName.ARTICLES}/:ID/comments'`, () => {
+  const mockComment = {
+    json: {text: `some comment text`}
+  };
 
-  test(`if ID is correct status code should be 200 and response should be the same as request object`, async () => {
+  // TODO результат теста пишется в базу, что неудобно - нужен мок базы данных
+  test.skip(`if ID is correct, status code should be 200 and response should be the same as request object`, async () => {
     const res = await request(app)
-      .put(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`)
+      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`)
       .send(mockComment);
 
     expect(res.statusCode).toBe(HttpCode.OK);
     expect(res.body).toStrictEqual(mockComment);
   });
 
-  test(`if ID is wrong status code should be 400 and response should be equal to '${Empty.COMMENT}'`, async () => {
+  test(`if ID is wrong, status code should be 400 and response should be equal to '${Empty.COMMENT}'`, async () => {
     const res = await request(app)
-      .put(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments`)
+      .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments`)
       .send(mockComment);
 
     expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);

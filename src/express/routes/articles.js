@@ -9,6 +9,7 @@ const {
   renderNewTicketPage,
   postFormDataToService,
   postEditedArticleToService,
+  postCommentToService,
 } = require(`./render.js`);
 
 const articlesRouter = new Router();
@@ -41,6 +42,11 @@ articlesRouter.get(
 articlesRouter.post(
     `/:articleId`,
     (req, res) => postEditedArticleToService(req, res)
+);
+
+articlesRouter.post(
+    `/:articleId/comments`,
+    (req, res) => postCommentToService(req, res)
 );
 
 module.exports = articlesRouter;

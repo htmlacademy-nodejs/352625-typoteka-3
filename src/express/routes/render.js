@@ -13,6 +13,7 @@ const {
   getFreshItems,
   getFreshComments,
   getMyComments,
+  postComment,
 } = require(`./../axios.js`);
 
 const {getHumanDate} = require(`./../utils.js`);
@@ -236,6 +237,24 @@ const postEditedArticleToService = (req, res) => {
   }
 };
 
+const postCommentToService = (req, res) => {
+  try {
+    const articleId = parseInt(req.params.articleId, 10);
+
+    postComment(req.body, articleId);
+
+    // TODO редирект не обновляет обращение к базе данных - чтобы увидеть новый коммент приходится обновлять страницу вручную
+    res.redirect(`/articles/${articleId}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+
+    res.redirect(`/articles/${req.params.articleId}`);
+
+  }
+};
+
 module.exports = {
   render404Page,
   render500Page,
@@ -249,4 +268,5 @@ module.exports = {
   renderSearchPage,
   postFormDataToService,
   postEditedArticleToService,
+  postCommentToService,
 };
