@@ -7,7 +7,7 @@ const {
   renderTicketPage,
   renderTicketEditPage,
   renderNewTicketPage,
-  postFormDataToService,
+  postNewArticleToService,
   postEditedArticleToService,
   postCommentToService,
 } = require(`./render.js`);
@@ -21,7 +21,7 @@ articlesRouter.get(
 
 articlesRouter.post(
     `/add`,
-    (req, res) => postFormDataToService(req, res)
+    (req, res) => postNewArticleToService(req, res)
 );
 
 articlesRouter.get(
@@ -39,6 +39,7 @@ articlesRouter.get(
     (req, res) => renderTicketPage(req, res)
 );
 
+// TODO не получилось реализвать редактирование поста через метод PUT
 articlesRouter.post(
     `/:articleId`,
     (req, res) => postEditedArticleToService(req, res)

@@ -14,6 +14,7 @@ const {
   getFreshComments,
   getMyComments,
   postComment,
+  deleteComment,
 } = require(`./../axios.js`);
 
 const {getHumanDate} = require(`./../utils.js`);
@@ -207,7 +208,7 @@ const renderSearchPage = async (req, res) => {
   }
 };
 
-const postFormDataToService = (req, res) => {
+const postNewArticleToService = (req, res) => {
   try {
     postArticle(req.body);
 
@@ -255,6 +256,23 @@ const postCommentToService = (req, res) => {
   }
 };
 
+const deleteCommentFormService = (req, res) => {
+  try {
+    const commentId = parseInt(req.params.commentId, 10);
+
+    logger.debug(`Удаляемый коммент: ${commentId}`);
+    deleteComment(commentId);
+
+    res.redirect(`/my/comments/`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+    res.redirect(`/my/comments/`);
+
+  }
+};
+
 module.exports = {
   render404Page,
   render500Page,
@@ -266,7 +284,8 @@ module.exports = {
   renderMyTicketsPage,
   renderCommentsPage,
   renderSearchPage,
-  postFormDataToService,
+  postNewArticleToService,
   postEditedArticleToService,
   postCommentToService,
+  deleteCommentFormService,
 };

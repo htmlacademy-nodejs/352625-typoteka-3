@@ -148,6 +148,7 @@ articlesRouter.post(`/`, async (req, res) => {
   }
 });
 
+// TODO не получилось реализвать редактирование поста через метод PUT
 articlesRouter.post(`/:articleId`, async (req, res) => {
   try {
     let data = null;

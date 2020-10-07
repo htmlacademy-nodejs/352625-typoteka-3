@@ -28,7 +28,7 @@ const getFreshComments = async (count = Comments.FRESH) => {
 
 const getCommentsByUserId = async (userId) => {
   return await db.Comment.findAll({
-    attributes: [`created_date`],
+    attributes: [`id`, `created_date`],
     include: [{
       model: db.Author,
       as: `author`,

@@ -8,6 +8,7 @@ const {Empty} = require(`./constants.js`);
 const {getLogger} = require(`./../logger.js`);
 
 const {getFreshComments, getCommentsByUserId} = require(`./utils/comments.js`);
+const {getComment, deleteComment} = require(`./utils/comment.js`);
 
 const logger = getLogger();
 
@@ -49,5 +50,26 @@ commentsRouter.get(`/byUser/:id`, async (req, res) => {
   }
 });
 
+commentsRouter.post(`/:commentId`, async (req, res) => {
+  try {
+    let comment = null;
+    const commentId = parseInt(req.params.articleId, 10);
+
+    if (commentId) {
+      comment = await getComment(commentId);
+    }
+
+    if (comment) {
+      deleteComment(req.params.commentId);
+      res.status(HttpCode.OK).send(`Comment is deleted`);
+    } else {
+      res.status(HttpCode.BAD_REQUEST).send(`Comment doesn't exist`);
+    }
+
+  } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.COMMENTS);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
 
 module.exports = commentsRouter;

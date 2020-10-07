@@ -14,6 +14,16 @@ const addComment = async (data, articleId, authorId) => {
   });
 };
 
-const deleteComment = () => {};
+const getComment = async (commentId) => {
+  return await db.Comment.findByPk(commentId);
+};
 
-module.exports = {addComment, deleteComment};
+const deleteComment = async (commentId) => {
+  return await db.Comment.destroy({
+    where: {
+      id: commentId
+    }
+  });
+};
+
+module.exports = {addComment, getComment, deleteComment};

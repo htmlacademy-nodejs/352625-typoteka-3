@@ -62,3 +62,18 @@ describe(`When GET '/${PathName.COMMENTS}/byUser/${User.WRONG_ID}'`, () => {
     expect(res.body).toStrictEqual(result);
   });
 });
+
+describe(`When POST '/${PathName.COMMENTS}/${User.RIGHT_ID}'`, () => {
+  // TODO результат теста стирает коммент из базы, что неудобно - нужен мок базы данных
+  test.skip(`status code should be ${HttpCode.OK}`, async () => {
+    const res = await request(app).post(`/${PathName.COMMENTS}/${User.RIGHT_ID}`);
+    expect(res.statusCode).toBe(HttpCode.OK);
+  });
+});
+
+describe(`When POST '/${PathName.COMMENTS}/${User.WRONG_ID}'`, () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+    const res = await request(app).post(`/${PathName.COMMENTS}/${User.WRONG_ID}`);
+    expect(res.statusCode).toBe(HttpCode.BAD_REQUEST);
+  });
+});

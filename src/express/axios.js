@@ -11,6 +11,7 @@ const getArticle = async (url) => (await axios.get(encodeURI(`${UriApi.ARTICLES}
 
 const postArticle = (data) => axios.post(UriApi.ARTICLES, {json: data});
 
+// TODO не получилось реализвать редактирование поста через метод PUT
 const editArticle = (data, id) => axios.post(`${UriApi.ARTICLES}/${id}`, {json: data});
 
 const getSearch = async (search) => (await axios.get(encodeURI(`${UriApi.SEARCH}${search}`))).data;
@@ -31,6 +32,9 @@ const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byUser/
 
 const postComment = (data, articleId) => axios.post(`${UriApi.ARTICLES}/${articleId}/comments`, {json: data});
 
+// TODO не получилось реализвать удаление коммента через метод DELETE
+const deleteComment = (commentId) => axios.post(`${UriApi.COMMENTS}/${commentId}`);
+
 module.exports = {
   getArticles,
   getMyArticles,
@@ -46,4 +50,5 @@ module.exports = {
   getFreshComments,
   getMyComments,
   postComment,
+  deleteComment,
 };
