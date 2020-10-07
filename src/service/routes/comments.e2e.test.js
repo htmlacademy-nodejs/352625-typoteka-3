@@ -9,7 +9,7 @@ const {HttpCode} = require(`./../cli/constants.js`);
 
 const User = {
   RIGHT_ID: 1,
-  WRONG_ID: 1234567809
+  WRONG_ID: `sdmf`
 };
 
 describe(`When GET '/${PathName.COMMENTS}/fresh'`, () => {

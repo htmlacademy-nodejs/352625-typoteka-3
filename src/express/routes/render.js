@@ -256,11 +256,10 @@ const postCommentToService = (req, res) => {
   }
 };
 
-const deleteCommentFormService = (req, res) => {
+const deleteCommentFromService = (req, res) => {
   try {
     const commentId = parseInt(req.params.commentId, 10);
 
-    logger.debug(`Удаляемый коммент: ${commentId}`);
     deleteComment(commentId);
 
     res.redirect(`/my/comments/`);
@@ -287,5 +286,5 @@ module.exports = {
   postNewArticleToService,
   postEditedArticleToService,
   postCommentToService,
-  deleteCommentFormService,
+  deleteCommentFromService,
 };

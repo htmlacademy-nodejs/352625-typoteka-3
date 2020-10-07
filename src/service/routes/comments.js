@@ -35,13 +35,19 @@ commentsRouter.get(`/fresh`, async (req, res) => {
 
 commentsRouter.get(`/byUser/:id`, async (req, res) => {
   try {
-    const data = await getCommentsByUserId(req.params.id);
+    let data = null;
+    const commentId = parseInt(req.params.id, 10);
 
-    if (!data || data.length === 0) {
-      res.status(HttpCode.BAD_REQUEST).json(Empty.COMMENTS);
-    } else {
-      res.json(data);
+    if (commentId) {
+      data = await getCommentsByUserId(commentId);
     }
+
+    if (data) {
+      res.json(data);
+    } else {
+      res.status(HttpCode.BAD_REQUEST).json(Empty.COMMENTS);
+    }
+
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -50,17 +56,18 @@ commentsRouter.get(`/byUser/:id`, async (req, res) => {
   }
 });
 
+// TODO не получилось реализвать удаление коммента через метод DELETE
 commentsRouter.post(`/:commentId`, async (req, res) => {
   try {
     let comment = null;
-    const commentId = parseInt(req.params.articleId, 10);
+    const commentId = parseInt(req.params.commentId, 10);
 
     if (commentId) {
       comment = await getComment(commentId);
     }
 
     if (comment) {
-      deleteComment(req.params.commentId);
+      deleteComment(commentId);
       res.status(HttpCode.OK).send(`Comment is deleted`);
     } else {
       res.status(HttpCode.BAD_REQUEST).send(`Comment doesn't exist`);
