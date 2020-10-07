@@ -1,10 +1,10 @@
 'use strict';
 
-const {Sequelize, Op} = require(`sequelize`);
+const {Sequelize} = require(`sequelize`);
 
 require(`dotenv`).config();
 
-const {getLogger} = require(`./../src/service/logger.js`);
+const {getLogger} = require(`./../../../src/service/logger.js`);
 
 const logger = getLogger();
 
@@ -15,7 +15,7 @@ const {
   articles,
   comments,
   categories,
-  article_category
+  articleCategory
 } = require(`./mocks.js`);
 
 const {
@@ -24,13 +24,13 @@ const {
 } = require(`./utils.js`);
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
-  }
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST,
+      dialect: process.env.DB_DIALECT,
+    }
 );
 
 const Avatar = require(`./models/avatar.js`)(sequelize);
@@ -96,10 +96,10 @@ const initArticlesCategories = async (list) => {
   const articlesIds = getArticlesIds(list);
 
   for (const id of articlesIds) {
-    const categories = getCategories(list, id);
+    const categoriesList = getCategories(list, id);
     const article = await Article.findByPk(id);
 
-    await article.addCategories(categories);
+    await article.addCategories(categoriesList);
   }
 };
 
@@ -114,7 +114,7 @@ const initDb = async () => {
   await Comment.bulkCreate(comments);
   await Category.bulkCreate(categories);
 
-  await initArticlesCategories(article_category);
+  await initArticlesCategories(articleCategory);
   logger.info(`The database is filled with mocks.`);
 };
 

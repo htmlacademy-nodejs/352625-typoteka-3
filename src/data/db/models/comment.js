@@ -3,19 +3,19 @@
 const {Model, DataTypes} = require(`sequelize`);
 
 module.exports = (sequelize) => {
-  class Comment extends Model{}
+  class Comment extends Model {}
   Comment.init({
-    id: {
+    [`id`]: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
-    text: {
+    [`text`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    created_date: {
+    [`created_date`]: {
       type: DataTypes.DATE,
       allowNull: false,
     },

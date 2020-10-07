@@ -1,7 +1,7 @@
 'use strict';
 
 const moment = require(`moment`);
-const {db} = require(`./../../../../db/db.js`);
+const {db} = require(`./../../../data/db/db.js`);
 
 const addComment = async (data, articleId, authorId) => {
   const result = data.json;

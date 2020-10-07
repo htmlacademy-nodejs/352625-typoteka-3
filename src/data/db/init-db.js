@@ -2,7 +2,7 @@
 
 const {sequelize, initDb} = require(`./db.js`);
 
-(async() => {
+(async () => {
   await initDb();
   await sequelize.close();
 })();

@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {db} = require(`./../../../db/db.js`);
+const {db} = require(`./../../data/db/db.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./../routes/constants.js`);
 const {getLogger} = require(`./../logger.js`);

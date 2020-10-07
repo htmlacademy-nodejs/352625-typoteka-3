@@ -3,31 +3,31 @@
 const {Model, DataTypes} = require(`sequelize`);
 
 module.exports = (sequelize) => {
-  class Article extends Model{}
+  class Article extends Model {}
   Article.init({
-    id: {
+    [`id`]: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
-    title: {
+    [`title`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    announce: {
+    [`announce`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    full_text: {
+    [`full_text`]: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    picture: {
+    [`picture`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    created_date: {
+    [`created_date`]: {
       type: DataTypes.DATE,
       allowNull: false,
     },

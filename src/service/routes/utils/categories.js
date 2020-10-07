@@ -1,6 +1,6 @@
 'use strict';
 
-const {db} = require(`./../../../../db/db.js`);
+const {db} = require(`./../../../data/db/db.js`);
 
 const getCategories = async () => {
   return await db.Category.findAll({

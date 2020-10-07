@@ -3,15 +3,15 @@
 const {Model, DataTypes} = require(`sequelize`);
 
 module.exports = (sequelize) => {
-  class Category extends Model{}
+  class Category extends Model {}
   Category.init({
-    id: {
+    [`id`]: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
-    name: {
+    [`name`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -2,7 +2,7 @@
 
 const request = require(`supertest`);
 
-const {db} = require(`./../../../db/db.js`);
+const {db} = require(`./../../data/db/db.js`);
 const {app} = require(`./../cli/server.js`);
 const {PathName, Empty, SEARCH_PARAM} = require(`./../routes/constants.js`);
 const {HttpCode} = require(`./../cli/constants.js`);

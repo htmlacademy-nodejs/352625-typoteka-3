@@ -1,6 +1,6 @@
 'use strict';
 
-const {db, sequelize} = require(`./../../../../db/db.js`);
+const {db, sequelize} = require(`./../../../data/db/db.js`);
 
 const {Items} = require(`./../constants.js`);
 

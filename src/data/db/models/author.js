@@ -3,19 +3,27 @@
 const {Model, DataTypes} = require(`sequelize`);
 
 module.exports = (sequelize) => {
-  class Avatar extends Model{}
-  Avatar.init({
-    id: {
+  class Author extends Model {}
+  Author.init({
+    [`id`]: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
     },
-    regular: {
+    [`firstname`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    small: {
+    [`lastname`]: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    [`email`]: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    [`password`]: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -25,5 +33,5 @@ module.exports = (sequelize) => {
     underscored: true,
   });
 
-  return Avatar;
+  return Author;
 };
