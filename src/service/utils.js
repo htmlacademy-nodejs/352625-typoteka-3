@@ -26,7 +26,7 @@ const shuffle = (someArray) => {
 
 const makeList = (text) => text
   .replace(/\r?\n/g, ` `)
-  .split(`. `)
+  .split(`; `)
   .slice(0, -1);
 
 const getFileData = async (path) => {
