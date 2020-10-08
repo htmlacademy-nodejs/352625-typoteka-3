@@ -1,6 +1,6 @@
 'use strict';
 
 const getCategories = (categories) => categories
-  .map((category, index) => ([index + 1, ` '${category}'`]));
+  .map((category) => ({[`name`]: category}));
 
 module.exports = getCategories;

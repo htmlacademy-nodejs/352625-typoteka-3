@@ -11,7 +11,8 @@
     "start::debug": "LOG_LEVEL=debug nodemon ./src/service/service.js --server | ./node_modules/.bin/pino-pretty",
     "start-front-server": "nodemon ./src/express/index.js",
     "start-front-server::debug": "LOG_LEVEL=debug nodemon ./src/express/index.js | ./node_modules/.bin/pino-pretty",
-    "db-connect": "node ./src/service/service.js --db-connect | ./node_modules/.bin/pino-pretty"
+    "db-connect": "node ./src/service/service.js --db-connect | ./node_modules/.bin/pino-pretty",
+    "filldb": "node ./src/service/service.js --filldb | ./node_modules/.bin/pino-pretty"
   },
   "repository": {
     "type": "git",

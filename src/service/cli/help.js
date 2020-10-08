@@ -12,9 +12,8 @@ const message = `
     Команды:
     ${CommandsNames.VERSION}             выводит номер версии
     ${CommandsNames.HELP}                печатает этот текст
-    ${CommandsNames.GENERATE} <count>    формирует файл mocks.json
     ${CommandsNames.SERVER} <port>       запускает dev-сервер
-    ${CommandsNames.FILL} <count>        формирует файл fill-db-test.sql с моковыми данными
+    ${CommandsNames.FILL_DB} <count>     инициализирует и наполняет базу 'typoteka' моковыми данными
 `;
 
 module.exports = {

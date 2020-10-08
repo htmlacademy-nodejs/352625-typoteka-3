@@ -8,21 +8,6 @@ const {getLogger} = require(`./../../../src/service/logger.js`);
 
 const logger = getLogger();
 
-const {
-  avatars,
-  authors,
-  auths,
-  articles,
-  comments,
-  categories,
-  articleCategory
-} = require(`./mocks.js`);
-
-const {
-  getArticlesIds,
-  getCategories,
-} = require(`./utils.js`);
-
 const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
@@ -39,6 +24,7 @@ const Auth = require(`./models/auth.js`)(sequelize);
 const Article = require(`./models/article.js`)(sequelize);
 const Comment = require(`./models/comment.js`)(sequelize);
 const Category = require(`./models/category.js`)(sequelize);
+const ArticleCategory = require(`./models/article-category.js`)(sequelize);
 
 Author.belongsTo(Avatar, {
   foreignKey: `avatar_id`,
@@ -71,7 +57,7 @@ Article.hasMany(Comment, {
 Article.belongsToMany(Category, {
   as: `categories`,
   foreignKey: `article_id`,
-  through: `article_category`,
+  through: `ArticleCategory`,
   timestamps: false,
 });
 
@@ -88,33 +74,23 @@ Comment.belongsTo(Article, {
 Category.belongsToMany(Article, {
   as: `articles`,
   foreignKey: `category_id`,
-  through: `article_category`,
+  through: `ArticleCategory`,
   timestamps: false,
 });
 
-const initArticlesCategories = async (list) => {
-  const articlesIds = getArticlesIds(list);
-
-  for (const id of articlesIds) {
-    const categoriesList = getCategories(list, id);
-    const article = await Article.findByPk(id);
-
-    await article.addCategories(categoriesList);
-  }
-};
-
-const initDb = async () => {
+const initDb = async (content) => {
   await sequelize.sync({force: true}); // TODO: delete {force: true} in production
   logger.info(`The database structure is created.`);
 
-  await Avatar.bulkCreate(avatars);
-  await Author.bulkCreate(authors);
-  await Auth.bulkCreate(auths);
-  await Article.bulkCreate(articles);
-  await Comment.bulkCreate(comments);
-  await Category.bulkCreate(categories);
+  await Avatar.bulkCreate(content.avatars);
+  await Author.bulkCreate(content.authors);
+  await Auth.bulkCreate(content.auths);
+  await Article.bulkCreate(content.articles);
+  await Comment.bulkCreate(content.comments);
+  await Category.bulkCreate(content.categories);
+  await ArticleCategory.bulkCreate(content.articlesCategories);
 
-  await initArticlesCategories(articleCategory);
+  // await initArticlesCategories(content.articlesCategories);
   logger.info(`The database is filled with mocks.`);
 };
 

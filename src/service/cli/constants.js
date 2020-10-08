@@ -1,12 +1,8 @@
 'use strict';
 
-const DEFAULT_COUNT = 1;
+const DEFAULT_COUNT = 10;
 
 const MAX_COUNT = 1000;
-
-const FILE_NAME = `mocks.json`;
-
-const FILE_NAME_FILL = `fill-db.sql`;
 
 const CommandsNames = {
   VERSION: `--version`,
@@ -15,6 +11,7 @@ const CommandsNames = {
   SERVER: `--server`,
   FILL: `--fill`,
   DB_CONNECT: `--db-connect`,
+  FILL_DB: `--filldb`,
 };
 
 const DEFAULT_COMMAND = CommandsNames.HELP;
@@ -31,13 +28,13 @@ const Time = {
   MAX: 0,
 };
 
-const FILE_SENTENCES_PATH = `./src/data/sentences.txt`;
-const FILE_CATEGORIES_PATH = `./src/data/categories.txt`;
-const FILE_TITLES_PATH = `./src/data/titles.txt`;
-const FILE_COMMENTS_PATH = `./src/data/comments.txt`;
-const FILE_USERS_PATH = `./src/data/users.txt`;
-const FILE_PICTURES_PATH = `./src/data/pictures.txt`;
-const DB_PATH = `./db/sql/`;
+const FILE_SENTENCES_PATH = `./src/data/initial/sentences.txt`;
+const FILE_CATEGORIES_PATH = `./src/data/initial/categories.txt`;
+const FILE_TITLES_PATH = `./src/data/initial/titles.txt`;
+const FILE_COMMENTS_PATH = `./src/data/initial/comments.txt`;
+const FILE_USERS_PATH = `./src/data/initial/users.txt`;
+const FILE_PICTURES_PATH = `./src/data/initial/pictures.txt`;
+const DB_PATH = `./src/data/`;
 
 const DEFAULT_API_PORT = 3000;
 const URL_API = `http://localhost:${DEFAULT_API_PORT}`;
@@ -77,8 +74,6 @@ const Category = {
 module.exports = {
   DEFAULT_COUNT,
   MAX_COUNT,
-  FILE_NAME,
-  FILE_NAME_FILL,
   DEFAULT_COMMAND,
   USER_ARGV_INDEX,
   ExitCode,

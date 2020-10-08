@@ -4,14 +4,13 @@ const nanoid = require(`nanoid`);
 
 const {PASSWORD_LENGTH} = require(`./constants.js`);
 
-const {getUniqueItem} = require(`./utils.js`);
+const {getUniqueItem} = require(`./../utils.js`);
 
 const getAuthors = (users, avatars) => {
-  const avatarIds = avatars.map((item) => item[0]);
+  const avatarIds = avatars.map((item, index) => index + 1);
 
   return users
-    .map((user, index) => {
-      const id = index + 1;
+    .map((user) => {
       const [name, emailPrefix] = user.split(`, `);
       const [firstName, lastName] = name.split(` `);
 
@@ -19,14 +18,13 @@ const getAuthors = (users, avatars) => {
       const password = nanoid(PASSWORD_LENGTH);
       const avatarId = getUniqueItem(avatarIds);
 
-      return [
-        id,
-        ` '${firstName}'`,
-        ` '${lastName}'`,
-        ` '${email}'`,
-        ` '${password}'`,
-        ` ${avatarId}`,
-      ];
+      return {
+        [`firstname`]: firstName,
+        [`lastname`]: lastName,
+        [`email`]: email,
+        [`password`]: password,
+        [`avatar_id`]: avatarId,
+      };
     });
 };
 

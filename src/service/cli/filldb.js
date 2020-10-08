@@ -2,10 +2,11 @@
 
 const chalk = require(`chalk`);
 
+const {sequelize, initDb} = require(`./../../data/db/db.js`);
+
 const {
   DEFAULT_COUNT,
   MAX_COUNT,
-  FILE_NAME_FILL,
   CommandsNames,
   FILE_SENTENCES_PATH,
   FILE_TITLES_PATH,
@@ -13,19 +14,26 @@ const {
   FILE_USERS_PATH,
   FILE_COMMENTS_PATH,
   FILE_CATEGORIES_PATH,
-  DB_PATH,
   ExitCode,
 } = require(`./constants.js`);
 
-const getSqlContent = require(`./../fill-db-tools`);
-
 const {
-  getFileData,
-  writePosts,
-} = require(`./../utils.js`);
+  AUTH_USER_ID,
+} = require(`./../filldb-tools/constants.js`);
 
-const generateContent = async (count) => {
-  const [sentences, titles, pictures, users, comments, categories] = await Promise.all([
+const getContent = require(`./../filldb-tools`);
+
+const {getFileData} = require(`./../utils.js`);
+
+const generateContent = async (count, authUserId) => {
+  const [
+    sentences,
+    titles,
+    pictures,
+    users,
+    comments,
+    categories
+  ] = await Promise.all([
     getFileData(FILE_SENTENCES_PATH),
     getFileData(FILE_TITLES_PATH),
     getFileData(FILE_PICTURES_PATH),
@@ -34,12 +42,20 @@ const generateContent = async (count) => {
     getFileData(FILE_CATEGORIES_PATH)
   ]);
 
-  const content = getSqlContent(count, sentences, titles, pictures, users, comments, categories);
-  writePosts(`${DB_PATH}${FILE_NAME_FILL}`, content);
+  return getContent(
+      count,
+      users,
+      authUserId,
+      sentences,
+      titles,
+      pictures,
+      comments,
+      categories
+  );
 };
 
 module.exports = {
-  name: CommandsNames.FILL,
+  name: CommandsNames.FILL_DB,
   run(args) {
     const [count] = args;
     const postsCount = Number.parseInt(count, 10) || DEFAULT_COUNT;
@@ -49,6 +65,11 @@ module.exports = {
       process.exit(ExitCode.FAILURE);
     }
 
-    generateContent(postsCount);
+    (async () => {
+      const content = await generateContent(postsCount, AUTH_USER_ID);
+      await initDb(content);
+      await sequelize.close();
+    })();
+
   }
 };
