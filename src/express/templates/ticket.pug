@@ -39,7 +39,7 @@ block content
             if auth.status
               form(action=`/articles/${article.id}/comments` method="POST")
                 .comments__avatar.avatar
-                  img(src=`/img/${auth.avatar.regular}.png` alt="аватар пользователя")
+                  img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
                 label
                   textarea(rows="1" name="text" placeholder="Присоединиться к обсуждению")
                 button.comments__button.button.button--colored(type="submit") Опубликовать

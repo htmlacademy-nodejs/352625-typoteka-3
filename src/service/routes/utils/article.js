@@ -71,7 +71,7 @@ const getArticle = async (articleId) => {
         include: [{
           model: db.Avatar,
           attributes: [`regular`, `small`],
-          as: `avatar`
+          as: `avatar`,
         }]
       }]
     }],

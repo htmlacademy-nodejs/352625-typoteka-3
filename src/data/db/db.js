@@ -26,8 +26,8 @@ const Comment = require(`./models/comment.js`)(sequelize);
 const Category = require(`./models/category.js`)(sequelize);
 const ArticleCategory = require(`./models/article-category.js`)(sequelize);
 
-Author.belongsTo(Avatar, {
-  foreignKey: `avatar_id`,
+Author.hasOne(Avatar, {
+  foreignKey: `author_id`,
   as: `avatar`,
 });
 
@@ -82,15 +82,14 @@ const initDb = async (content) => {
   await sequelize.sync({force: true}); // TODO: delete {force: true} in production
   logger.info(`The database structure is created.`);
 
-  await Avatar.bulkCreate(content.avatars);
   await Author.bulkCreate(content.authors);
+  await Avatar.bulkCreate(content.avatars);
   await Auth.bulkCreate(content.auths);
   await Article.bulkCreate(content.articles);
   await Comment.bulkCreate(content.comments);
   await Category.bulkCreate(content.categories);
   await ArticleCategory.bulkCreate(content.articlesCategories);
 
-  // await initArticlesCategories(content.articlesCategories);
   logger.info(`The database is filled with mocks.`);
 };
 

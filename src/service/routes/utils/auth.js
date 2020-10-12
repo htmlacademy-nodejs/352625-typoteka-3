@@ -7,30 +7,28 @@ const getAuth = async () => {
     where: {
       [`is_auth`]: true
     },
-    include: [`user`],
+    include: {
+      model: db.Author,
+      as: `user`,
+      attributes: [`id`, `firstname`, `lastname`],
+
+      include: {
+        model: db.Avatar,
+        as: `avatar`,
+        attributes: [`regular`, `small`],
+      }
+    }
   });
 
-  let result;
+  let result = {
+    status: false,
+    user: null,
+  };
 
-  if (!authData) {
-
-    result = {
-      status: false,
-      user: null,
-      avatar: null,
-    };
-
-  } else {
-    const userAvatar = await db.Avatar.findOne({
-      where: {
-        [`id`]: authData.user[`avatar_id`]
-      }
-    });
-
+  if (authData) {
     result = {
       status: authData[`is_auth`],
       user: authData[`user`],
-      avatar: userAvatar,
     };
   }
 
