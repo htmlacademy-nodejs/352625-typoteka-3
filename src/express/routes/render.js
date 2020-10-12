@@ -209,9 +209,9 @@ const renderSearchPage = async (req, res) => {
   }
 };
 
-const postNewArticleToService = (req, res) => {
+const postNewArticleToService = async (req, res) => {
   try {
-    postArticle(req.body);
+    await postArticle(req.body);
 
     res.redirect(`/my`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -223,11 +223,11 @@ const postNewArticleToService = (req, res) => {
   }
 };
 
-const postEditedArticleToService = (req, res) => {
+const postEditedArticleToService = async (req, res) => {
   try {
     const articleId = parseInt(req.params.articleId, 10);
 
-    editArticle(req.body, articleId);
+    await editArticle(req.body, articleId);
 
     res.redirect(`/articles/${articleId}`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -239,13 +239,12 @@ const postEditedArticleToService = (req, res) => {
   }
 };
 
-const postCommentToService = (req, res) => {
+const postCommentToService = async (req, res) => {
   try {
     const articleId = parseInt(req.params.articleId, 10);
 
-    postComment(req.body, articleId);
+    await postComment(req.body, articleId);
 
-    // TODO редирект не обновляет обращение к базе данных - чтобы увидеть новый коммент приходится обновлять страницу вручную
     res.redirect(`/articles/${articleId}`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -257,11 +256,11 @@ const postCommentToService = (req, res) => {
   }
 };
 
-const deleteCommentFromService = (req, res) => {
+const deleteCommentFromService = async (req, res) => {
   try {
     const commentId = parseInt(req.params.commentId, 10);
 
-    deleteComment(commentId);
+    await deleteComment(commentId);
 
     res.redirect(`/my/comments/`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -273,11 +272,11 @@ const deleteCommentFromService = (req, res) => {
   }
 };
 
-const deleteArticleFromService = (req, res) => {
+const deleteArticleFromService = async (req, res) => {
   try {
     const articleId = parseInt(req.params.articleId, 10);
 
-    deleteArticle(articleId);
+    await deleteArticle(articleId);
 
     res.redirect(`/my/`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);

@@ -4,7 +4,7 @@ const moment = require(`moment`);
 const {db} = require(`./../../../data/db/db.js`);
 
 const getCategoriesFromServerAnswer = (data) => {
-  let categories = [];
+  const categories = [];
 
   for (const prop in data) {
     if (data.hasOwnProperty(prop) && prop.includes(`category`)) {
