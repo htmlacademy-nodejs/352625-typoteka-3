@@ -4,14 +4,16 @@ const {Sequelize} = require(`sequelize`);
 
 require(`dotenv`).config();
 
-const initModels = require(`./models`);
+const initModels = require(`../models`);
 
-const {getLogger} = require(`./../../../src/service/logger.js`);
+const {getLogger} = require(`./../../../service/logger.js`);
 
 const logger = getLogger();
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME,
+const FAKE_DB_NAME = `fake_typoteka`;
+
+const fakeSequelize = new Sequelize(
+    FAKE_DB_NAME,
     process.env.DB_USER,
     process.env.DB_PASSWORD,
     {
@@ -28,11 +30,12 @@ const {
   Comment,
   Category,
   ArticleCategory,
-} = initModels(sequelize);
+} = initModels(fakeSequelize);
 
 const initDb = async (content, orm) => {
   try {
-    await orm.sync({force: true}); // TODO: delete {force: true} in production
+    // TODO если базы 'fake_typoteka' не существует, то ее нужно создать вручную, чтобы тесты заработали
+    await orm.sync({force: true});
     logger.info(`The database structure is created.`);
 
     await Author.bulkCreate(content.authors);
@@ -49,8 +52,18 @@ const initDb = async (content, orm) => {
   }
 };
 
+const dropDb = async (orm) => {
+  try {
+    await orm.drop();
+
+    logger.info(`All db tables are dropped.`);
+  } catch (error) {
+    logger.error(`Something is going wrong: ${error}`);
+  }
+};
+
 module.exports = {
-  db: {
+  fakeDb: {
     Avatar,
     Author,
     Auth,
@@ -59,5 +72,6 @@ module.exports = {
     Category,
   },
   initDb,
-  sequelize,
+  dropDb,
+  fakeSequelize,
 };

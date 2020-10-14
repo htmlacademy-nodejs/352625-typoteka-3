@@ -67,7 +67,7 @@ module.exports = {
 
     (async () => {
       const content = await generateContent(postsCount, AUTH_USER_ID);
-      await initDb(content);
+      await initDb(content, sequelize);
       await sequelize.close();
     })();
 
