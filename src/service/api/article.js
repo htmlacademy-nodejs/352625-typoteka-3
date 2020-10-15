@@ -192,7 +192,7 @@ module.exports = (app, articleService, authService, commentService) => {
 
 
   // TODO не получилось реализовать удаление поста через метод DELETE
-  route.post(`/delete/:articleId`, async (req, res) => {
+  route.delete(`/:articleId`, async (req, res) => {
     try {
       let data = null;
       const articleId = parseInt(req.params.articleId, 10);

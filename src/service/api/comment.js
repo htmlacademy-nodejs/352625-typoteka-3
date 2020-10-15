@@ -58,7 +58,6 @@ module.exports = (app, commentService) => {
     try {
       let comment = null;
       const commentId = parseInt(req.params.commentId, 10);
-      console.log(`!!! Коммент: ${commentId}`);
 
       if (commentId) {
         comment = await commentService.findOne(commentId);

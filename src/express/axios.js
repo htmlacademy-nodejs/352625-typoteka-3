@@ -35,7 +35,7 @@ const postComment = (data, articleId) => axios.post(`${UriApi.ARTICLES}/${articl
 const deleteComment = (commentId) => axios.delete(`${UriApi.COMMENTS}/${commentId}`);
 
 // TODO не получилось реализовать удаление поста через метод DELETE
-const deleteArticle = (articleId) => axios.post(`${UriApi.ARTICLES}/delete/${articleId}`);
+const deleteArticle = (articleId) => axios.delete(`${UriApi.ARTICLES}/${articleId}`);
 
 module.exports = {
   getArticles,

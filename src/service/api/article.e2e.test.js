@@ -326,14 +326,14 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments'`, () =>
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}'`, () => {
+describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}`);
+      .delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
   });
 
   test(`status code should be ${HttpCode.OK}`, () => {
@@ -342,14 +342,14 @@ describe(`When POST '/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/delete/${Article.WRONG_ID}'`, () => {
+describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.ARTICLES}/delete/${Article.WRONG_ID}`);
+      .delete(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
