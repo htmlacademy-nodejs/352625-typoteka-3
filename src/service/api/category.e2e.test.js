@@ -25,6 +25,10 @@ const createAPI = () => {
   return app;
 };
 
+beforeAll(async () => {
+  await initDb(mocks, fakeSequelize);
+});
+
 afterAll(async () => {
   await dropDb(fakeSequelize);
   await fakeSequelize.close();
@@ -38,18 +42,17 @@ describe(`When GET '/${PathName.CATEGORIES}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await categoryService.findAll();
     response = await request(app)
       .get(`/${PathName.CATEGORIES}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to categories from db`, async () => {
+  test(`response should be equal to categories from db`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -62,18 +65,17 @@ describe(`When GET '/${PathName.CATEGORIES}/${Category.RIGHT_ID}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await categoryService.findOne(Category.RIGHT_ID);
     response = await request(app)
       .get(`/${PathName.CATEGORIES}/${Category.RIGHT_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to category from db`, async () => {
+  test(`response should be equal to category from db`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -85,16 +87,15 @@ describe(`When GET '/${PathName.CATEGORIES}/${Category.WRONG_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.CATEGORIES}/${Category.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
-  test(`response should be equal to ${Empty.CATEGORY}`, async () => {
+  test(`response should be equal to ${Empty.CATEGORY}`, () => {
     expect(response.body).toStrictEqual(Empty.CATEGORY);
   });
 });

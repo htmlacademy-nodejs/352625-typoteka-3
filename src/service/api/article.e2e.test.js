@@ -34,6 +34,10 @@ const createAPI = () => {
   return app;
 };
 
+beforeAll(async () => {
+  await initDb(mocks, fakeSequelize);
+});
+
 afterAll(async () => {
   await dropDb(fakeSequelize);
   await fakeSequelize.close();
@@ -46,7 +50,6 @@ describe(`When GET '/${PathName.ARTICLES}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await dataService.findAll();
     response = await request(app)
       .get(`/${PathName.ARTICLES}`);
@@ -57,7 +60,7 @@ describe(`When GET '/${PathName.ARTICLES}'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to articles from fake database`, async () => {
+  test(`response should be equal to articles from fake database`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -70,18 +73,17 @@ describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await dataService.findAllByUserId(Author.RIGHT_ID);
     response = await request(app)
       .get(`/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to author's articles from database`, async () => {
+  test(`response should be equal to author's articles from database`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -93,16 +95,15 @@ describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
-  test(`response should be equal to '${Empty.ARTICLES}'`, async () => {
+  test(`response should be equal to '${Empty.ARTICLES}'`, () => {
     expect(response.body).toStrictEqual(Empty.ARTICLES);
   });
 });
@@ -115,18 +116,17 @@ describe(`When GET '/${PathName.ARTICLES}/mostDiscussed'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await dataService.findMostDiscussed();
     response = await request(app)
       .get(`/${PathName.ARTICLES}/mostDiscussed`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to list of most discussed articles`, async () => {
+  test(`response should be equal to list of most discussed articles`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -139,18 +139,17 @@ describe(`When GET '/${PathName.ARTICLES}/fresh'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await dataService.findFresh();
     response = await request(app)
       .get(`/${PathName.ARTICLES}/fresh`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to most fresh articles`, async () => {
+  test(`response should be equal to most fresh articles`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -163,7 +162,6 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await dataService.findOne(Article.RIGHT_ID);
     response = await request(app)
       .get(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
@@ -171,11 +169,11 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   });
 
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to mock article with id='${Article.RIGHT_ID}''`, async () => {
+  test(`response should be equal to mock article with id='${Article.RIGHT_ID}''`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -187,16 +185,15 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
-  test(`response should be equal to ${Empty.ARTICLE}`, async () => {
+  test(`response should be equal to ${Empty.ARTICLE}`, () => {
     expect(response.body).toStrictEqual(Empty.ARTICLE);
   });
 });
@@ -220,13 +217,12 @@ describe(`When POST '/${PathName.ARTICLES}'`, () => {
   };
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}`)
       .send(mockArticle);
   });
 
-  test(`status code should be ${HttpCode.OK}, response should be the same as mockArticle`, async () => {
+  test(`status code should be ${HttpCode.OK}, response should be the same as mockArticle`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.body).toStrictEqual(mockArticle);
   });
@@ -247,13 +243,12 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   };
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
       .send(mockArticle);
   });
 
-  test(`status code should be ${HttpCode.OK}, response should be the same as request object`, async () => {
+  test(`status code should be ${HttpCode.OK}, response should be the same as request object`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.body).toStrictEqual(mockArticle);
   });
@@ -274,13 +269,12 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   };
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
       .send(mockArticle);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}, response should be ${Empty.ARTICLE}`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}, response should be ${Empty.ARTICLE}`, () => {
 
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
     expect(response.body).toStrictEqual(Empty.ARTICLE);
@@ -298,13 +292,12 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments'`, () =>
   };
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`)
       .send(mockComment);
   });
 
-  test(`status code should be ${HttpCode.OK} and response should be the same as mockComment`, async () => {
+  test(`status code should be ${HttpCode.OK} and response should be the same as mockComment`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.body).toStrictEqual(mockComment);
   });
@@ -321,13 +314,12 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments'`, () =>
   };
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments`)
       .send(mockComment);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST} and response should be equal to '${Empty.COMMENT}'`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST} and response should be equal to '${Empty.COMMENT}'`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
     expect(response.body).toStrictEqual(Empty.COMMENT);
   });
@@ -340,12 +332,11 @@ describe(`When POST '/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}/delete/${Article.RIGHT_ID}`);
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 });
@@ -357,12 +348,11 @@ describe(`When POST '/${PathName.ARTICLES}/delete/${Article.WRONG_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.ARTICLES}/delete/${Article.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 });

@@ -20,6 +20,10 @@ const createAPI = () => {
   return app;
 };
 
+beforeAll(async () => {
+  await initDb(mocks, fakeSequelize);
+});
+
 afterAll(async () => {
   await dropDb(fakeSequelize);
   await fakeSequelize.close();
@@ -32,18 +36,17 @@ describe(`When GET '/${PathName.AUTH}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await authService.get();
     response = await request(app)
       .get(`/${PathName.AUTH}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should consist object with special structure`, async () => {
+  test(`response should consist object with special structure`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });

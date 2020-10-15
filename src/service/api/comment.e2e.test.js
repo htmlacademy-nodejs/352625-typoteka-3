@@ -30,6 +30,10 @@ const createAPI = () => {
   return app;
 };
 
+beforeAll(async () => {
+  await initDb(mocks, fakeSequelize);
+});
+
 afterAll(async () => {
   await dropDb(fakeSequelize);
   await fakeSequelize.close();
@@ -42,18 +46,17 @@ describe(`When GET '/${PathName.COMMENTS}/fresh'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await commentService.findFresh();
     response = await request(app)
       .get(`/${PathName.COMMENTS}/fresh`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to comments from database`, async () => {
+  test(`response should be equal to comments from database`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -66,18 +69,17 @@ describe(`When GET '/${PathName.COMMENTS}/byUserId/${User.RIGHT_ID}'`, () => {
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await commentService.findAllByUserId(User.RIGHT_ID);
     response = await request(app)
       .get(`/${PathName.COMMENTS}/byUserId/${User.RIGHT_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to comments from database`, async () => {
+  test(`response should be equal to comments from database`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -89,16 +91,15 @@ describe(`When GET '/${PathName.COMMENTS}/byUserId/${User.WRONG_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.COMMENTS}/byUserId/${User.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
-  test(`response should be equal to ${Empty.COMMENTS}`, async () => {
+  test(`response should be equal to ${Empty.COMMENTS}`, () => {
     expect(response.body).toStrictEqual(Empty.COMMENTS);
   });
 });
@@ -110,12 +111,11 @@ describe(`When POST '/${PathName.COMMENTS}/delete/${Comment.RIGHT_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.COMMENTS}/delete/${Comment.RIGHT_ID}`);
   });
 
-  test(`status code should be ${HttpCode.OK} and response.text is 'Comment is deleted'`, async () => {
+  test(`status code should be ${HttpCode.OK} and response.text is 'Comment is deleted'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.text).toBe(`Comment is deleted`);
   });
@@ -128,12 +128,11 @@ describe(`When POST '/${PathName.COMMENTS}/delete/${Comment.WRONG_ID}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .post(`/${PathName.COMMENTS}/delete/${Comment.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST} and response.text is 'Comment doesn't exist'`, async () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST} and response.text is 'Comment doesn't exist'`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
     expect(response.text).toBe(`Comment doesn't exist`);
   });

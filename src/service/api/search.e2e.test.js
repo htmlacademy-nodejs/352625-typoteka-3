@@ -26,6 +26,10 @@ const createAPI = () => {
   return app;
 };
 
+beforeAll(async () => {
+  await initDb(mocks, fakeSequelize);
+});
+
 afterAll(async () => {
   await dropDb(fakeSequelize);
   await fakeSequelize.close();
@@ -39,18 +43,17 @@ describe(`When GET '${PathName.SEARCH}${SEARCH_PARAM}${RIGHT_SEARCH_URI}'`, () =
   let result;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     const data = await searchService.findSome(RIGHT_SEARCH);
     response = await request(app)
       .get(`/${PathName.SEARCH}${SEARCH_PARAM}${RIGHT_SEARCH_URI}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`request '${SEARCH_PARAM}${RIGHT_SEARCH_URI}' should return items by ${RIGHT_SEARCH} in title`, async () => {
+  test(`request '${SEARCH_PARAM}${RIGHT_SEARCH_URI}' should return items by ${RIGHT_SEARCH} in title`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -62,16 +65,15 @@ describe(`When GET '${PathName.SEARCH}${SEARCH_PARAM}${WRONG_SEARCH_URI}'`, () =
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.SEARCH}${SEARCH_PARAM}${WRONG_SEARCH_URI}`);
   });
 
-  test(`status code should be ${HttpCode.OK}`, async () => {
+  test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`request '${SEARCH_PARAM}${WRONG_SEARCH_URI}' should return ${Empty.SEARCH}`, async () => {
+  test(`request '${SEARCH_PARAM}${WRONG_SEARCH_URI}' should return ${Empty.SEARCH}`, () => {
     expect(response.body).toStrictEqual(Empty.SEARCH);
   });
 });
@@ -83,12 +85,11 @@ describe(`When GET '${PathName.SEARCH}${SEARCH_PARAM}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.SEARCH}${SEARCH_PARAM}`);
   });
 
-  test(`blank search returns '${Empty.SEARCH}'`, async () => {
+  test(`blank search returns '${Empty.SEARCH}'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.body).toStrictEqual(Empty.SEARCH);
   });
@@ -101,12 +102,11 @@ describe(`When GET '${PathName.SEARCH}'`, () => {
   let response;
 
   beforeAll(async () => {
-    await initDb(mocks, fakeSequelize);
     response = await request(app)
       .get(`/${PathName.SEARCH}`);
   });
 
-  test(`blank search returns '${Empty.SEARCH}'`, async () => {
+  test(`blank search returns '${Empty.SEARCH}'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.body).toStrictEqual(Empty.SEARCH);
   });
