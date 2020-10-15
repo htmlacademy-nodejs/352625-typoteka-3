@@ -32,14 +32,14 @@ class CommentService {
     });
   }
 
-  async findAllByUserId(userId) {
+  async findAllByAuthor(authorId) {
     return await this._database.Comment.findAll({
       attributes: [`id`, `created_date`],
       include: [{
         model: this._database.Author,
         as: `author`,
         where: {
-          id: userId
+          id: authorId
         },
         attributes: [`firstname`, `lastname`],
 

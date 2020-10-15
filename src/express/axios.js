@@ -5,7 +5,7 @@ const {UriApi} = require(`./utils.js`);
 
 const getArticles = async () => (await axios.get(UriApi.ARTICLES)).data;
 
-const getMyArticles = async (authorId) => (await axios.get(`${UriApi.ARTICLES}/byUser/${authorId}`)).data;
+const getMyArticles = async (authorId) => (await axios.get(`${UriApi.ARTICLES}/byAuthor/${authorId}`)).data;
 
 const getArticle = async (url) => (await axios.get(encodeURI(`${UriApi.ARTICLES}/${url}`))).data;
 
@@ -28,12 +28,12 @@ const getFreshItems = async () => (await axios.get(`${UriApi.ARTICLES}/fresh`)).
 
 const getFreshComments = async () => (await axios.get(`${UriApi.COMMENTS}/fresh`)).data;
 
-const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byUser/${id}`)).data;
+const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byAuthor/${id}`)).data;
 
 const postComment = (data, articleId) => axios.post(`${UriApi.ARTICLES}/${articleId}/comments`, {json: data});
 
 // TODO не получилось реализовать удаление коммента через метод DELETE
-const deleteComment = (commentId) => axios.post(`${UriApi.COMMENTS}/${commentId}`);
+const deleteComment = (commentId) => axios.post(`${UriApi.COMMENTS}/delete/${commentId}`);
 
 // TODO не получилось реализовать удаление поста через метод DELETE
 const deleteArticle = (articleId) => axios.post(`${UriApi.ARTICLES}/delete/${articleId}`);

@@ -77,13 +77,13 @@ module.exports = (app, articleService, authService, commentService) => {
   });
 
 
-  route.get(`/byUser/:id`, async (req, res) => {
+  route.get(`/byAuthor/:id`, async (req, res) => {
     try {
       let data = null;
       const userId = parseInt(req.params.id, 10);
 
       if (userId) {
-        data = await articleService.findAllByUserId(userId);
+        data = await articleService.findAllByAuthor(userId);
       }
 
       if (data) {

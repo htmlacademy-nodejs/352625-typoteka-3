@@ -31,13 +31,13 @@ module.exports = (app, commentService) => {
   });
 
 
-  route.get(`/byUserId/:id`, async (req, res) => {
+  route.get(`/byAuthor/:id`, async (req, res) => {
     try {
       let data = null;
-      const userId = parseInt(req.params.id, 10);
+      const authorId = parseInt(req.params.id, 10);
 
-      if (userId) {
-        data = await commentService.findAllByUserId(userId);
+      if (authorId) {
+        data = await commentService.findAllByAuthor(authorId);
       }
 
       if (data) {

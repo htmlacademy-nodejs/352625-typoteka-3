@@ -66,16 +66,16 @@ describe(`When GET '/${PathName.ARTICLES}'`, () => {
 });
 
 
-describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}'`, () => {
+describe(`When GET '/${PathName.ARTICLES}/byAuthor/${Author.RIGHT_ID}'`, () => {
   const app = createAPI();
 
   let response;
   let result;
 
   beforeAll(async () => {
-    const data = await dataService.findAllByUserId(Author.RIGHT_ID);
+    const data = await dataService.findAllByAuthor(Author.RIGHT_ID);
     response = await request(app)
-      .get(`/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}`);
+      .get(`/${PathName.ARTICLES}/byAuthor/${Author.RIGHT_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
@@ -89,14 +89,14 @@ describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.RIGHT_ID}'`, () => {
 });
 
 
-describe(`When GET '/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}'`, () => {
+describe(`When GET '/${PathName.ARTICLES}/byAuthor/${Author.WRONG_ID}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .get(`/${PathName.ARTICLES}/byUser/${Author.WRONG_ID}`);
+      .get(`/${PathName.ARTICLES}/byAuthor/${Author.WRONG_ID}`);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {

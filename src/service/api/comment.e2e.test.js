@@ -62,16 +62,16 @@ describe(`When GET '/${PathName.COMMENTS}/fresh'`, () => {
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byUserId/${User.RIGHT_ID}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.RIGHT_ID}'`, () => {
   const app = createAPI();
 
   let response;
   let result;
 
   beforeAll(async () => {
-    const data = await commentService.findAllByUserId(User.RIGHT_ID);
+    const data = await commentService.findAllByAuthor(User.RIGHT_ID);
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byUserId/${User.RIGHT_ID}`);
+      .get(`/${PathName.COMMENTS}/byAuthor/${User.RIGHT_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
@@ -85,14 +85,14 @@ describe(`When GET '/${PathName.COMMENTS}/byUserId/${User.RIGHT_ID}'`, () => {
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byUserId/${User.WRONG_ID}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byUserId/${User.WRONG_ID}`);
+      .get(`/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}`);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
