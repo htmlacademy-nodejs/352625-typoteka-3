@@ -11,7 +11,6 @@ const getArticle = async (url) => (await axios.get(encodeURI(`${UriApi.ARTICLES}
 
 const postArticle = (data) => axios.post(UriApi.ARTICLES, {json: data});
 
-// TODO не получилось реализвать редактирование поста через метод PUT
 const editArticle = (data, id) => axios.put(`${UriApi.ARTICLES}/${id}`, {json: data});
 
 const getSearch = async (search) => (await axios.get(encodeURI(`${UriApi.SEARCH}${search}`))).data;

@@ -39,7 +39,6 @@ articlesRouter.get(
     (req, res) => renderTicketPage(req, res)
 );
 
-// TODO не получилось реализвать редактирование поста через метод PUT
 articlesRouter.post(
     `/edit/:articleId`,
     (req, res) => postEditedArticleToService(req, res)

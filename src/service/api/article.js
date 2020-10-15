@@ -144,7 +144,6 @@ module.exports = (app, articleService, authService, commentService) => {
   });
 
 
-  // TODO не получилось реализвать редактирование поста через метод PUT
   route.put(`/:articleId`, async (req, res) => {
     try {
       let data = null;
