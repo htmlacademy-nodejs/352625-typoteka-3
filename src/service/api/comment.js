@@ -54,11 +54,11 @@ module.exports = (app, commentService) => {
   });
 
 
-  // TODO не получилось реализвать удаление коммента через метод DELETE
-  route.post(`/delete/:commentId`, async (req, res) => {
+  route.delete(`/:commentId`, async (req, res) => {
     try {
       let comment = null;
       const commentId = parseInt(req.params.commentId, 10);
+      console.log(`!!! Коммент: ${commentId}`);
 
       if (commentId) {
         comment = await commentService.findOne(commentId);
@@ -70,6 +70,7 @@ module.exports = (app, commentService) => {
       } else {
         res.status(HttpCode.BAD_REQUEST).send(`Comment doesn't exist`);
       }
+      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
     } catch (error) {
       res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.COMMENTS);

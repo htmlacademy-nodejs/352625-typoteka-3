@@ -105,14 +105,14 @@ describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.COMMENTS}/delete/${Comment.RIGHT_ID}'`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}/${Comment.RIGHT_ID}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.COMMENTS}/delete/${Comment.RIGHT_ID}`);
+      .delete(`/${PathName.COMMENTS}/${Comment.RIGHT_ID}`);
   });
 
   test(`status code should be ${HttpCode.OK} and response.text is 'Comment is deleted'`, () => {
@@ -122,14 +122,14 @@ describe(`When POST '/${PathName.COMMENTS}/delete/${Comment.RIGHT_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.COMMENTS}/delete/${Comment.WRONG_ID}'`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}/${Comment.WRONG_ID}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.COMMENTS}/delete/${Comment.WRONG_ID}`);
+      .delete(`/${PathName.COMMENTS}/${Comment.WRONG_ID}`);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST} and response.text is 'Comment doesn't exist'`, () => {

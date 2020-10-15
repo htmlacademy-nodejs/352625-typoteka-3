@@ -32,8 +32,7 @@ const getMyComments = async (id) => (await axios.get(`${UriApi.COMMENTS}/byAutho
 
 const postComment = (data, articleId) => axios.post(`${UriApi.ARTICLES}/${articleId}/comments`, {json: data});
 
-// TODO не получилось реализовать удаление коммента через метод DELETE
-const deleteComment = (commentId) => axios.post(`${UriApi.COMMENTS}/delete/${commentId}`);
+const deleteComment = (commentId) => axios.delete(`${UriApi.COMMENTS}/${commentId}`);
 
 // TODO не получилось реализовать удаление поста через метод DELETE
 const deleteArticle = (articleId) => axios.post(`${UriApi.ARTICLES}/delete/${articleId}`);
