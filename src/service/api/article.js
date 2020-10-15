@@ -145,7 +145,7 @@ module.exports = (app, articleService, authService, commentService) => {
 
 
   // TODO не получилось реализвать редактирование поста через метод PUT
-  route.post(`/:articleId`, async (req, res) => {
+  route.put(`/:articleId`, async (req, res) => {
     try {
       let data = null;
       const articleId = parseInt(req.params.articleId, 10);
@@ -191,7 +191,6 @@ module.exports = (app, articleService, authService, commentService) => {
   });
 
 
-  // TODO не получилось реализовать удаление поста через метод DELETE
   route.delete(`/:articleId`, async (req, res) => {
     try {
       let data = null;

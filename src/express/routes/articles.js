@@ -41,7 +41,7 @@ articlesRouter.get(
 
 // TODO не получилось реализвать редактирование поста через метод PUT
 articlesRouter.post(
-    `/:articleId`,
+    `/edit/:articleId`,
     (req, res) => postEditedArticleToService(req, res)
 );
 

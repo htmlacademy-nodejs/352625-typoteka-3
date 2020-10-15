@@ -229,7 +229,7 @@ describe(`When POST '/${PathName.ARTICLES}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
+describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   const app = createAPI();
 
   let response;
@@ -244,7 +244,7 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
+      .put(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
       .send(mockArticle);
   });
 
@@ -255,7 +255,7 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
+describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   const app = createAPI();
 
   let response;
@@ -270,7 +270,7 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
+      .put(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
       .send(mockArticle);
   });
 
