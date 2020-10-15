@@ -168,18 +168,16 @@ class ArticleService {
 
   async update(formData, articleId) {
     const result = formData.json;
+    const article = await this._database.Article.findByPk(articleId);
 
-    // TODO не разобрался как обновлять категории - для Model.update метода Model.setCategories([...]) не существует;
-    return await this._database.Article.update({
-      [`title`]: result[`title`],
-      [`announce`]: result[`announce`],
-      [`full_text`]: result[`full_text`],
-      [`picture`]: result[`picture`],
-      [`created_date`]: moment(result[`created_date`], `DD.MM.YYYY`).toISOString(),
-    }, {
-      where: {id: articleId}
-    });
+    article[`title`] = result[`title`];
+    article[`announce`] = result[`announce`];
+    article[`full_text`] = result[`full_text`];
+    article[`picture`] = result[`picture`];
+    article[`created_date`] = moment(result[`created_date`], `DD.MM.YYYY`).toISOString();
+    article.setCategories(getCategoriesFromServerAnswer(result));
 
+    await article.save();
   }
 
   async delete(articleId) {

@@ -239,6 +239,8 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
       [`title`]: `Название нового заголовка`,
       [`created_date`]: `14.10.2020`,
       [`announce`]: `Исправленная аннотация поста`,
+      [`full_text`]: `Исправленный полный текст публикации`,
+      [`picture`]: `picture`,
     }
   };
 
