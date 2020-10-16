@@ -1,24 +1,14 @@
 'use strict';
 
-const {Sequelize} = require(`sequelize`);
-
 require(`dotenv`).config();
 
+const {getDbConnection} = require(`./utils.js`);
 const initModels = require(`./models`);
-
 const {getLogger} = require(`./../../../src/service/logger.js`);
 
 const logger = getLogger();
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-      host: process.env.DB_HOST,
-      dialect: process.env.DB_DIALECT,
-    }
-);
+const sequelize = getDbConnection(process.env.DB_NAME);
 
 const {
   Avatar,

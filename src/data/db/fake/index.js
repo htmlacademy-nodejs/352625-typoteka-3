@@ -1,26 +1,17 @@
 'use strict';
 
-const {Sequelize} = require(`sequelize`);
-
 require(`dotenv`).config();
 
+const {getDbConnection, createDb} = require(`../utils.js`);
 const initModels = require(`../models`);
-
 const {getLogger} = require(`./../../../service/logger.js`);
 
 const logger = getLogger();
 
 const FAKE_DB_NAME = `fake_typoteka`;
 
-const fakeSequelize = new Sequelize(
-    FAKE_DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-      host: process.env.DB_HOST,
-      dialect: process.env.DB_DIALECT,
-    }
-);
+const sequelize = getDbConnection(`postgres`);
+const fakeSequelize = getDbConnection(FAKE_DB_NAME);
 
 const {
   Avatar,
@@ -32,9 +23,12 @@ const {
   ArticleCategory,
 } = initModels(fakeSequelize);
 
+
 const initDb = async (content, orm) => {
   try {
-    // TODO если базы 'fake_typoteka' не существует, то ее нужно создать вручную, чтобы тесты заработали
+    await createDb(FAKE_DB_NAME, sequelize);
+    logger.info(`The database ${FAKE_DB_NAME} is created.`);
+
     await orm.sync({force: true});
     logger.info(`The database structure is created.`);
 

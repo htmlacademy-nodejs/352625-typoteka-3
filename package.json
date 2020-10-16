@@ -5,7 +5,7 @@
   "main": "./src/service/service.js",
   "scripts": {
     "test": "npm run eslint && npm run test::rest",
-    "test::rest": "jest",
+    "test::rest": "jest --runInBand",
     "eslint": "eslint --ext .js src/",
     "start": "nodemon ./src/service/service.js --server",
     "start::debug": "LOG_LEVEL=debug nodemon ./src/service/service.js --server | ./node_modules/.bin/pino-pretty",
