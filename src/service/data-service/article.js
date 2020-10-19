@@ -157,7 +157,7 @@ class ArticleService {
       [`announce`]: result[`announce`],
       [`full_text`]: result[`full_text`],
       [`picture`]: result[`picture`],
-      [`created_date`]: result[`created_date`],
+      [`created_date`]: moment(result[`created_date`], `DD.MM.YYYY`).toISOString(),
       [`author_id`]: authorId,
     });
 

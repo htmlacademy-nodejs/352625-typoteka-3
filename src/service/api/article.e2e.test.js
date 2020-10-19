@@ -207,7 +207,7 @@ describe(`When POST '/${PathName.ARTICLES}'`, () => {
   const mockArticle = {
     json: {
       [`title`]: `text`,
-      [`created_date`]: `2020-10-05T05:29:20.718Z`,
+      [`created_date`]: `14.10.2020`,
       [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
       [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
       [`picture`]: `forest`,
