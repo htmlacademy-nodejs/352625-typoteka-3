@@ -16,3 +16,8 @@ build/
 
 #Файл переменных окружения
 .env
+
+# Директория с загруженными изображениями
+src/express/upload/img/*.*
+
+!src/express/upload/img/.gitkeep

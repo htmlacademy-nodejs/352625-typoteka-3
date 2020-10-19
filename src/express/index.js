@@ -19,6 +19,7 @@ const myRouter = require(`./routes/my.js`);
 const errorRouter = require(`./routes/error.js`);
 
 const PUBLIC_DIR = `public`;
+const UPLOAD_DIR = `upload`;
 
 const {getLogger} = require(`./../service/logger.js`);
 
@@ -30,6 +31,7 @@ app.set(`views`, `./src/express/templates`);
 app.set(`view engine`, `pug`);
 
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
+app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
 app.use(express.urlencoded({extended: false}));
 
 app.use(`/`, homeRouter);

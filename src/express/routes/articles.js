@@ -1,15 +1,32 @@
 'use strict';
 
 const {Router} = require(`express`);
+const multer = require(`multer`);
+const path = require(`path`);
+const nanoid = require(`nanoid`);
 
 const {getHumanDate} = require(`./../utils.js`);
 const {render404Page, render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
 
+const UPLOAD_DIR = `../upload/img/`;
+const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
+
 const logger = getLogger();
 
 const articlesRouter = new Router();
+
+const storage = multer.diskStorage({
+  destination: uploadDirAbsolute,
+  filename: (req, file, cb) => {
+    const uniqueName = nanoid(10);
+    const extension = file.originalname.split(`.`).pop();
+    cb(null, `${uniqueName}.${extension}`);
+  }
+});
+
+const upload = multer({storage});
 
 articlesRouter.get(`/add`, async (req, res) => {
   try {
@@ -25,9 +42,13 @@ articlesRouter.get(`/add`, async (req, res) => {
 });
 
 
-articlesRouter.post(`/add`, async (req, res) => {
+articlesRouter.post(`/add`, upload.single(`picture`), async (req, res) => {
+  const {body, file} = req;
+  const articleData = body;
+  articleData[`picture`] = file.filename;
+
   try {
-    await api.postArticle(req.body);
+    await api.postArticle(articleData);
 
     res.redirect(`/my`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -104,11 +125,15 @@ articlesRouter.get(`/edit/:articleId`, async (req, res) => {
 });
 
 
-articlesRouter.post(`/edit/:articleId`, async (req, res) => {
+articlesRouter.post(`/edit/:articleId`, upload.single(`picture`), async (req, res) => {
+  const {body, file} = req;
+  const articleData = body;
+  articleData[`picture`] = file.filename;
+
   try {
     const articleId = parseInt(req.params.articleId, 10);
 
-    await api.editArticle(req.body, articleId);
+    await api.editArticle(articleData, articleId);
 
     res.redirect(`/articles/${articleId}`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);

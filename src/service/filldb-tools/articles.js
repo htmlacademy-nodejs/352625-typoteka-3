@@ -11,7 +11,7 @@ const getArticles = (count, sentences, titles, pictures, authors) => {
     const title = getRandomItem(titles);
     const announce = getSomeSentences(sentences, 1, 3);
     const fullText = getSomeSentences(sentences, 1, sentences.length);
-    const picture = getRandomItem(pictures);
+    const picture = `${getRandomItem(pictures)}@1x.jpg`;
     const createdDate = getDate();
     const authorId = getRandomItem(authorsIds);
 
