@@ -30,7 +30,7 @@ const Comments = {
 
 const SEARCH_PARAM = `?query=`;
 
-const SEARCH_LIMIT = 10;
+const SEARCH_LIMIT = 4;
 
 module.exports = {
   PathName,

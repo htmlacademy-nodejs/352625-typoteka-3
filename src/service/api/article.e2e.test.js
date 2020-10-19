@@ -205,15 +205,13 @@ describe(`When POST '/${PathName.ARTICLES}'`, () => {
   let response;
 
   const mockArticle = {
-    json: {
-      [`title`]: `text`,
-      [`created_date`]: `14.10.2020`,
-      [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
-      [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
-      [`picture`]: `forest`,
-      [`category-1`]: 1,
-      [`category-2`]: 2,
-    }
+    [`title`]: `text`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    [`picture`]: `forest`,
+    [`category-1`]: 1,
+    [`category-2`]: 2,
   };
 
   beforeAll(async () => {
@@ -235,13 +233,11 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
   let response;
 
   const mockArticle = {
-    json: {
-      [`title`]: `Название нового заголовка`,
-      [`created_date`]: `14.10.2020`,
-      [`announce`]: `Исправленная аннотация поста`,
-      [`full_text`]: `Исправленный полный текст публикации`,
-      [`picture`]: `picture`,
-    }
+    [`title`]: `Название нового заголовка`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Исправленная аннотация поста`,
+    [`full_text`]: `Исправленный полный текст публикации`,
+    [`picture`]: `picture`,
   };
 
   beforeAll(async () => {
@@ -263,11 +259,9 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   let response;
 
   const mockArticle = {
-    json: {
-      [`title`]: `Название нового заголовка`,
-      [`created_date`]: `14.10.2020`,
-      [`announce`]: `Исправленная аннотация поста`,
-    }
+    [`title`]: `Название нового заголовка`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Исправленная аннотация поста`,
   };
 
   beforeAll(async () => {
@@ -290,7 +284,7 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments'`, () =>
   let response;
 
   const mockComment = {
-    json: {text: `Текст нового комментария`}
+    text: `Текст нового комментария`
   };
 
   beforeAll(async () => {

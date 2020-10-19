@@ -150,32 +150,29 @@ class ArticleService {
   }
 
   async add(formData, authorId) {
-    const result = formData.json;
-
     const article = await this._database.Article.create({
-      [`title`]: result[`title`],
-      [`announce`]: result[`announce`],
-      [`full_text`]: result[`full_text`],
-      [`picture`]: result[`picture`],
-      [`created_date`]: moment(result[`created_date`], `DD.MM.YYYY`).toISOString(),
+      [`title`]: formData[`title`],
+      [`announce`]: formData[`announce`],
+      [`full_text`]: formData[`full_text`],
+      [`picture`]: formData[`picture`],
+      [`created_date`]: moment(formData[`created_date`], `DD.MM.YYYY`).toISOString(),
       [`author_id`]: authorId,
     });
 
-    article.setCategories(getCategoriesFromServerAnswer(result));
+    article.setCategories(getCategoriesFromServerAnswer(formData));
 
     return article;
   }
 
   async update(formData, articleId) {
-    const result = formData.json;
     const article = await this._database.Article.findByPk(articleId);
 
-    article[`title`] = result[`title`];
-    article[`announce`] = result[`announce`];
-    article[`full_text`] = result[`full_text`];
-    article[`picture`] = result[`picture`];
-    article[`created_date`] = moment(result[`created_date`], `DD.MM.YYYY`).toISOString();
-    article.setCategories(getCategoriesFromServerAnswer(result));
+    article[`title`] = formData[`title`];
+    article[`announce`] = formData[`announce`];
+    article[`full_text`] = formData[`full_text`];
+    article[`picture`] = formData[`picture`];
+    article[`created_date`] = moment(formData[`created_date`], `DD.MM.YYYY`).toISOString();
+    article.setCategories(getCategoriesFromServerAnswer(formData));
 
     await article.save();
   }

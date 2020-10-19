@@ -61,10 +61,8 @@ class CommentService {
   }
 
   async add(formData, articleId, authorId) {
-    const result = formData.json;
-
     return await this._database.Comment.create({
-      [`text`]: result[`text`],
+      [`text`]: formData[`text`],
       [`created_date`]: moment().toISOString(),
       [`author_id`]: authorId,
       [`article_id`]: articleId,

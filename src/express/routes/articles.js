@@ -2,51 +2,139 @@
 
 const {Router} = require(`express`);
 
-const {
-  renderCategoryPage,
-  renderTicketPage,
-  renderTicketEditPage,
-  renderNewTicketPage,
-  postNewArticleToService,
-  postEditedArticleToService,
-  postCommentToService,
-} = require(`./render.js`);
+const {getHumanDate} = require(`./../utils.js`);
+const {render404Page, render500Page} = require(`./render.js`);
+const api = require(`../api.js`).getApi();
+const {getLogger} = require(`./../../service/logger.js`);
+
+const logger = getLogger();
 
 const articlesRouter = new Router();
 
-articlesRouter.get(
-    `/add`,
-    (req, res) => renderNewTicketPage(req, res)
-);
+articlesRouter.get(`/add`, async (req, res) => {
+  try {
+    const categories = await api.getCategories();
 
-articlesRouter.post(
-    `/add`,
-    (req, res) => postNewArticleToService(req, res)
-);
+    res.render(`new-ticket`, {categories, getHumanDate});
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-articlesRouter.get(
-    `/category/:categoryId`,
-    (req, res) => renderCategoryPage(req, res)
-);
+  } catch (error) {
+    render500Page(req, res);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
 
-articlesRouter.get(
-    `/edit/:articleId`,
-    (req, res) => renderTicketEditPage(req, res)
-);
 
-articlesRouter.get(
-    `/:offerId`,
-    (req, res) => renderTicketPage(req, res)
-);
+articlesRouter.post(`/add`, async (req, res) => {
+  try {
+    await api.postArticle(req.body);
 
-articlesRouter.post(
-    `/edit/:articleId`,
-    (req, res) => postEditedArticleToService(req, res)
-);
+    res.redirect(`/my`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-articlesRouter.post(
-    `/:articleId/comments`,
-    (req, res) => postCommentToService(req, res)
-);
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+
+    res.redirect(`/articles/add`);
+  }
+});
+
+
+articlesRouter.get(`/category/:categoryId`, async (req, res) => {
+  try {
+    const [
+      auth,
+      activeCategory,
+      categories
+    ] = await Promise.all([
+      api.getAuth(),
+      api.getCategory(req.params.categoryId),
+      api.getCategories(),
+    ]);
+
+    if (!categories) {
+      render404Page(req, res);
+
+    } else {
+      res.render(`category`, {
+        auth,
+        activeCategory,
+        categories,
+        getHumanDate,
+      });
+      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+    }
+
+  } catch (error) {
+    render500Page(req, res);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
+
+
+articlesRouter.get(`/:offerId`, async (req, res) => {
+  try {
+    const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.offerId)]);
+
+    res.render(`ticket`, {
+      auth,
+      article,
+      getHumanDate,
+    });
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    render404Page(req, res);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
+
+
+articlesRouter.get(`/edit/:articleId`, async (req, res) => {
+  try {
+    const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
+
+    res.render(`ticket-edit`, {article, categories});
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    render404Page(req, res);
+    logger.error(`Error occurs: ${error}`);
+  }
+});
+
+
+articlesRouter.post(`/edit/:articleId`, async (req, res) => {
+  try {
+    const articleId = parseInt(req.params.articleId, 10);
+
+    await api.editArticle(req.body, articleId);
+
+    res.redirect(`/articles/${articleId}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+
+    res.redirect(`/articles/edit/${req.params.articleId}`);
+  }
+});
+
+
+articlesRouter.post(`/:articleId/comments`, async (req, res) => {
+  try {
+    const articleId = parseInt(req.params.articleId, 10);
+
+    await api.postComment(req.body, articleId);
+
+    res.redirect(`/articles/${articleId}`);
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+  } catch (error) {
+    logger.error(`Error occurs: ${error}`);
+
+    res.redirect(`/articles/${req.params.articleId}`);
+  }
+});
 
 module.exports = articlesRouter;
