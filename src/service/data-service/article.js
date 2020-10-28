@@ -165,12 +165,13 @@ class ArticleService {
   }
 
   async update(formData, articleId) {
+    console.log(formData);
     const article = await this._database.Article.findByPk(articleId);
 
     article[`title`] = formData[`title`];
     article[`announce`] = formData[`announce`];
     article[`full_text`] = formData[`full_text`];
-    article[`picture`] = formData[`picture`];
+    article[`picture`] = formData[`picture`] || formData[`picture_filename`];
     article[`created_date`] = moment(formData[`created_date`], `DD.MM.YYYY`).toISOString();
     article.setCategories(getCategoriesFromServerAnswer(formData));
 

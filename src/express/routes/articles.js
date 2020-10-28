@@ -128,7 +128,9 @@ articlesRouter.get(`/edit/:articleId`, async (req, res) => {
 articlesRouter.post(`/edit/:articleId`, upload.single(`picture`), async (req, res) => {
   const {body, file} = req;
   const articleData = body;
-  articleData[`picture`] = file.filename;
+  if (file) {
+    articleData[`picture`] = file.filename;
+  }
 
   try {
     const articleId = parseInt(req.params.articleId, 10);
