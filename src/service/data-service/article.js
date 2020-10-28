@@ -165,7 +165,6 @@ class ArticleService {
   }
 
   async update(formData, articleId) {
-    console.log(formData);
     const article = await this._database.Article.findByPk(articleId);
 
     article[`title`] = formData[`title`];
