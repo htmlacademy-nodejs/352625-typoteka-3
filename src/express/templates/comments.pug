@@ -5,16 +5,15 @@ block content
     section.main-page__publication.publication
       h1.publication__title Комментарии
       ul.publication__list
-        - const userComments = getCommentsByUserId(articles, auth.user.id).sort((a, b) => b.createdDate.machine - a.createdDate.machine)
-        each comment in userComments
-          - const targetArticle = getItemByCommentId(articles, comment.id)
+        each comment in myComments
           li.publication__list-item
             .publication__header
               img.publication__list-image(src=`/img/${comment.author.avatar.small}.png` width="20" height="20" alt="Аватар пользователя")
-              b.publication__list-name= comment.author.name
-              time.publication__item-time(datetime=`${comment.createdDate.datetime}`)= comment.createdDate.human
-            a.publication__item-text(href=`/articles/${targetArticle.id}`)= comment.text
-            p.publication__text-strong= targetArticle.announce
-            button.publication__button.button.button--close-item(type="button")
-              span.visually-hidden Закрыть строку списка
+              b.publication__list-name= `${comment.author.firstname} ${comment.author.lastname}`
+              time.publication__item-time(datetime=`${comment.created_date}`)= getHumanDate(comment.created_date)
+            a.publication__item-text(href=`/articles/${comment.article.id}`)= comment.article.title
+            p.publication__text-strong= comment.article.announce
+            form(action=`/my/comments/delete/${comment.id}` method=`post`)
+              button.publication__button.button.button--close-item(type="submit")
+                span.visually-hidden Закрыть строку списка
 

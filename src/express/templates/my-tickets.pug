@@ -5,11 +5,11 @@ block content
     section.main-page__notes.notes
       h1.notes__title Мои записи
       ul.notes__list
-        - const sortedArticles = auth.userArticles.sort((a, b) => b.createdDate.machine - a.createdDate.machine)
-        each item in sortedArticles
+        each item in myArticles
           li.notes__list-item
-            time.notes__item-time(datetime=`${item.createdDate.datetime}`)= item.createdDate.human
+            time.notes__item-time(datetime=`${item.created_date}`)= getHumanDate(item.created_date)
             a.notes__item-text(href=`/articles/edit/${item.id}`)= item.title
-            button.notes__button.button.button--close-item(type="button")
-              span.visually-hidden Закрыть строку списка
+            form(action=`/my/articles/delete/${item.id}` method=`post`)
+              button.notes__button.button.button--close-item(submit="button")
+                span.visually-hidden Закрыть строку списка
 

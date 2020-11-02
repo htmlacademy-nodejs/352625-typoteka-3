@@ -1,24 +1,17 @@
 'use strict';
 
 const express = require(`express`);
-
 const pino = require(`pino`)(`./src/service/logs/service.log`);
 const expressPino = require(`express-pino-logger`)({
   logger: pino
 });
-
 
 const {
   CommandsNames,
   DEFAULT_API_PORT,
 } = require(`./constants.js`);
 
-const {PathName} = require(`./../routes/constants.js`);
-
-const articlesRouter = require(`./../routes/articles.js`);
-const categoriesRouter = require(`./../routes/categories.js`);
-const searchRouter = require(`./../routes/search.js`);
-const authRouter = require(`./../routes/auth.js`);
+const routes = require(`./../api`);
 
 const {getLogger} = require(`./../logger.js`);
 
@@ -26,12 +19,9 @@ const logger = getLogger();
 
 const app = express();
 
-app.use(`/${PathName.ARTICLES}`, articlesRouter);
-app.use(`/${PathName.CATEGORIES}`, categoriesRouter);
-app.use(`/${PathName.SEARCH}`, searchRouter);
-app.use(`/${PathName.AUTH}`, authRouter);
-
 app.use(express.json());
+
+app.use(routes);
 
 app.set(`json spaces`, 2);
 

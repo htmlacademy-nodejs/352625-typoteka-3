@@ -9,16 +9,16 @@ block content
         .post__wrapper
           .post__head
             a.post__backwards.button.button--backwards(href="/") Назад
-            time.post__date(datetime=`${article.createdDate.datetime}`)= article.createdDate.human
+            time.post__date(datetime=`${article.created_date}`)= getHumanDate(article.created_date)
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
-              each category in article.category
+              each category in article.categories
                 li.themes__item
                   a.themes__item-link(href=`/articles/category/${category.id}`)= category.name
-                    sup= getArticlesByCategory(articles, category).length
+                    sup= category.articles.length
                   button.themes__remove-btn(type="button") Удалить категорию
           .post__picture
-            img(src=`/img/${article.picture}@1x.jpg` alt=`${article.picture}`)
+            img(src=`/img/${article.picture}` alt=`${article.picture}`)
           .post__text
             h3= article.announce
             p= article.fullText
@@ -26,21 +26,21 @@ block content
         section.post__comments.comments
           h2.comments__title.title.title--middle Комментарии
           ul.comments__list
-            - const sortedComments = article.comments.sort((a, b) => b.createdDate.machine - a.createdDate.machine)
-            each comment in sortedComments
+            each comment in article.comments
               li.comments__comment
                 .comments__avatar.avatar
                   img(src=`/img/${comment.author.avatar.regular}.png` alt="аватар пользователя")
                 .comments__text
                   .comments__head
-                    p= `${comment.author.name} •`
-                    time.comments__date(datetime=`${comment.createdDate.dateTime}`)= comment.createdDate.human
+                    p= `${comment.author.firstname} ${comment.author.lastname} •`
+                    time.comments__date(datetime=`${comment.created_date}`)= getHumanDate(comment.created_date)
                   p.comments__message= comment.text
           .comments__footer.comments__footer--user
-            form(action="#" method="POST")
-              .comments__avatar.avatar
-                img(src="/img/avatar-2.png" alt="аватар пользователя")
-              label
-                textarea(rows="1" placeholder="Присоединиться к обсуждению")
-              button.comments__button.button.button--colored(type="submit") Опубликовать
+            if auth.status
+              form(action=`/articles/${article.id}/comments` method="POST")
+                .comments__avatar.avatar
+                  img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
+                label
+                  textarea(rows="1" name="text" placeholder="Присоединиться к обсуждению")
+                button.comments__button.button.button--colored(type="submit") Опубликовать
 

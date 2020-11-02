@@ -5,7 +5,7 @@ header.header
     ul.header__nav-list
       if auth.status
         li.header__list-item
-          p= auth.user.name
+          p= `${auth.user.firstname} ${auth.user.lastname}`
         li.header__list-item
           a.header__exit(href="#") Выйти
       else
