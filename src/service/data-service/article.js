@@ -54,7 +54,7 @@ class ArticleService {
       totalPages: Math.ceil(freshItems.count / Pagination.SIZE),
       currentPage,
       items: freshItems.rows,
-    }
+    };
   }
 
   async findMostDiscussed() {

@@ -27,6 +27,11 @@ const Article = {
   WRONG_ID: encodeURI(`kdsj6lsd`),
 };
 
+const Page = {
+  RIGHT_ID: 1,
+  WRONG_ID: `wr0ng1d`,
+};
+
 const createAPI = () => {
   const app = express();
   app.use(express.json());
@@ -132,16 +137,16 @@ describe(`When GET '/${PathName.ARTICLES}/mostDiscussed'`, () => {
 });
 
 
-describe(`When GET '/${PathName.ARTICLES}/fresh'`, () => {
+describe(`When GET '/${PathName.ARTICLES}/fresh/page=${Page.RIGHT_ID}'`, () => {
   const app = createAPI();
 
   let response;
   let result;
 
   beforeAll(async () => {
-    const data = await dataService.findFresh();
+    const data = await dataService.findFresh(Page.RIGHT_ID);
     response = await request(app)
-      .get(`/${PathName.ARTICLES}/fresh`);
+      .get(`/${PathName.ARTICLES}/fresh/page=${Page.RIGHT_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
@@ -151,6 +156,26 @@ describe(`When GET '/${PathName.ARTICLES}/fresh'`, () => {
 
   test(`response should be equal to most fresh articles`, () => {
     expect(response.body).toStrictEqual(result);
+  });
+});
+
+
+describe(`When GET '/${PathName.ARTICLES}/fresh/page=${Page.WRONG_ID}'`, () => {
+  const app = createAPI();
+
+  let response;
+
+  beforeAll(async () => {
+    response = await request(app)
+      .get(`/${PathName.ARTICLES}/fresh/page=${Page.WRONG_ID}`);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  });
+
+  test(`response should be equal to ${Empty.ARTICLES}`, () => {
+    expect(response.body).toStrictEqual(Empty.ARTICLES);
   });
 });
 
