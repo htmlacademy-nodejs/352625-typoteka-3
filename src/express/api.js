@@ -69,8 +69,8 @@ class Api {
     return this._load(`${PathName.ARTICLES}/mostDiscussed`);
   }
 
-  getFreshItems() {
-    return this._load(`${PathName.ARTICLES}/fresh`);
+  getFreshItems(pageNumber) {
+    return this._load(`${PathName.ARTICLES}/fresh/page=${pageNumber}`);
   }
 
   getFreshComments() {

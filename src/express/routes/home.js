@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {getHumanDate} = require(`./../utils.js`);
+const {getHumanDate, getPageNumbers} = require(`./../utils.js`);
 const {render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
@@ -11,19 +11,21 @@ const logger = getLogger();
 
 const homeRouter = new Router();
 
-homeRouter.get(`/`, async (req, res) => {
+homeRouter.get(`/page=:pageNumber`, async (req, res) => {
   try {
+    const pageNumber = req.params.pageNumber;
+
     const [
       auth,
       categories,
       mostDiscussedItems,
-      freshItems,
+      fresh,
       lastComments,
     ] = await Promise.all([
       api.getAuth(),
       api.getCategories(),
       api.getMostDiscussed(),
-      api.getFreshItems(),
+      api.getFreshItems(pageNumber),
       api.getFreshComments(),
     ]);
 
@@ -32,8 +34,9 @@ homeRouter.get(`/`, async (req, res) => {
       categories,
       mostDiscussedItems,
       lastComments,
-      freshItems,
+      fresh,
       getHumanDate,
+      pageNumbers: getPageNumbers(fresh.totalPages),
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -42,5 +45,7 @@ homeRouter.get(`/`, async (req, res) => {
     logger.error(`Error occurs: ${error}`);
   }
 });
+
+homeRouter.get(`/`, (req, res) => res.redirect(`/page=1`));
 
 module.exports = homeRouter;

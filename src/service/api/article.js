@@ -59,11 +59,16 @@ module.exports = (app, articleService, authService, commentService) => {
   });
 
 
-  route.get(`/fresh`, async (req, res) => {
+  route.get(`/fresh/page=:pageNumber`, async (req, res) => {
     try {
-      const data = await articleService.findFresh();
+      let data = null;
+      const pageNumber = parseInt(req.params.pageNumber, 10);
 
-      if (!data || data.length === 0) {
+      if (pageNumber > 0) {
+        data = await await articleService.findFresh(pageNumber);
+      }
+
+      if (!data) {
         res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
       } else {
         res.status(HttpCode.OK).json(data);
