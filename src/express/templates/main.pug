@@ -10,9 +10,9 @@ block content
       ul.themes
         each category in categories
           li.themes__item
-            a.themes__item-link(href=`/articles/category/${category.id}`)= category.name
+            a.themes__item-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
               |&#32;
-              sup= category.articles.length
+              sup= category.totalArticles
     .main-page__section-flex
       section.main-page__hot.hot
         h2.hot__name
@@ -53,24 +53,25 @@ block content
               | Комментарии
               span.preview__cloud
               b.preview__comment-count= item.comments.length
-      .preview__toggle-wrapper
-        ul.preview__pagination.pagination
-          li
-            a(
-              class= fresh.currentPage === 1
-                ? "pagination__button button button--backwards button--disabled"
-                : "pagination__button button button--backwards"
-              href=`/page=${fresh.currentPage - 1}`
-              aria-label="Страница назад"
-              ) Назад
-          each item in pageNumbers
-            li(class= item === fresh.currentPage ? "pagination__item pagination__item--active" : "pagination__item")
-              a(href=`/page=${item}`)= item
-          li
-            a(class= fresh.currentPage === fresh.totalPages
-                ? "pagination__button button button--forward button--disabled"
-                : "pagination__button button button--forward"
-              href=`/page=${fresh.currentPage + 1}`
-              aria-label="Страница вперед"
-              ) Вперед
+      if pageNumbers.length > 1
+        .preview__toggle-wrapper
+          ul.preview__pagination.pagination
+            li
+              a(
+                class= fresh.currentPage === 1
+                  ? "pagination__button button button--backwards button--disabled"
+                  : "pagination__button button button--backwards"
+                href=`/page=${fresh.currentPage - 1}`
+                aria-label="Страница назад"
+                ) Назад
+            each item in pageNumbers
+              li(class= item === fresh.currentPage ? "pagination__item pagination__item--active" : "pagination__item")
+                a(href=`/page=${item}`)= item
+            li
+              a(class= fresh.currentPage === fresh.totalPages
+                  ? "pagination__button button button--forward button--disabled"
+                  : "pagination__button button button--forward"
+                href=`/page=${fresh.currentPage + 1}`
+                aria-label="Страница вперед"
+                ) Вперед
 

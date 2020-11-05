@@ -29,8 +29,8 @@ class Api {
     return this._load(`${PathName.CATEGORIES}`);
   }
 
-  getCategory(categoryId) {
-    return this._load(`${PathName.CATEGORIES}/${categoryId}`);
+  getCategory(categoryId, pageNumber) {
+    return this._load(`${PathName.CATEGORIES}/id=${categoryId}&page=${pageNumber}`);
   }
 
   getAuth() {

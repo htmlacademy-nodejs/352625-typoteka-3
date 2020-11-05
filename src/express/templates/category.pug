@@ -9,17 +9,17 @@ block content
         each category in categories
           li.themes__item
             a(class= category.id === activeCategory.id ? `themes__item-link themes__item-link--active` : `themes__item-link`
-              href=`/articles/category/${category.id}`)= category.name
-              sup= category.articles.length
+              href=`/articles/category/id=${category.id}&page=1`)= category.name
+              sup= category.totalArticles
     section.articles-category__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list
-        each item in activeCategory.articles
+        each item in articles.items
           li.preview__item
             ul.preview__breadcrumbs
               each category in item.categories
                 li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`)= category.name
+                  a.preview__breadcrumbs-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
             .preview__background
               img.preview__background-image(src=`/img/${item.picture}` width="460" height="240" srcset=`/img/${item.picture} 2x` alt=`Фотография ${item.picture}`)
             time.preview__time(datetime=`${item.created_date}`)= getHumanDate(item.created_date)
@@ -29,4 +29,25 @@ block content
             a.preview__comment(href="#")
               | Комментарии
               span.preview__cloud
-              b.preview__comment-count= item.comments.length
+              b.preview__comment-count= item.totalComments
+      if pageNumbers.length > 1
+        .preview__toggle-wrapper
+          ul.preview__pagination.pagination
+            li
+              a(
+                class= articles.currentPage === 1
+                  ? "pagination__button button button--backwards button--disabled"
+                : "pagination__button button button--backwards"
+                href=`/articles/category/id=${activeCategory.id}&page=${articles.currentPage - 1}`
+                aria-label="Страница назад"
+              ) Назад
+            each item in pageNumbers
+              li(class= item === articles.currentPage ? "pagination__item pagination__item--active" : "pagination__item")
+                a(href=`/articles/category/id=${activeCategory.id}&page=${item}`)= item
+            li
+              a(class= articles.currentPage === articles.totalPages
+                ? "pagination__button button button--forward button--disabled"
+                : "pagination__button button button--forward"
+                href=`/articles/category/id=${activeCategory.id}&page=${articles.currentPage + 1}`
+                aria-label="Страница вперед"
+              ) Вперед
