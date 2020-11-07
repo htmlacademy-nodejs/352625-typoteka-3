@@ -3,7 +3,7 @@
 const {db, sequelize} = require(`./../../data/db/db.js`);
 const moment = require(`moment`);
 
-const {Items} = require(`../api/constants.js`);
+const {Items, Pagination} = require(`../api/constants.js`);
 
 const getCategoriesFromServerAnswer = (data) => {
   const categories = [];
@@ -21,16 +21,18 @@ class ArticleService {
     this._database = database;
     this._orm = orm;
     this._mostDiscussedCount = Items.MOST_DISCUSSED;
-    this._freshItemsCount = Items.FRESH;
   }
 
   async findAll() {
     return await this._database.Article.findAll();
   }
 
-  async findFresh() {
-    return await this._database.Article.findAll({
+  async findFresh(currentPage = Pagination.DEFAULT_PAGE) {
+    const freshItems = await this._database.Article.findAndCountAll({
       attributes: [`id`, `picture`, `title`, `created_date`],
+      distinct: true,
+      offset: Pagination.SIZE * (currentPage - 1),
+      limit: Pagination.SIZE,
       order: [
         [`created_date`, `desc`]
       ],
@@ -45,9 +47,14 @@ class ArticleService {
         as: `comments`,
         attributes: [`id`],
       }],
-
-      limit: this._freshItemsCount,
     });
+
+    return {
+      totalItems: freshItems.count,
+      totalPages: Math.ceil(freshItems.count / Pagination.SIZE),
+      currentPage,
+      items: freshItems.rows,
+    };
   }
 
   async findMostDiscussed() {

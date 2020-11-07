@@ -16,7 +16,18 @@ const getHumanDate = (date) => {
   return moment(date).format(`DD.MM.YYYY, HH:mm`);
 };
 
+const getPageNumbers = (length) => {
+  const result = [];
+  let i = 1;
+  do {
+    result.push(i);
+    i++;
+  } while (i <= length);
+  return result;
+};
+
 module.exports = {
   UriApi,
   getHumanDate,
+  getPageNumbers,
 };

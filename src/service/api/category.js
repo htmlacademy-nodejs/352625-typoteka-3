@@ -31,13 +31,14 @@ module.exports = (app, categoryService) => {
   });
 
 
-  route.get(`/:id`, async (req, res) => {
+  route.get(`/id=:id&page=:pageNumber`, async (req, res) => {
     try {
       let data = null;
       const categoryId = parseInt(req.params.id, 10);
+      const pageNumber = parseInt(req.params.pageNumber, 10);
 
-      if (categoryId) {
-        data = await categoryService.findOne(req.params.id);
+      if (categoryId && pageNumber > 0) {
+        data = await categoryService.findOne(categoryId, pageNumber);
       }
 
       if (!data) {

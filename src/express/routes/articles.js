@@ -5,7 +5,7 @@ const multer = require(`multer`);
 const path = require(`path`);
 const nanoid = require(`nanoid`);
 
-const {getHumanDate} = require(`./../utils.js`);
+const {getHumanDate, getPageNumbers} = require(`./../utils.js`);
 const {render404Page, render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
@@ -61,15 +61,18 @@ articlesRouter.post(`/add`, upload.single(`picture`), async (req, res) => {
 });
 
 
-articlesRouter.get(`/category/:categoryId`, async (req, res) => {
+articlesRouter.get(`/category/id=:categoryId&page=:pageNumber`, async (req, res) => {
   try {
+    const activeCategoryId = req.params.categoryId;
+    const pageNumber = req.params.pageNumber;
+
     const [
       auth,
-      activeCategory,
+      {activeCategory, articles},
       categories
     ] = await Promise.all([
       api.getAuth(),
-      api.getCategory(req.params.categoryId),
+      api.getCategory(activeCategoryId, pageNumber),
       api.getCategories(),
     ]);
 
@@ -80,8 +83,10 @@ articlesRouter.get(`/category/:categoryId`, async (req, res) => {
       res.render(`category`, {
         auth,
         activeCategory,
+        articles,
         categories,
         getHumanDate,
+        pageNumbers: getPageNumbers(articles.totalPages),
       });
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
     }

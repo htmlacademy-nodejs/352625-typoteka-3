@@ -20,12 +20,16 @@ const Empty = {
 };
 
 const Items = {
-  FRESH: 2,
   MOST_DISCUSSED: 2,
 };
 
 const Comments = {
   FRESH: 4,
+};
+
+const Pagination = {
+  SIZE: 8,
+  DEFAULT_PAGE: 1,
 };
 
 const SEARCH_PARAM = `?query=`;
@@ -39,4 +43,5 @@ module.exports = {
   SEARCH_LIMIT,
   Items,
   Comments,
+  Pagination,
 };
