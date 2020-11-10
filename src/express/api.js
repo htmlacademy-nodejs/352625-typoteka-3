@@ -56,7 +56,7 @@ class Api {
   }
 
   deleteArticle(articleId) {
-    return this._load(`/${PathName.ARTICLES}/${articleId}}`, {
+    return this._load(`/${PathName.ARTICLES}/${articleId}`, {
       method: `DELETE`
     });
   }
@@ -89,7 +89,7 @@ class Api {
   }
 
   deleteComment(commentId) {
-    return this._load(`/${PathName.COMMENTS}/${commentId}}`, {
+    return this._load(`/${PathName.COMMENTS}/${commentId}`, {
       method: `DELETE`
     });
   }

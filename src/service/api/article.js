@@ -3,6 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
+const isData = require(`../middlewares/is-data.js`);
 const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
@@ -23,111 +24,75 @@ module.exports = (app, articleService, authService, commentService) => {
 
   app.use(`/api/articles`, route);
 
-  route.get(`/`, async (req, res) => {
-    try {
-      const data = await articleService.findAll();
-
-      if (!data || data.length === 0) {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      } else {
-        res.status(HttpCode.OK).json(data);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/`,
+      isData(articleService.findAll.bind(articleService), Empty.ARTICLES),
+      (req, res) => {
+        res.status(HttpCode.OK).json(res.body);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 
 
-  route.get(`/mostDiscussed`, async (req, res) => {
-    try {
-      const data = await articleService.findMostDiscussed();
-
-      if (!data || data.length === 0) {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      } else {
-        res.status(HttpCode.OK).json(data);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/mostDiscussed`,
+      isData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
+      (req, res) => {
+        res.status(HttpCode.OK).json(res.body);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 
 
-  route.get(`/fresh/page=:pageNumber`, async (req, res) => {
-    try {
-      let data = null;
-      const pageNumber = parseInt(req.params.pageNumber, 10);
+  route.get(
+      `/fresh`,
+      (req, res) => res.redirect(`/api/articles/fresh/page=1`)
+  );
 
-      if (pageNumber > 0) {
-        data = await await articleService.findFresh(pageNumber);
-      }
+  route.get(
+      `/fresh/page=:pageNumber`,
+      isData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
+      (req, res) => {
+        // let data = null;
+        // const pageNumber = parseInt(req.params.pageNumber, 10);
+        //
+        // if (pageNumber > 0) {
+        //   data = await await articleService.findFresh(pageNumber);
+        // }
 
-      if (!data) {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      } else {
-        res.status(HttpCode.OK).json(data);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        res.status(HttpCode.OK).json(res.body);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 
 
-  route.get(`/byAuthor/:id`, async (req, res) => {
-    try {
-      let data = null;
-      const userId = parseInt(req.params.id, 10);
+  route.get(
+      `/byAuthor/:authorId`,
+      isData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
+      (req, res) => {
+        // let data = null;
+        // const userId = parseInt(req.params.id, 10);
+        //
+        // if (userId) {
+        //   data = await articleService.findAllByAuthor(userId);
+        // }
 
-      if (userId) {
-        data = await articleService.findAllByAuthor(userId);
-      }
-
-      if (data) {
-        res.status(HttpCode.OK).json(data);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        res.status(HttpCode.OK).json(res.body);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 
 
-  route.get(`/:articleId`, async (req, res) => {
-    try {
-      let data = null;
-      const articleId = parseInt(req.params.articleId, 10);
+  route.get(
+      `/:articleId`,
+      isData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      (req, res) => {
+        // let data = null;
+        // const articleId = parseInt(req.params.articleId, 10);
+        //
+        // if (articleId) {
+        //   data = await articleService.findOne(articleId);
+        // }
 
-      if (articleId) {
-        data = await articleService.findOne(articleId);
-      }
-
-      if (data) {
-        res.status(HttpCode.OK).json(data);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLE);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLE);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        res.status(HttpCode.OK).json(res.body);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 
 
   route.post(`/`, async (req, res) => {
@@ -149,29 +114,26 @@ module.exports = (app, articleService, authService, commentService) => {
   });
 
 
-  route.put(`/:articleId`, async (req, res) => {
-    try {
-      let data = null;
-      const articleId = parseInt(req.params.articleId, 10);
+  route.put(
+      `/:articleId`,
+      isData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      async (req, res) => {
+        // let data = null;
+        // const articleId = parseInt(req.params.articleId, 10);
+        //
+        // if (articleId) {
+        //   data = await articleService.findOne(articleId);
+        // }
 
-      if (articleId) {
-        data = await articleService.findOne(articleId);
-      }
+        if (res.body) {
+          await articleService.update(req.body, req.params.articleId);
+          res.status(HttpCode.OK).send(req.body);
 
-      if (data) {
-        await articleService.update(req.body, articleId);
-        res.status(HttpCode.OK).send(req.body);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        } else {
+          res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
+        }
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 
 
   route.post(`/:articleId/comments`, async (req, res) => {
@@ -195,28 +157,25 @@ module.exports = (app, articleService, authService, commentService) => {
   });
 
 
-  route.delete(`/:articleId`, async (req, res) => {
-    try {
-      let data = null;
-      const articleId = parseInt(req.params.articleId, 10);
+  route.delete(
+      `/:articleId`,
+      isData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      async (req, res) => {
+        // let data = null;
+        // const articleId = parseInt(req.params.articleId, 10);
+        //
+        // if (articleId) {
+        //   data = await articleService.findOne(articleId);
+        // }
 
-      if (articleId) {
-        data = await articleService.findOne(articleId);
-      }
+        if (res.body) {
+          await articleService.delete(req.params.articleId);
+          res.status(HttpCode.OK).send(`Article is deleted`);
 
-      if (data) {
-        await articleService.delete(articleId);
-        res.status(HttpCode.OK).send(`Article is deleted`);
+        } else {
+          res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
+        }
 
-      } else {
-        res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
-      }
-
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+      });
 };
