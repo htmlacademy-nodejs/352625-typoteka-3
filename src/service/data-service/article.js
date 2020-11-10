@@ -52,7 +52,7 @@ class ArticleService {
     return {
       totalItems: freshItems.count,
       totalPages: Math.ceil(freshItems.count / Pagination.SIZE),
-      currentPage,
+      currentPage: parseInt(currentPage, 10),
       items: freshItems.rows,
     };
   }

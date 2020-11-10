@@ -3,7 +3,9 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
-const isData = require(`../middlewares/is-data.js`);
+const discardWrongData = require(`../middlewares/discard-wrong-data.js`);
+const passProperParam = require(`../middlewares/pass-proper-param.js`);
+const executeRoute = require(`../middlewares/execute-route.js`);
 const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
@@ -26,20 +28,16 @@ module.exports = (app, articleService, authService, commentService) => {
 
   route.get(
       `/`,
-      isData(articleService.findAll.bind(articleService), Empty.ARTICLES),
-      (req, res) => {
-        res.status(HttpCode.OK).json(res.body);
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      discardWrongData(articleService.findAll.bind(articleService), Empty.ARTICLES),
+      executeRoute(Empty.ARTICLES)
+  );
 
 
   route.get(
       `/mostDiscussed`,
-      isData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
-      (req, res) => {
-        res.status(HttpCode.OK).json(res.body);
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      discardWrongData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
+      executeRoute(Empty.ARTICLES)
+  );
 
 
   route.get(
@@ -49,50 +47,26 @@ module.exports = (app, articleService, authService, commentService) => {
 
   route.get(
       `/fresh/page=:pageNumber`,
-      isData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
-      (req, res) => {
-        // let data = null;
-        // const pageNumber = parseInt(req.params.pageNumber, 10);
-        //
-        // if (pageNumber > 0) {
-        //   data = await await articleService.findFresh(pageNumber);
-        // }
-
-        res.status(HttpCode.OK).json(res.body);
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      passProperParam(`pageNumber`, Empty.ARTICLES),
+      discardWrongData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
+      executeRoute(Empty.ARTICLES)
+  );
 
 
   route.get(
       `/byAuthor/:authorId`,
-      isData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
-      (req, res) => {
-        // let data = null;
-        // const userId = parseInt(req.params.id, 10);
-        //
-        // if (userId) {
-        //   data = await articleService.findAllByAuthor(userId);
-        // }
-
-        res.status(HttpCode.OK).json(res.body);
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      passProperParam(`authorId`, Empty.ARTICLES),
+      discardWrongData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
+      executeRoute(Empty.ARTICLES)
+  );
 
 
   route.get(
       `/:articleId`,
-      isData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
-      (req, res) => {
-        // let data = null;
-        // const articleId = parseInt(req.params.articleId, 10);
-        //
-        // if (articleId) {
-        //   data = await articleService.findOne(articleId);
-        // }
-
-        res.status(HttpCode.OK).json(res.body);
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      passProperParam(`articleId`, Empty.ARTICLE),
+      discardWrongData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      executeRoute(Empty.ARTICLE)
+  );
 
 
   route.post(`/`, async (req, res) => {
@@ -116,14 +90,9 @@ module.exports = (app, articleService, authService, commentService) => {
 
   route.put(
       `/:articleId`,
-      isData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      passProperParam(`articleId`, Empty.ARTICLE),
+      discardWrongData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
       async (req, res) => {
-        // let data = null;
-        // const articleId = parseInt(req.params.articleId, 10);
-        //
-        // if (articleId) {
-        //   data = await articleService.findOne(articleId);
-        // }
 
         if (res.body) {
           await articleService.update(req.body, req.params.articleId);
@@ -159,14 +128,9 @@ module.exports = (app, articleService, authService, commentService) => {
 
   route.delete(
       `/:articleId`,
-      isData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      passProperParam(`articleId`, Empty.ARTICLE),
+      discardWrongData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
       async (req, res) => {
-        // let data = null;
-        // const articleId = parseInt(req.params.articleId, 10);
-        //
-        // if (articleId) {
-        //   data = await articleService.findOne(articleId);
-        // }
 
         if (res.body) {
           await articleService.delete(req.params.articleId);
