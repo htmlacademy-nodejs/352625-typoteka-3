@@ -3,7 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
-const discardWrongData = require(`../middlewares/discard-wrong-data.js`);
+const passNotNullData = require(`../middlewares/pass-not-null-data.js`);
 const passProperParam = require(`../middlewares/pass-proper-param.js`);
 const executeRoute = require(`../middlewares/execute-route.js`);
 const {getLogger} = require(`./../../service/logger.js`);
@@ -28,14 +28,14 @@ module.exports = (app, articleService, authService, commentService) => {
 
   route.get(
       `/`,
-      discardWrongData(articleService.findAll.bind(articleService), Empty.ARTICLES),
+      passNotNullData(articleService.findAll.bind(articleService), Empty.ARTICLES),
       executeRoute(Empty.ARTICLES)
   );
 
 
   route.get(
       `/mostDiscussed`,
-      discardWrongData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
+      passNotNullData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
       executeRoute(Empty.ARTICLES)
   );
 
@@ -48,7 +48,7 @@ module.exports = (app, articleService, authService, commentService) => {
   route.get(
       `/fresh/page=:pageNumber`,
       passProperParam(`pageNumber`, Empty.ARTICLES),
-      discardWrongData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
+      passNotNullData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
       executeRoute(Empty.ARTICLES)
   );
 
@@ -56,7 +56,7 @@ module.exports = (app, articleService, authService, commentService) => {
   route.get(
       `/byAuthor/:authorId`,
       passProperParam(`authorId`, Empty.ARTICLES),
-      discardWrongData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
+      passNotNullData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
       executeRoute(Empty.ARTICLES)
   );
 
@@ -64,7 +64,7 @@ module.exports = (app, articleService, authService, commentService) => {
   route.get(
       `/:articleId`,
       passProperParam(`articleId`, Empty.ARTICLE),
-      discardWrongData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
       executeRoute(Empty.ARTICLE)
   );
 
@@ -91,7 +91,7 @@ module.exports = (app, articleService, authService, commentService) => {
   route.put(
       `/:articleId`,
       passProperParam(`articleId`, Empty.ARTICLE),
-      discardWrongData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
       async (req, res) => {
 
         if (res.body) {
@@ -129,7 +129,7 @@ module.exports = (app, articleService, authService, commentService) => {
   route.delete(
       `/:articleId`,
       passProperParam(`articleId`, Empty.ARTICLE),
-      discardWrongData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
       async (req, res) => {
 
         if (res.body) {
