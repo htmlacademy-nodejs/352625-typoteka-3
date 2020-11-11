@@ -3,9 +3,12 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
+
 const passNotNullData = require(`../middlewares/pass-not-null-data.js`);
 const passProperParam = require(`../middlewares/pass-proper-param.js`);
 const executeRoute = require(`../middlewares/execute-route.js`);
+const isAuth = require(`../middlewares/is-auth.js`);
+
 const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
@@ -69,23 +72,24 @@ module.exports = (app, articleService, authService, commentService) => {
   );
 
 
-  route.post(`/`, async (req, res) => {
-    try {
-      const auth = await authService.get();
+  route.post(
+      `/`,
+      isAuth(authService.get.bind(authService)),
+      async (req, res) => {
+        try {
+          if (!validateArticle()) {
+            res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
+          } else {
+            await articleService.add(req.body, res.body.user.id);
+            res.status(HttpCode.OK).send(req.body);
+          }
+          logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-      if (!validateArticle() || !auth.status) {
-        res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
-      } else {
-        await articleService.add(req.body, auth.user.id);
-        res.status(HttpCode.OK).send(req.body);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        } catch (error) {
+          res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
+          logger.error(`Error occurs: ${error}`);
+        }
+      });
 
 
   route.put(
@@ -105,25 +109,27 @@ module.exports = (app, articleService, authService, commentService) => {
       });
 
 
-  route.post(`/:articleId/comments`, async (req, res) => {
-    try {
-      const articleId = parseInt(req.params.articleId, 10);
-      const auth = await authService.get();
+  route.post(
+      `/:articleId/comments`,
+      passProperParam(`articleId`, Empty.COMMENT),
+      isAuth(authService.get.bind(authService)),
+      async (req, res) => {
+        try {
 
-      if (validateComment() && auth.status && Number.isInteger(articleId)) {
-        await commentService.add(req.body, articleId, auth.user.id);
-        res.status(HttpCode.OK).send(req.body);
+          if (validateComment()) {
+            await commentService.add(req.body, req.params.articleId, res.body.user.id);
+            res.status(HttpCode.OK).send(req.body);
 
-      } else {
-        res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+          } else {
+            res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
+          }
+          logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        } catch (error) {
+          res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
+          logger.error(`Error occurs: ${error}`);
+        }
+      });
 
 
   route.delete(

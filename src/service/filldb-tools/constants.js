@@ -1,6 +1,6 @@
 'use strict';
 
-const AUTH_USER_ID = 2;
+const AUTH_USER_ID = 2; // = 0 --> Не авторизован ни один пользователь;
 
 const Comments = {
   MIN: 2,

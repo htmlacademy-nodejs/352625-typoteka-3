@@ -5,15 +5,16 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-module.exports = (param, mock) => (
-  (req, res, next) => {
-    const properParam = parseInt(req.params[`${param}`], 10);
+module.exports = (service) => (
+  async (req, res, next) => {
+    const auth = await service();
 
-    if (!properParam || properParam < 0) {
-      res.status(HttpCode.BAD_REQUEST).json(mock);
+    if (!auth.status) {
+      res.status(HttpCode.UNAUTHORIZED).send(`Unauthorized access`);
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
       return;
     }
+    res.body = auth;
 
     next();
   }

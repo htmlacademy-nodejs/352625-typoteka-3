@@ -32,6 +32,18 @@ const Page = {
   WRONG_ID: `wr0ng1d`,
 };
 
+const loginByAuthorId = async (AuthorId) => {
+  const targetAuth = await fakeDb.Auth.findOne({where: {[`author_id`]: AuthorId}});
+  targetAuth[`is_auth`] = true;
+  await targetAuth.save();
+};
+
+const logoutByAuthorId = async (AuthorId) => {
+  const targetAuth = await fakeDb.Auth.findOne({where: {[`author_id`]: AuthorId}});
+  targetAuth[`is_auth`] = false;
+  await targetAuth.save();
+};
+
 const createAPI = () => {
   const app = express();
   app.use(express.json());
@@ -224,7 +236,7 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}'`, () => {
+describe(`When POST '/${PathName.ARTICLES}' in login mode`, () => {
   const app = createAPI();
 
   let response;
@@ -240,14 +252,48 @@ describe(`When POST '/${PathName.ARTICLES}'`, () => {
   };
 
   beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
     response = await request(app)
       .post(`/${PathName.ARTICLES}`)
       .send(mockArticle);
   });
 
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
+  });
+
   test(`status code should be ${HttpCode.OK}, response should be the same as mockArticle`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
     expect(response.body).toStrictEqual(mockArticle);
+  });
+});
+
+
+describe(`When POST '/${PathName.ARTICLES}' in logout mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockArticle = {
+    [`title`]: `text`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    [`picture`]: `forest`,
+    [`category-1`]: 1,
+    [`category-2`]: 2,
+  };
+
+  beforeAll(async () => {
+
+    response = await request(app)
+      .post(`/${PathName.ARTICLES}`)
+      .send(mockArticle);
+  });
+
+  test(`status code should be ${HttpCode.UNAUTHORIZED}, because Author is unauthorized`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+    expect(response.body).toStrictEqual(Empty.ARTICLE);
   });
 });
 
@@ -303,7 +349,34 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments'`, () => {
+describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockComment = {
+    text: `Текст нового комментария`
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
+    response = await request(app)
+      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`)
+      .send(mockComment);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
+  });
+
+  test(`status code should be ${HttpCode.OK} and response should be the same as mockComment`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
+    expect(response.body).toStrictEqual(mockComment);
+  });
+});
+
+
+describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in logout mode`, () => {
   const app = createAPI();
 
   let response;
@@ -318,9 +391,9 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments'`, () =>
       .send(mockComment);
   });
 
-  test(`status code should be ${HttpCode.OK} and response should be the same as mockComment`, () => {
-    expect(response.statusCode).toBe(HttpCode.OK);
-    expect(response.body).toStrictEqual(mockComment);
+  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be the same as mockComment`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+    expect(response.body).toStrictEqual(Empty.COMMENT);
   });
 });
 
