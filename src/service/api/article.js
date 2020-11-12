@@ -4,24 +4,14 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
 
-const passNotNullData = require(`../middlewares/pass-not-null-data.js`);
-const passProperParam = require(`../middlewares/pass-proper-param.js`);
-const executeRoute = require(`../middlewares/execute-route.js`);
-const isAuth = require(`../middlewares/is-auth.js`);
-
-const {getLogger} = require(`./../../service/logger.js`);
-
-const logger = getLogger();
-
-const validateArticle = () => {
-  // TODO: validating code is coming soon...
-  return true;
-};
-
-const validateComment = () => {
-  // TODO: validating code is coming soon...
-  return true;
-};
+const {
+  passNotNullData,
+  passProperParam,
+  tryToResponse,
+  isAuth,
+  validateArticle,
+  validateComment,
+} = require(`../middlewares`);
 
 
 module.exports = (app, articleService, authService, commentService) => {
@@ -29,17 +19,18 @@ module.exports = (app, articleService, authService, commentService) => {
 
   app.use(`/api/articles`, route);
 
+
   route.get(
       `/`,
       passNotNullData(articleService.findAll.bind(articleService), Empty.ARTICLES),
-      executeRoute(Empty.ARTICLES)
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
   );
 
 
   route.get(
       `/mostDiscussed`,
       passNotNullData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
-      executeRoute(Empty.ARTICLES)
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
   );
 
 
@@ -48,11 +39,12 @@ module.exports = (app, articleService, authService, commentService) => {
       (req, res) => res.redirect(`/api/articles/fresh/page=1`)
   );
 
+
   route.get(
       `/fresh/page=:pageNumber`,
       passProperParam(`pageNumber`, Empty.ARTICLES),
       passNotNullData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
-      executeRoute(Empty.ARTICLES)
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
   );
 
 
@@ -60,7 +52,7 @@ module.exports = (app, articleService, authService, commentService) => {
       `/byAuthor/:authorId`,
       passProperParam(`authorId`, Empty.ARTICLES),
       passNotNullData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
-      executeRoute(Empty.ARTICLES)
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
   );
 
 
@@ -68,84 +60,57 @@ module.exports = (app, articleService, authService, commentService) => {
       `/:articleId`,
       passProperParam(`articleId`, Empty.ARTICLE),
       passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
-      executeRoute(Empty.ARTICLE)
+      tryToResponse(HttpCode.OK, Empty.ARTICLE)
   );
 
 
   route.post(
       `/`,
       isAuth(authService.get.bind(authService)),
-      async (req, res) => {
-        try {
-          if (!validateArticle()) {
-            res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
-          } else {
-            await articleService.add(req.body, res.body.user.id);
-            res.status(HttpCode.OK).send(req.body);
-          }
-          logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-        } catch (error) {
-          res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-          logger.error(`Error occurs: ${error}`);
-        }
-      });
+      validateArticle(),
+      async (req, res, next) => {
+        await articleService.add(req.body, res.auth.user.id);
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
 
 
   route.put(
       `/:articleId`,
+      isAuth(authService.get.bind(authService)),
       passProperParam(`articleId`, Empty.ARTICLE),
-      passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
-      async (req, res) => {
-
-        if (res.body) {
-          await articleService.update(req.body, req.params.articleId);
-          res.status(HttpCode.OK).send(req.body);
-
-        } else {
-          res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
-        }
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      validateArticle(),
+      async (req, res, next) => {
+        await articleService.update(req.body, req.params.articleId);
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
 
 
   route.post(
       `/:articleId/comments`,
-      passProperParam(`articleId`, Empty.COMMENT),
       isAuth(authService.get.bind(authService)),
-      async (req, res) => {
-        try {
-
-          if (validateComment()) {
-            await commentService.add(req.body, req.params.articleId, res.body.user.id);
-            res.status(HttpCode.OK).send(req.body);
-
-          } else {
-            res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
-          }
-          logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-        } catch (error) {
-          res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-          logger.error(`Error occurs: ${error}`);
-        }
-      });
+      passProperParam(`articleId`, Empty.COMMENT),
+      validateComment(),
+      async (req, res, next) => {
+        await commentService.add(req.body, req.params.articleId, res.auth.user.id);
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
 
 
   route.delete(
       `/:articleId`,
+      isAuth(authService.get.bind(authService)),
       passProperParam(`articleId`, Empty.ARTICLE),
       passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
-      async (req, res) => {
-
-        if (res.body) {
-          await articleService.delete(req.params.articleId);
-          res.status(HttpCode.OK).send(`Article is deleted`);
-
-        } else {
-          res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
-        }
-
-        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-      });
+      async (req, res, next) => {
+        await articleService.delete(req.params.articleId);
+        next();
+      },
+      tryToResponse(HttpCode.OK)
+  );
 };

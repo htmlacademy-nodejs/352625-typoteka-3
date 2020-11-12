@@ -166,7 +166,7 @@ describe(`When GET '/${PathName.ARTICLES}/fresh/page=${Page.RIGHT_ID}'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to most fresh articles`, () => {
+  test(`response should be equal to page ${Page.RIGHT_ID} of most fresh articles`, () => {
     expect(response.body).toStrictEqual(result);
   });
 });
@@ -262,9 +262,8 @@ describe(`When POST '/${PathName.ARTICLES}' in login mode`, () => {
     await logoutByAuthorId(Author.RIGHT_ID);
   });
 
-  test(`status code should be ${HttpCode.OK}, response should be the same as mockArticle`, () => {
-    expect(response.statusCode).toBe(HttpCode.OK);
-    expect(response.body).toStrictEqual(mockArticle);
+  test(`status code should be ${HttpCode.CREATED}`, () => {
+    expect(response.statusCode).toBe(HttpCode.CREATED);
   });
 });
 
@@ -291,14 +290,44 @@ describe(`When POST '/${PathName.ARTICLES}' in logout mode`, () => {
       .send(mockArticle);
   });
 
-  test(`status code should be ${HttpCode.UNAUTHORIZED}, because Author is unauthorized`, () => {
+  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be equal to ${Empty.ARTICLE}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
     expect(response.body).toStrictEqual(Empty.ARTICLE);
   });
 });
 
 
-describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
+describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockArticle = {
+    [`title`]: `Название нового заголовка`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Исправленная аннотация поста`,
+    [`full_text`]: `Исправленный полный текст публикации`,
+    [`picture`]: `picture`,
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
+    response = await request(app)
+      .put(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
+      .send(mockArticle);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
+  });
+
+  test(`status code should be ${HttpCode.CREATED}`, () => {
+    expect(response.statusCode).toBe(HttpCode.CREATED);
+  });
+});
+
+
+describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in logout mode`, () => {
   const app = createAPI();
 
   let response;
@@ -317,14 +346,43 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
       .send(mockArticle);
   });
 
-  test(`status code should be ${HttpCode.OK}, response should be the same as request object`, () => {
-    expect(response.statusCode).toBe(HttpCode.OK);
-    expect(response.body).toStrictEqual(mockArticle);
+  test(`status code should be ${HttpCode.UNAUTHORIZED}, response should be equal to ${Empty.ARTICLE}`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+    expect(response.body).toStrictEqual(Empty.ARTICLE);
   });
 });
 
 
-describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
+describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockArticle = {
+    [`title`]: `Название нового заголовка`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Исправленная аннотация поста`,
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
+    response = await request(app)
+      .put(`/${PathName.ARTICLES}/${Article.WRONG_ID}`)
+      .send(mockArticle);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST}, response should be ${Empty.ARTICLE}`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+    expect(response.body).toStrictEqual(Empty.ARTICLE);
+  });
+});
+
+
+describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}' in logout mode`, () => {
   const app = createAPI();
 
   let response;
@@ -341,9 +399,8 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
       .send(mockArticle);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}, response should be ${Empty.ARTICLE}`, () => {
-
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.UNAUTHORIZED}, response should be ${Empty.ARTICLE}`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
     expect(response.body).toStrictEqual(Empty.ARTICLE);
   });
 });
@@ -369,9 +426,8 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in logi
     await logoutByAuthorId(Author.RIGHT_ID);
   });
 
-  test(`status code should be ${HttpCode.OK} and response should be the same as mockComment`, () => {
-    expect(response.statusCode).toBe(HttpCode.OK);
-    expect(response.body).toStrictEqual(mockComment);
+  test(`status code should be ${HttpCode.CREATED} and response should be the same as mockComment`, () => {
+    expect(response.statusCode).toBe(HttpCode.CREATED);
   });
 });
 
@@ -391,14 +447,41 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in logo
       .send(mockComment);
   });
 
-  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be the same as mockComment`, () => {
+  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be equal to ${Empty.COMMENT}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
     expect(response.body).toStrictEqual(Empty.COMMENT);
   });
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments'`, () => {
+describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockComment = {
+    json: {text: `Текст нового комментария`}
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
+    response = await request(app)
+      .post(`/${PathName.ARTICLES}/${Article.WRONG_ID}/comments`)
+      .send(mockComment);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST} and response should be equal to '${Empty.COMMENT}'`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+    expect(response.body).toStrictEqual(Empty.COMMENT);
+  });
+});
+
+
+describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments' in logout mode`, () => {
   const app = createAPI();
 
   let response;
@@ -413,14 +496,14 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.WRONG_ID}/comments'`, () =>
       .send(mockComment);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST} and response should be equal to '${Empty.COMMENT}'`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be equal to '${Empty.COMMENT}'`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
     expect(response.body).toStrictEqual(Empty.COMMENT);
   });
 });
 
 
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
+describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in logout mode`, () => {
   const app = createAPI();
 
   let response;
@@ -430,13 +513,34 @@ describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}'`, () => {
       .delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
   });
 
+  test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+  });
+});
+
+
+describe(`When DELETE '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
+    response = await request(app)
+      .delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
+  });
+
   test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 });
 
 
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
+describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}' in logout mode`, () => {
   const app = createAPI();
 
   let response;
@@ -444,6 +548,27 @@ describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
   beforeAll(async () => {
     response = await request(app)
       .delete(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
+  });
+
+  test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+  });
+});
+
+
+describe(`When DELETE '/${PathName.ARTICLES}/${Article.WRONG_ID}' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID);
+    response = await request(app)
+      .delete(`/${PathName.ARTICLES}/${Article.WRONG_ID}`);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {

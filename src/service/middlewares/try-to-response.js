@@ -5,14 +5,14 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-module.exports = (mock) => (
-  (req, res) => {
+module.exports = (code, mock = null) => (
+  async (req, res) => {
     try {
-      res.status(HttpCode.OK).json(res.body);
+      res.status(code).json(res.body);
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
     } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(mock);
+      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(mock ? mock : error);
       logger.error(`Error occurs: ${error}`);
     }
   });

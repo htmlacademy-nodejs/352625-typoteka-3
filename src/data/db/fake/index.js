@@ -46,6 +46,19 @@ const initDb = async (content, orm) => {
   }
 };
 
+const initEmptyDb = async (orm) => {
+  try {
+    await createDb(FAKE_DB_NAME, sequelize);
+    logger.info(`The database ${FAKE_DB_NAME} is created.`);
+
+    await orm.sync({force: true});
+    logger.info(`The database structure is created.`);
+
+  } catch (error) {
+    logger.error(`Something is going wrong: ${error}`);
+  }
+};
+
 const dropDb = async (orm) => {
   try {
     await orm.drop();
@@ -66,6 +79,7 @@ module.exports = {
     Category,
   },
   initDb,
+  initEmptyDb,
   dropDb,
   fakeSequelize,
 };

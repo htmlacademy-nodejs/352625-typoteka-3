@@ -5,16 +5,18 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-module.exports = (service) => (
-  async (req, res, next) => {
-    const auth = await service();
+const validateComment = () => {
+  // TODO: validating code is coming soon...
+  return true;
+};
 
-    if (!auth.status) {
-      res.status(HttpCode.UNAUTHORIZED).send(`Unauthorized access`);
+module.exports = () => (
+  (req, res, next) => {
+    if (!validateComment()) {
+      res.status(HttpCode.BAD_REQUEST).send(`Incorrect comment format`);
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
       return;
     }
-    res.auth = auth;
 
     next();
   }
