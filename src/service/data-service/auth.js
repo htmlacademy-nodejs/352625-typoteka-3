@@ -28,7 +28,9 @@ class AuthService {
       }
     });
 
-    if (!result) result = Empty.AUTH;
+    if (!result) {
+      result = Empty.AUTH;
+    }
 
     return result;
   }
