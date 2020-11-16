@@ -9,6 +9,7 @@ const PathName = {
 };
 
 const Empty = {
+  AUTH: {status: false, user: null},
   ARTICLES: [],
   ARTICLE: {},
   COMMENTS: [],
