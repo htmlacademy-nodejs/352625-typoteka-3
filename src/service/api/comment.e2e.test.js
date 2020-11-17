@@ -115,9 +115,9 @@ describe(`When DELETE '/${PathName.COMMENTS}/${Comment.RIGHT_ID}'`, () => {
       .delete(`/${PathName.COMMENTS}/${Comment.RIGHT_ID}`);
   });
 
-  test(`status code should be ${HttpCode.OK} and response.text is 'Comment is deleted'`, () => {
+  test(`status code should be ${HttpCode.OK} and response is 'Comment is deleted'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
-    expect(response.text).toBe(`Comment is deleted`);
+    expect(response.body).toBe(`Comment is deleted`);
   });
 });
 
@@ -132,8 +132,8 @@ describe(`When DELETE '/${PathName.COMMENTS}/${Comment.WRONG_ID}'`, () => {
       .delete(`/${PathName.COMMENTS}/${Comment.WRONG_ID}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST} and response.text is 'Comment doesn't exist'`, () => {
+  test(`status code should be ${HttpCode.BAD_REQUEST} and response is 'Comment doesn't exist'`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-    expect(response.text).toBe(`Comment doesn't exist`);
+    expect(response.body).toBe(`Comment doesn't exist`);
   });
 });
