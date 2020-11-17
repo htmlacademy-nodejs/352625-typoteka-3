@@ -78,7 +78,7 @@ class CategoryService {
       articles: {
         totalItems: articlesByCategory.count,
         totalPages: Math.ceil(articlesByCategory.count / Pagination.SIZE),
-        currentPage,
+        currentPage: parseInt(currentPage, 10),
         items: articles,
       }
     };

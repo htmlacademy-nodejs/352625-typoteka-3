@@ -5,10 +5,10 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-module.exports = (service, mock, param = null) => (
+module.exports = (service, mock, param1 = null, param2 = null) => (
   async (req, res, next) => {
     try {
-      const data = await service(req.params[`${param}`]);
+      const data = await service(req.params[`${param1}`], req.params[`${param2}`]);
 
       if (!data || data.length === 0) {
         res.status(HttpCode.BAD_REQUEST).json(mock);
