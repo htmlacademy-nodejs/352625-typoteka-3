@@ -70,6 +70,7 @@ module.exports = (app, articleService, authService, commentService) => {
       validateArticle(),
       async (req, res, next) => {
         await articleService.add(req.body, res.auth.user.id);
+        res.body = `Article is added`;
         next();
       },
       tryToResponse(HttpCode.CREATED)
@@ -79,10 +80,12 @@ module.exports = (app, articleService, authService, commentService) => {
   route.put(
       `/:articleId`,
       isAuth(authService.get.bind(authService)),
-      passProperParam(`articleId`, Empty.ARTICLE),
+      passProperParam(`articleId`, `Incorrect id`),
+      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
       validateArticle(),
       async (req, res, next) => {
         await articleService.update(req.body, req.params.articleId);
+        res.body = `Article is changed`;
         next();
       },
       tryToResponse(HttpCode.CREATED)
@@ -92,10 +95,12 @@ module.exports = (app, articleService, authService, commentService) => {
   route.post(
       `/:articleId/comments`,
       isAuth(authService.get.bind(authService)),
-      passProperParam(`articleId`, Empty.COMMENT),
+      passProperParam(`articleId`, `Incorrect id`),
+      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
       validateComment(),
       async (req, res, next) => {
         await commentService.add(req.body, req.params.articleId, res.auth.user.id);
+        res.body = `Comment is added`;
         next();
       },
       tryToResponse(HttpCode.CREATED)
@@ -105,10 +110,11 @@ module.exports = (app, articleService, authService, commentService) => {
   route.delete(
       `/:articleId`,
       isAuth(authService.get.bind(authService)),
-      passProperParam(`articleId`, Empty.ARTICLE),
-      passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      passProperParam(`articleId`, `Incorrect id`),
+      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
       async (req, res, next) => {
         await articleService.delete(req.params.articleId);
+        res.body = `Article is deleted`;
         next();
       },
       tryToResponse(HttpCode.OK)

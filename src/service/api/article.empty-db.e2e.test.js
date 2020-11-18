@@ -172,8 +172,8 @@ describe(`When POST '/${PathName.ARTICLES}' to empty database '${fakeSequelize.c
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`response should be equal to ${Empty.ARTICLE}`, () => {
-    expect(response.body).toStrictEqual(Empty.ARTICLE);
+  test(`Response is 'Unauthorized access'`, () => {
+    expect(response.body).toBe(`Unauthorized access`);
   });
 });
 
@@ -201,8 +201,8 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.ID}' to empty database '${fa
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`response should be equal to ${Empty.ARTICLE}`, () => {
-    expect(response.body).toStrictEqual(Empty.ARTICLE);
+  test(`Response is 'Unauthorized access'`, () => {
+    expect(response.body).toBe(`Unauthorized access`);
   });
 });
 
@@ -226,8 +226,8 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.ID}/comments' to empty data
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`response should be equal to ${Empty.COMMENT}`, () => {
-    expect(response.body).toStrictEqual(Empty.COMMENT);
+  test(`Response is 'Unauthorized access'`, () => {
+    expect(response.body).toBe(`Unauthorized access`);
   });
 });
 
@@ -246,7 +246,7 @@ describe(`When DELETE '/${PathName.ARTICLES}/${Article.ID}' to empty database '$
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`response should be equal to ${Empty.ARTICLE}`, () => {
-    expect(response.body).toStrictEqual(Empty.ARTICLE);
+  test(`Response is 'Unauthorized access'`, () => {
+    expect(response.body).toBe(`Unauthorized access`);
   });
 });

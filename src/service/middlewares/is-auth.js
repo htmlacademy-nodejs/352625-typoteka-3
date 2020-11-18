@@ -10,7 +10,7 @@ module.exports = (service) => (
     const auth = await service();
 
     if (auth.status === false) {
-      res.status(HttpCode.UNAUTHORIZED).send(`Unauthorized access`);
+      res.status(HttpCode.UNAUTHORIZED).json(`Unauthorized access`);
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
       return;
     }
