@@ -10,23 +10,12 @@ const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
 const {mocks} = require(`../../data/db/fake/mocks.js`);
 const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
+const {loginByAuthorId, logoutByAuthorId} = require(`./test-utils.js`);
 
 const authService = new AuthService(fakeDb);
 
 const Author = {
   RIGHT_ID: encodeURI(`1`),
-};
-
-const loginByAuthorId = async (AuthorId) => {
-  const targetAuth = await fakeDb.Auth.findOne({where: {[`author_id`]: AuthorId}});
-  targetAuth[`is_auth`] = true;
-  await targetAuth.save();
-};
-
-const logoutByAuthorId = async (AuthorId) => {
-  const targetAuth = await fakeDb.Auth.findOne({where: {[`author_id`]: AuthorId}});
-  targetAuth[`is_auth`] = false;
-  await targetAuth.save();
 };
 
 const createAPI = () => {
@@ -53,7 +42,7 @@ describe(`When GET '/${PathName.AUTH}' in login mode`, () => {
   let result;
 
   beforeAll(async () => {
-    await loginByAuthorId(Author.RIGHT_ID);
+    await loginByAuthorId(Author.RIGHT_ID, fakeDb);
     const data = await authService.get();
     response = await request(app)
       .get(`/${PathName.AUTH}`);
@@ -61,7 +50,7 @@ describe(`When GET '/${PathName.AUTH}' in login mode`, () => {
   });
 
   afterAll(async () => {
-    await logoutByAuthorId(Author.RIGHT_ID);
+    await logoutByAuthorId(Author.RIGHT_ID, fakeDb);
   });
 
 
