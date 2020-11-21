@@ -33,7 +33,7 @@ block content
                   button.button.button--transparent Удалить
                 each category in categories
                   .new-publication__checkbox.new-publication__checkbox--auto
-                    input(id=`${category.id}` type="checkbox" name=`category-${category.name}` value=`${category.id}`)
+                    input(id=`${category.id}` type="checkbox" name=`categories` value=`${category.id}`)
                     label(for=`${category.id}`)= category.name
                 a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
               .form__wrapper.form__wrapper--text

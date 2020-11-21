@@ -3,18 +3,7 @@
 const {db, sequelize} = require(`./../../data/db/db.js`);
 const moment = require(`moment`);
 
-const {Items, Pagination} = require(`../api/constants.js`);
-
-const getCategoriesFromServerAnswer = (data) => {
-  const categories = [];
-
-  for (const prop in data) {
-    if (data.hasOwnProperty(prop) && prop.includes(`category`)) {
-      categories.push(data[prop]);
-    }
-  }
-  return categories;
-};
+const {Items, Pagination, Empty} = require(`../api/constants.js`);
 
 class ArticleService {
   constructor(database = db, orm = sequelize) {
@@ -166,7 +155,9 @@ class ArticleService {
       [`author_id`]: authorId,
     });
 
-    article.setCategories(getCategoriesFromServerAnswer(formData));
+    if (formData[`categories`]) {
+      article.setCategories(formData[`categories`]);
+    }
 
     return article;
   }
@@ -179,7 +170,12 @@ class ArticleService {
     article[`full_text`] = formData[`full_text`];
     article[`picture`] = formData[`picture`] || formData[`picture_filename`];
     article[`created_date`] = moment(formData[`created_date`], `DD.MM.YYYY`).toISOString();
-    article.setCategories(getCategoriesFromServerAnswer(formData));
+
+    if (formData[`categories`]) {
+      article.setCategories(formData[`categories`]);
+    } else {
+      article.setCategories(Empty.CATEGORIES);
+    }
 
     await article.save();
   }
