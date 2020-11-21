@@ -21,11 +21,11 @@ module.exports = (sequelize) => {
     },
     [`full_text`]: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     [`picture`]: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     [`created_date`]: {
       type: DataTypes.DATE,

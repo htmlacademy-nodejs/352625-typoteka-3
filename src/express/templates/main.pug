@@ -44,7 +44,8 @@ block content
                 li.preview__breadcrumbs-item
                   a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`)= category.name
             .preview__background
-              img.preview__background-image(src=`/img/${item.picture}` width="460" height="240" srcset=`/img/${item.picture} 2x` alt=`Фотография ${item.picture}`)
+              if item.picture
+                img.preview__background-image(src=`/img/${item.picture}` width="460" height="240" srcset=`/img/${item.picture} 2x` alt=`Фотография ${item.picture}`)
             time.preview__time(datetime=`${item.created_date}`)= getHumanDate(item.created_date)
             h3.preview__name
               a.preview__name-link(href=`/articles/${item.id}`)= item.title

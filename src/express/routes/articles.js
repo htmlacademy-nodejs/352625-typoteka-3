@@ -45,7 +45,9 @@ articlesRouter.get(`/add`, async (req, res) => {
 articlesRouter.post(`/add`, upload.single(`picture`), async (req, res) => {
   const {body, file} = req;
   const articleData = body;
-  articleData[`picture`] = file.filename;
+  if (file) {
+    articleData[`picture`] = file.filename;
+  }
 
   try {
     await api.postArticle(articleData);
