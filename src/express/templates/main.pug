@@ -42,7 +42,7 @@ block content
             ul.preview__breadcrumbs
               each category in item.categories
                 li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`)= category.name
+                  a.preview__breadcrumbs-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
             .preview__background
               if item.picture
                 img.preview__background-image(src=`/img/${item.picture}` width="460" height="240" srcset=`/img/${item.picture} 2x` alt=`Фотография ${item.picture}`)
