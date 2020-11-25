@@ -33,6 +33,7 @@
     "supertest": "4.0.2"
   },
   "dependencies": {
+    "@hapi/joi-date": "2.0.1",
     "axios": "0.19.2",
     "chalk": "3.0.0",
     "dotenv": "8.2.0",

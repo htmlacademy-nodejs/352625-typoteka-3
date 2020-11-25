@@ -30,9 +30,20 @@ const upload = multer({storage});
 
 articlesRouter.get(`/add`, async (req, res) => {
   try {
+    let status = 200;
+    let data;
+    let errors;
+
+    if (req.query.data) {
+      const apiReply = JSON.parse(req.query.data);
+      status = apiReply.status;
+      data = apiReply.data;
+      errors = apiReply.errors;
+    }
+
     const categories = await api.getCategories();
 
-    res.render(`new-ticket`, {categories, getHumanDate});
+    res.status(status).render(`new-ticket`, {categories, getHumanDate, data, errors});
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -50,15 +61,13 @@ articlesRouter.post(`/add`, upload.single(`picture`), async (req, res) => {
   }
 
   try {
-    await api.postArticle(articleData);
-
+    res.body = await api.postArticle(articleData);
     res.redirect(`/my`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.redirect(`/articles/add?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
-
-    res.redirect(`/articles/add`);
   }
 });
 
@@ -120,9 +129,19 @@ articlesRouter.get(`/:offerId`, async (req, res) => {
 
 articlesRouter.get(`/edit/:articleId`, async (req, res) => {
   try {
-    const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
+    let status = 200;
+    let data;
+    let errors;
 
-    res.render(`ticket-edit`, {article, categories});
+    if (req.query.data) {
+      const apiReply = JSON.parse(req.query.data);
+      status = apiReply.status;
+      data = apiReply.data;
+      errors = apiReply.errors;
+    }
+
+    const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
+    res.status(status).render(`ticket-edit`, {article, categories, data, errors});
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -148,9 +167,8 @@ articlesRouter.post(`/edit/:articleId`, upload.single(`picture`), async (req, re
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.redirect(`/articles/edit/${req.params.articleId}?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
-
-    res.redirect(`/articles/edit/${req.params.articleId}`);
   }
 });
 

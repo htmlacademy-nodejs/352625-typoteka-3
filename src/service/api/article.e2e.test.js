@@ -227,19 +227,72 @@ describe(`When GET '/${PathName.ARTICLES}/${Article.WRONG_ID}'`, () => {
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}' in login mode`, () => {
+describe(`When POST invalid data '/${PathName.ARTICLES}' in login mode`, () => {
   const app = createAPI();
 
   let response;
 
   const mockArticle = {
-    [`title`]: `text`,
+    [`title`]: `Невалидный заголовок`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Невалидный анонс`,
+    [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    // нет ни одной категории
+  };
+
+  const expectedReply = {
+    data: mockArticle,
+    errors: [
+      {
+        label: `title`,
+        message: `Длина должна быть не менее 30 символов`
+      },
+      {
+        label: `categories`,
+        message: `Выберите хотя бы одну категорию`
+      },
+      {
+        label: `announce`,
+        message: `Длина должна быть не менее 30 символов`
+      }
+    ],
+    status: HttpCode.BAD_REQUEST
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID, fakeDb);
+    response = await request(app)
+      .post(`/${PathName.ARTICLES}`)
+      .send(mockArticle);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID, fakeDb);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  });
+
+  test(`Response is 'Article is added'`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
+  });
+
+});
+
+
+describe(`When POST valid data '/${PathName.ARTICLES}' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockArticle = {
+    [`title`]: `Заголовок должен быть не менее 30 символов`,
     [`created_date`]: `14.10.2020`,
     [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`picture`]: `forest`,
-    [`category-1`]: 1,
-    [`category-2`]: 2,
+    [`categories`]: [3, 5],
   };
 
   beforeAll(async () => {
@@ -296,17 +349,71 @@ describe(`When POST '/${PathName.ARTICLES}' in logout mode`, () => {
 });
 
 
-describe(`When PUT '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
+describe(`When PUT unvalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
   const app = createAPI();
 
   let response;
 
   const mockArticle = {
-    [`title`]: `Название нового заголовка`,
+    [`title`]: `Невалидный заголовок`,
     [`created_date`]: `14.10.2020`,
-    [`announce`]: `Исправленная аннотация поста`,
-    [`full_text`]: `Исправленный полный текст публикации`,
-    [`picture`]: `picture`,
+    [`announce`]: `Невалидный анонс`,
+    [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    // нет ни одной категории
+  };
+
+  const expectedReply = {
+    data: mockArticle,
+    errors: [
+      {
+        label: `title`,
+        message: `Длина должна быть не менее 30 символов`
+      },
+      {
+        label: `categories`,
+        message: `Выберите хотя бы одну категорию`
+      },
+      {
+        label: `announce`,
+        message: `Длина должна быть не менее 30 символов`
+      }
+    ],
+    status: HttpCode.BAD_REQUEST
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID, fakeDb);
+    response = await request(app)
+      .put(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
+      .send(mockArticle);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID, fakeDb);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  });
+
+  test(`Response is 'Article is changed'`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
+  });
+});
+
+
+describe(`When PUT valid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockArticle = {
+    [`title`]: `Заголовок должен быть не менее 30 символов`,
+    [`created_date`]: `14.10.2020`,
+    [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    [`picture`]: `forest`,
+    [`categories`]: [3, 5],
   };
 
   beforeAll(async () => {

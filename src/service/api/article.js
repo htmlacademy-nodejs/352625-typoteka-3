@@ -13,6 +13,7 @@ const {
   validateComment,
 } = require(`../middlewares`);
 
+const articleSchema = require(`../schemas/article.js`);
 
 module.exports = (app, articleService, authService, commentService) => {
   const route = new Router();
@@ -67,7 +68,7 @@ module.exports = (app, articleService, authService, commentService) => {
   route.post(
       `/`,
       isAuth(authService.get.bind(authService)),
-      validateArticle(),
+      validateArticle(articleSchema),
       async (req, res, next) => {
         await articleService.add(req.body, res.auth.user.id);
         res.body = `Article is added`;
@@ -82,7 +83,7 @@ module.exports = (app, articleService, authService, commentService) => {
       isAuth(authService.get.bind(authService)),
       passProperParam(`articleId`, `Incorrect id`),
       passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
-      validateArticle(),
+      validateArticle(articleSchema),
       async (req, res, next) => {
         await articleService.update(req.body, req.params.articleId);
         res.body = `Article is changed`;
