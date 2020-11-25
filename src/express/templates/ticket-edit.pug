@@ -57,6 +57,8 @@ block content
                   label
                     textarea(rows="2" placeholder="Анонс публикации" name="announce" required="")= data ? data[`announce`] : article.announce
                 .form__field.form__field--publication-text
+                  - const fullTextError = errors ? errors.find((error) => error.label === "full_text") : null
+                  span(style={color: `red`})= fullTextError ? fullTextError.message : ""
                   label
                     textarea(rows="5" placeholder="Полный текст публикации" name="full_text")= data ? data[`full_text`] : article.full_text ? article.full_text : ""
       .modal__overlay
