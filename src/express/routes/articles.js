@@ -109,14 +109,27 @@ articlesRouter.get(`/category/id=:categoryId&page=:pageNumber`, async (req, res)
 });
 
 
-articlesRouter.get(`/:offerId`, async (req, res) => {
+articlesRouter.get(`/:articleId`, async (req, res) => {
   try {
-    const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.offerId)]);
+    let status = 200;
+    let data;
+    let errors;
 
-    res.render(`ticket`, {
+    if (req.query.data) {
+      const apiReply = JSON.parse(req.query.data);
+      status = apiReply.status;
+      data = apiReply.data;
+      errors = apiReply.errors;
+    }
+
+    const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.articleId)]);
+
+    res.status(status).render(`ticket`, {
       auth,
       article,
       getHumanDate,
+      data,
+      errors,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -183,9 +196,8 @@ articlesRouter.post(`/:articleId/comments`, async (req, res) => {
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.redirect(`/articles/${req.params.articleId}?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
-
-    res.redirect(`/articles/${req.params.articleId}`);
   }
 });
 

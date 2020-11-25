@@ -557,13 +557,13 @@ describe(`When PUT '/${PathName.ARTICLES}/${Article.WRONG_ID}' in logout mode`, 
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in login mode`, () => {
+describe(`When POST valid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in login mode`, () => {
   const app = createAPI();
 
   let response;
 
   const mockComment = {
-    text: `Текст нового комментария`
+    text: `Текст нового валидного комментария`
   };
 
   beforeAll(async () => {
@@ -583,6 +583,49 @@ describe(`When POST '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in logi
 
   test(`Response is 'Comment is added'`, () => {
     expect(response.body).toBe(`Comment is added`);
+  });
+});
+
+
+describe(`When POST unvalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments' in login mode`, () => {
+  const app = createAPI();
+
+  let response;
+
+  const mockComment = {
+    text: `Текст`
+  };
+
+  const unvalidReply = {
+    data: {
+      text: `Текст`,
+    },
+    errors: [
+      {
+        label: `text`,
+        message: `Длина должна быть не менее 20 символов`,
+      }
+    ],
+    status: HttpCode.BAD_REQUEST,
+  };
+
+  beforeAll(async () => {
+    await loginByAuthorId(Author.RIGHT_ID, fakeDb);
+    response = await request(app)
+      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`)
+      .send(mockComment);
+  });
+
+  afterAll(async () => {
+    await logoutByAuthorId(Author.RIGHT_ID, fakeDb);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  });
+
+  test(`Response is 'Comment is added'`, () => {
+    expect(response.body).toStrictEqual(unvalidReply);
   });
 });
 

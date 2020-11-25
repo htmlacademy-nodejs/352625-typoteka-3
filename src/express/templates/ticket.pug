@@ -42,6 +42,9 @@ block content
                 .comments__avatar.avatar
                   img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
                 label
-                  textarea(rows="1" name="text" placeholder="Присоединиться к обсуждению")
+                  textarea(rows="1" name="text" placeholder="Присоединиться к обсуждению")= data ? data.text : ""
                 button.comments__button.button.button--colored(type="submit") Опубликовать
+                - const commentError = errors ? errors.find((error) => error.label === "text") : null
+                span(style={color: `red`})= commentError ? commentError.message : ""
+
 

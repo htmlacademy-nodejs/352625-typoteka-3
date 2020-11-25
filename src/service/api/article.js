@@ -14,6 +14,7 @@ const {
 } = require(`../middlewares`);
 
 const articleSchema = require(`../schemas/article.js`);
+const commentSchema = require(`../schemas/comment.js`);
 
 module.exports = (app, articleService, authService, commentService) => {
   const route = new Router();
@@ -98,7 +99,7 @@ module.exports = (app, articleService, authService, commentService) => {
       isAuth(authService.get.bind(authService)),
       passProperParam(`articleId`, `Incorrect id`),
       passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
-      validateComment(),
+      validateComment(commentSchema),
       async (req, res, next) => {
         await commentService.add(req.body, req.params.articleId, res.auth.user.id);
         res.body = `Comment is added`;

@@ -5,15 +5,26 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const validateComment = () => {
-  // TODO: validating code is coming soon...
-  return true;
-};
+module.exports = (schema) => (
+  async (req, res, next) => {
+    const {body} = req;
 
-module.exports = () => (
-  (req, res, next) => {
-    if (!validateComment()) {
-      res.status(HttpCode.BAD_REQUEST).send(`Incorrect comment format`);
+    try {
+      await schema.validateAsync(body, {
+        abortEarly: false
+      });
+    } catch (err) {
+      const {details} = err;
+
+      res.status(HttpCode.BAD_REQUEST).json({
+        status: HttpCode.BAD_REQUEST,
+        data: body,
+        errors: details.map((errorDescription) => ({
+          label: errorDescription.context.label,
+          message: errorDescription.message,
+        })),
+      });
+
       logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
       return;
     }
