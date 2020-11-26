@@ -1,49 +1,32 @@
 'use strict';
 
 const {Router} = require(`express`);
-const multer = require(`multer`);
-const path = require(`path`);
-const nanoid = require(`nanoid`);
 
 const {getHumanDate, getPageNumbers} = require(`./../utils.js`);
 const {render404Page, render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
+
 const {getLogger} = require(`./../../service/logger.js`);
-
-const UPLOAD_DIR = `../upload/img/`;
-const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
-
 const logger = getLogger();
+
+const {
+  checkApiReply,
+  uploadFile,
+  saveFileNameToBody,
+} = require(`../middlewares`);
 
 const articlesRouter = new Router();
 
-const storage = multer.diskStorage({
-  destination: uploadDirAbsolute,
-  filename: (req, file, cb) => {
-    const uniqueName = nanoid(10);
-    const extension = file.originalname.split(`.`).pop();
-    cb(null, `${uniqueName}.${extension}`);
-  }
-});
-
-const upload = multer({storage});
-
-articlesRouter.get(`/add`, async (req, res) => {
+articlesRouter.get(`/add`, checkApiReply(), async (req, res) => {
   try {
-    let status = 200;
-    let data;
-    let errors;
-
-    if (req.query.data) {
-      const apiReply = JSON.parse(req.query.data);
-      status = apiReply.status;
-      data = apiReply.data;
-      errors = apiReply.errors;
-    }
-
     const categories = await api.getCategories();
 
-    res.status(status).render(`new-ticket`, {categories, getHumanDate, data, errors});
+    res.status(req.apiStatus).render(`new-ticket`, {
+      categories,
+      getHumanDate,
+      data: req.apiData,
+      errors: req.apiErrors,
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -53,15 +36,9 @@ articlesRouter.get(`/add`, async (req, res) => {
 });
 
 
-articlesRouter.post(`/add`, upload.single(`picture`), async (req, res) => {
-  const {body, file} = req;
-  const articleData = body;
-  if (file) {
-    articleData[`picture`] = file.filename;
-  }
-
+articlesRouter.post(`/add`, uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
   try {
-    res.body = await api.postArticle(articleData);
+    await api.postArticle(req.body);
     res.redirect(`/my`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -109,27 +86,16 @@ articlesRouter.get(`/category/id=:categoryId&page=:pageNumber`, async (req, res)
 });
 
 
-articlesRouter.get(`/:articleId`, async (req, res) => {
+articlesRouter.get(`/:articleId`, checkApiReply(), async (req, res) => {
   try {
-    let status = 200;
-    let data;
-    let errors;
-
-    if (req.query.data) {
-      const apiReply = JSON.parse(req.query.data);
-      status = apiReply.status;
-      data = apiReply.data;
-      errors = apiReply.errors;
-    }
-
     const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.articleId)]);
 
-    res.status(status).render(`ticket`, {
+    res.status(req.apiStatus).render(`ticket`, {
       auth,
       article,
       getHumanDate,
-      data,
-      errors,
+      data: req.apiData,
+      errors: req.apiErrors,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -140,21 +106,16 @@ articlesRouter.get(`/:articleId`, async (req, res) => {
 });
 
 
-articlesRouter.get(`/edit/:articleId`, async (req, res) => {
+articlesRouter.get(`/edit/:articleId`, checkApiReply(), async (req, res) => {
   try {
-    let status = 200;
-    let data;
-    let errors;
-
-    if (req.query.data) {
-      const apiReply = JSON.parse(req.query.data);
-      status = apiReply.status;
-      data = apiReply.data;
-      errors = apiReply.errors;
-    }
-
     const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
-    res.status(status).render(`ticket-edit`, {article, categories, data, errors});
+
+    res.status(req.apiStatus).render(`ticket-edit`, {
+      article,
+      categories,
+      data: req.apiData,
+      errors: req.apiErrors,
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -164,19 +125,10 @@ articlesRouter.get(`/edit/:articleId`, async (req, res) => {
 });
 
 
-articlesRouter.post(`/edit/:articleId`, upload.single(`picture`), async (req, res) => {
-  const {body, file} = req;
-  const articleData = body;
-  if (file) {
-    articleData[`picture`] = file.filename;
-  }
-
+articlesRouter.post(`/edit/:articleId`, uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
   try {
-    const articleId = parseInt(req.params.articleId, 10);
-
-    await api.editArticle(articleData, articleId);
-
-    res.redirect(`/articles/${articleId}`);
+    await api.editArticle(req.body, req.params.articleId);
+    res.redirect(`/articles/${req.params.articleId}`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {

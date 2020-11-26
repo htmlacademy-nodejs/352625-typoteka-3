@@ -237,7 +237,7 @@ describe(`When POST invalid data '/${PathName.ARTICLES}' in login mode`, () => {
     [`created_date`]: `14.10.2020`,
     [`announce`]: `Невалидный анонс`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
-    // нет ни одной категории
+    [`categories`]: [],
   };
 
   const expectedReply = {
@@ -292,7 +292,7 @@ describe(`When POST valid data '/${PathName.ARTICLES}' in login mode`, () => {
     [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`picture`]: `forest`,
-    [`categories`]: [3, 5],
+    [`categories`]: [1, 3],
   };
 
   beforeAll(async () => {
@@ -328,8 +328,7 @@ describe(`When POST '/${PathName.ARTICLES}' in logout mode`, () => {
     [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`picture`]: `forest`,
-    [`category-1`]: 1,
-    [`category-2`]: 2,
+    [`categories`]: [1]
   };
 
   beforeAll(async () => {
@@ -349,7 +348,7 @@ describe(`When POST '/${PathName.ARTICLES}' in logout mode`, () => {
 });
 
 
-describe(`When PUT unvalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
+describe(`When PUT invalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in login mode`, () => {
   const app = createAPI();
 
   let response;
@@ -359,7 +358,7 @@ describe(`When PUT unvalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in l
     [`created_date`]: `14.10.2020`,
     [`announce`]: `Невалидный анонс`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
-    // нет ни одной категории
+    [`categories`]: []
   };
 
   const expectedReply = {
@@ -413,7 +412,7 @@ describe(`When PUT valid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in log
     [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`picture`]: `forest`,
-    [`categories`]: [3, 5],
+    [`categories`]: [1, 2]
   };
 
   beforeAll(async () => {

@@ -18,51 +18,75 @@ GET http://localhost:3000/api/categories
 Content-Type: application/json
 
 
-### 5. Get comments of existing article (Response code: 200)
-GET http://localhost:3000/api/articles/1/comments
-Content-Type: application/json
-
-
-### 6. Get comments of non-existing article (Response code: 400)
-GET http://localhost:3000/api/articles/100000/comments
-Content-Type: application/json
-
-
-### 7. Get existing search result (Response code: 200)
+### 5. Get existing search result (Response code: 200)
 GET http://localhost:3000/api/search?query=лучший
 Content-Type: application/json
 
 
-### 8. Get non-existing search result (Response code: 200)
+### 6. Get non-existing search result (Response code: 200)
 GET http://localhost:3000/api/search?query=asdfghjlkl
 Content-Type: application/json
 
 
-### 9. Get auth status (Response code: 200)
+### 7. Get auth status (Response code: 200)
 GET http://localhost:3000/api/auth
 Content-Type: application/json
 
 
-### 10. Post new article (Response code: 200)
+### 8. Post new article (valid data) (Response code: 200)
 POST http://localhost:3000/api/articles
 Content-Type: application/json
 
 {
-  "title": "Ёлки. История деревьев.",
-  "announce": "Ёлки — это не просто красивое дерево. Это прочная древесина. Простые ежедневные упражнения помогут достичь успеха.",
-  "full_text": "Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь. Первая большая ёлка была установлена только в 1938 году. Так ли это на самом деле? Достичь успеха помогут ежедневные повторения. Вы можете достичь всего. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Просто действуйте. Это прочная древесина. Простые ежедневные упражнения помогут достичь успеха.",
-  "picture": "forest",
+  "title": "Заголовок должен быть более 30 символов.",
+  "announce": "Анонс должен быть более 30 символов чтобы быть валидным.",
+  "full_text": "Необязательное поле. Максимальная длина - 1000 символов.",
   "created_date": "11.11.2020",
-  "author_id": 2
+  "picture": "picture_name.jpg",
+  "categories": [1, 4]
 }
 
 
-### 11. Update existing article (Response code: 200)
+### 9. Post new article (invalid data) (Response code: 400)
+POST http://localhost:3000/api/articles
+Content-Type: application/json
+
+{
+  "title": "Заголовок не валидный",
+  "announce": "Анонс не валидный",
+  "full_text": "Необязательное поле. Максимальная длина - 1000 символов.",
+  "created_date": "11.11.2020",
+  "picture": "picture_name.jpg",
+  "categories": []
+}
+
+
+
+### 10. Update existing article (valid data) (Response code: 201)
 PUT http://localhost:3000/api/articles/1
 Content-Type: application/json
 
 {
-  "announce": "Стоит только немного постараться и запастись книгами."
+  "title": "Исправленный валидный заголовок более 30 символов.",
+  "announce": "Анонс должен быть более 30 символов чтобы быть валидным.",
+  "full_text": "Необязательное поле. Максимальная длина - 1000 символов.",
+  "created_date": "11.11.2020",
+  "picture": "picture_name.jpg",
+  "categories": [1, 4]
+}
+
+
+### 11. Update existing article (invalid data) (Response code: 400)
+PUT http://localhost:3000/api/articles/1
+Content-Type: application/json
+
+{
+  "title": "Заголовок не валидный",
+  "announce": "Анонс не валидный",
+  "full_text": "Необязательное поле. Максимальная длина - 1000 символов.",
+  "created_date": "11.11.2020",
+  "picture": "picture_name.jpg",
+  "categories": [1]
 }
 
 
@@ -71,48 +95,56 @@ PUT http://localhost:3000/api/articles/100000
 Content-Type: application/json
 
 {
-  "announce": "Стоит только немного постараться и запастись книгами."
+  "first": "Здесь могут быть",
+  "next_data": "любые данные",
+  "end": ["они отбросятся", "без валидации"],
+  "finish": "потому что ID поста не существует"
 }
 
 
-### 13. Put new comment to existing article (Response code: 200)
-PUT http://localhost:3000/api/articles/1/comments
+### 13. Put new comment to existing article (valid data) (Response code: 201)
+POST http://localhost:3000/api/articles/1/comments
 Content-Type: application/json
 
 {
-  "id": "uuDL",
-  "text": "Ноутбуки победили."
+  "text": "Текст более 20 символов"
 }
 
 
-### 14. Put new comment to non-existing article (Response code: 400)
-PUT http://localhost:3000/api/articles/100000/comments
+### 14. Put new comment to existing article (invalid data) (Response code: 400)
+POST http://localhost:3000/api/articles/1/comments
 Content-Type: application/json
 
 {
-  "id": "uuDL",
-  "text": "Ноутбуки победили."
+  "text": "Текст < 20 символов"
 }
 
 
-### 15. Delete existing article (Response code: 200)
+### 15. Put new comment to non-existing article (Response code: 400)
+POST http://localhost:3000/api/articles/100000/comments
+Content-Type: application/json
+
+{
+  "text": "ID поста не существует, поэтому коммент не запишется."
+}
+
+
+### 16. Delete existing article (Response code: 200)
 DELETE http://localhost:3000/api/articles/1
 
 
-### 16. Delete non-existing article (Response code: 400)
+### 17. Delete non-existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1000000
 
 
-### 17. Delete existing comment in existing article (Response code: 200)
+### 18. Delete existing comment in existing article (Response code: 200)
 DELETE http://localhost:3000/api/articles/1/comments/1
 
 
-### 18. Delete existing comment in non-existing article (Response code: 400)
+### 19. Delete existing comment in non-existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1000000/comments/1
 
 
-### 18. Delete non-existing comment in existing article (Response code: 400)
+### 20. Delete non-existing comment in existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1/comments/1000000
 
-
-###

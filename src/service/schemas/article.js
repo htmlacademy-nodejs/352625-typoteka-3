@@ -26,11 +26,11 @@ module.exports = Joi.object({
   picture: Joi.string(),
 
   categories: Joi.array()
-    .items(Joi.number())
+    .items(Joi.number().integer())
     .min(1)
     .required()
     .messages({
-      'any.required': `Выберите хотя бы одну категорию`
+      'array.min': `Выберите хотя бы одну категорию`
     }),
 
   announce: Joi.string()
