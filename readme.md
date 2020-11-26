@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
 * Студент: [Максим Акимов](https://up.htmlacademy.ru/nodejs/3/user/352625).
-* Наставник: [Олег Поляков](https://htmlacademy.ru/profile/id1296165).
+* Наставник: [Алексей Балесный](https://htmlacademy.ru/profile/id221665).
 
 ---
 
