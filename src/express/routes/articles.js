@@ -132,6 +132,7 @@ articlesRouter.post(`/edit/:articleId`, uploadFile.single(`picture`), saveFileNa
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    // TODO Отправка error.response.data из API в query URL-строки выглядит длинновато
     res.redirect(`/articles/edit/${req.params.articleId}?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
   }
@@ -148,6 +149,7 @@ articlesRouter.post(`/:articleId/comments`, async (req, res) => {
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    // TODO Отправка error.response.data из API в query URL-строки выглядит длинновато
     res.redirect(`/articles/${req.params.articleId}?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
   }
