@@ -13,7 +13,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for="new-publication-date" aria-label="Календарь")
-                    input#new-publication-date(type="text" name="created_date" placeholder="21.03.2019" value=`${getHumanDate(Date.now())}` required="")
+                    input#new-publication-date(type="text" name="created_date" placeholder="21.03.2019" value=`${data ? data[`created_date`] : getHumanDate(Date.now())}` required="")
               button.new-publication__button.button.button--colored(type="submit") Опубликовать
             a.popup__button.button.button--popup-close(href="/my" aria-label="Закрыть окно")
               | Закрыть
@@ -21,27 +21,41 @@ block content
             .new-publication__form.form
               .form__wrapper.form__wrapper--intro
                 .form__field
+                  - const titleError = errors ? errors.find((error) => error.label === "title") : null
+                  span(style={color: `red`})= titleError ? titleError.message : ""
                   label
-                    input(type="text" placeholder="Заголовок" name="title" value="" required="")
+                    input(type="text" placeholder="Заголовок" name="title" value=`${data ? data[`title`] : ""}` required="")
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type="text" value="" name="picture-name" placeholder="Фотография" readonly="")
+                    input#image-name-field(type="text" name="picture_filename" placeholder="Фотография" readonly="")
                   .form__image-loader.form__image-loader--publication
                     label
-                      input.visually-hidden(type="file" name="picture" required="")
+                      input#image-field.visually-hidden(type="file" name="picture" accept="image/jpeg,image/x-png")
                       | Обзор
-                  button.button.button--transparent Удалить
+                  button.button.button--transparent.button--delete Удалить
                 each category in categories
                   .new-publication__checkbox.new-publication__checkbox--auto
-                    input(id=`${category.id}` type="checkbox" name=`category-${category.name}` value=`${category.id}`)
+                    input(
+                      id=`${category.id}`
+                      type="checkbox"
+                      name=`categories`
+                      value=`${category.id}`
+                      checked=((data && data.categories) ? data.categories.find((item) => item === category.id) : false)
+                      )
                     label(for=`${category.id}`)= category.name
                 a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
+              - const categoriesError = errors ? errors.find((error) => error.label === "categories") : null
+              span(style={color: `red`})= categoriesError ? categoriesError.message : ""
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
+                  - const announceError = errors ? errors.find((error) => error.label === "announce") : null
+                  span(style={color: `red`})= announceError ? announceError.message : ""
                   label
-                    textarea(rows="2" placeholder="Анонс публикации" name="announce")
+                    textarea(rows="2" placeholder="Анонс публикации" name="announce" required="")= data ? data[`announce`] : ""
                 .form__field.form__field--publication-text
+                  - const fullTextError = errors ? errors.find((error) => error.label === "full_text") : null
+                  span(style={color: `red`})= fullTextError ? fullTextError.message : ""
                   label
-                    textarea(rows="5" placeholder="Полный текст публикации" name="full_text")
+                    textarea(rows="5" placeholder="Полный текст публикации" name="full_text")= data ? data[`full_text`] : ""
       .modal__overlay
 

@@ -1,38 +1,32 @@
 'use strict';
 
 const {Router} = require(`express`);
-const multer = require(`multer`);
-const path = require(`path`);
-const nanoid = require(`nanoid`);
 
 const {getHumanDate, getPageNumbers} = require(`./../utils.js`);
 const {render404Page, render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
+
 const {getLogger} = require(`./../../service/logger.js`);
-
-const UPLOAD_DIR = `../upload/img/`;
-const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
-
 const logger = getLogger();
+
+const {
+  checkApiReply,
+  uploadFile,
+  saveFileNameToBody,
+} = require(`../middlewares`);
 
 const articlesRouter = new Router();
 
-const storage = multer.diskStorage({
-  destination: uploadDirAbsolute,
-  filename: (req, file, cb) => {
-    const uniqueName = nanoid(10);
-    const extension = file.originalname.split(`.`).pop();
-    cb(null, `${uniqueName}.${extension}`);
-  }
-});
-
-const upload = multer({storage});
-
-articlesRouter.get(`/add`, async (req, res) => {
+articlesRouter.get(`/add`, checkApiReply(), async (req, res) => {
   try {
     const categories = await api.getCategories();
 
-    res.render(`new-ticket`, {categories, getHumanDate});
+    res.status(req.apiStatus).render(`new-ticket`, {
+      categories,
+      getHumanDate,
+      data: req.apiData,
+      errors: req.apiErrors,
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -42,21 +36,15 @@ articlesRouter.get(`/add`, async (req, res) => {
 });
 
 
-articlesRouter.post(`/add`, upload.single(`picture`), async (req, res) => {
-  const {body, file} = req;
-  const articleData = body;
-  articleData[`picture`] = file.filename;
-
+articlesRouter.post(`/add`, uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
   try {
-    await api.postArticle(articleData);
-
+    await api.postArticle(req.body);
     res.redirect(`/my`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.redirect(`/articles/add?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
-
-    res.redirect(`/articles/add`);
   }
 });
 
@@ -98,14 +86,16 @@ articlesRouter.get(`/category/id=:categoryId&page=:pageNumber`, async (req, res)
 });
 
 
-articlesRouter.get(`/:offerId`, async (req, res) => {
+articlesRouter.get(`/:articleId`, checkApiReply(), async (req, res) => {
   try {
-    const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.offerId)]);
+    const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.articleId)]);
 
-    res.render(`ticket`, {
+    res.status(req.apiStatus).render(`ticket`, {
       auth,
       article,
       getHumanDate,
+      data: req.apiData,
+      errors: req.apiErrors,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -116,11 +106,16 @@ articlesRouter.get(`/:offerId`, async (req, res) => {
 });
 
 
-articlesRouter.get(`/edit/:articleId`, async (req, res) => {
+articlesRouter.get(`/edit/:articleId`, checkApiReply(), async (req, res) => {
   try {
     const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
 
-    res.render(`ticket-edit`, {article, categories});
+    res.status(req.apiStatus).render(`ticket-edit`, {
+      article,
+      categories,
+      data: req.apiData,
+      errors: req.apiErrors,
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -130,25 +125,16 @@ articlesRouter.get(`/edit/:articleId`, async (req, res) => {
 });
 
 
-articlesRouter.post(`/edit/:articleId`, upload.single(`picture`), async (req, res) => {
-  const {body, file} = req;
-  const articleData = body;
-  if (file) {
-    articleData[`picture`] = file.filename;
-  }
-
+articlesRouter.post(`/edit/:articleId`, uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
   try {
-    const articleId = parseInt(req.params.articleId, 10);
-
-    await api.editArticle(articleData, articleId);
-
-    res.redirect(`/articles/${articleId}`);
+    await api.editArticle(req.body, req.params.articleId);
+    res.redirect(`/articles/${req.params.articleId}`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    // TODO Отправка error.response.data из API в query URL-строки выглядит длинновато
+    res.redirect(`/articles/edit/${req.params.articleId}?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
-
-    res.redirect(`/articles/edit/${req.params.articleId}`);
   }
 });
 
@@ -163,9 +149,9 @@ articlesRouter.post(`/:articleId/comments`, async (req, res) => {
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    // TODO Отправка error.response.data из API в query URL-строки выглядит длинновато
+    res.redirect(`/articles/${req.params.articleId}?data=${JSON.stringify(error.response.data)}`);
     logger.error(`Error occurs: ${error}`);
-
-    res.redirect(`/articles/${req.params.articleId}`);
   }
 });
 

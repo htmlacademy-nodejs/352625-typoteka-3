@@ -30,7 +30,7 @@ const mocks = {
   auths: [
     {
       [`author_id`]: 1,
-      [`is_auth`]: true,
+      [`is_auth`]: false,
     },
     {
       [`author_id`]: 2,

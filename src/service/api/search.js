@@ -1,11 +1,9 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {PathName} = require(`./constants.js`);
 const {HttpCode} = require(`./../cli/constants.js`);
-const {getLogger} = require(`./../../service/logger.js`);
-
-const logger = getLogger();
+const {Empty} = require(`./constants.js`);
+const {tryToResponse} = require(`../middlewares`);
 
 
 module.exports = (app, searchService) => {
@@ -13,20 +11,18 @@ module.exports = (app, searchService) => {
 
   app.use(`/api/search`, route);
 
-  route.get(`/`, async (req, res) => {
-    try {
-      const typingData = req.query.query;
-      let data = await searchService.findSome(typingData);
+  route.get(
+      `/`,
+      async (req, res, next) => {
+        const typingData = req.query.query;
+        res.body = await searchService.findSome(typingData);
 
-      if (typingData === ``) {
-        data = [];
-      }
+        if (typingData === ``) {
+          res.body = Empty.SEARCH;
+        }
 
-      res.status(HttpCode.OK).json(data);
-      logger.debug(`${req.method} /${PathName.SEARCH}${req.url} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+        next();
+      },
+      tryToResponse(HttpCode.OK, Empty.SEARCH)
+  );
 };

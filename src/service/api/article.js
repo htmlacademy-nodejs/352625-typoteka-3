@@ -3,220 +3,122 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
-const {getLogger} = require(`./../../service/logger.js`);
 
-const logger = getLogger();
+const {
+  passNotNullData,
+  passProperParam,
+  tryToResponse,
+  isAuth,
+  validateArticle,
+  validateComment,
+} = require(`../middlewares`);
 
-const validateArticle = () => {
-  // TODO: validating code is coming soon...
-  return true;
-};
-
-const validateComment = () => {
-  // TODO: validating code is coming soon...
-  return true;
-};
-
+const articleSchema = require(`../schemas/article.js`);
+const commentSchema = require(`../schemas/comment.js`);
 
 module.exports = (app, articleService, authService, commentService) => {
   const route = new Router();
 
   app.use(`/api/articles`, route);
 
-  route.get(`/`, async (req, res) => {
-    try {
-      const data = await articleService.findAll();
 
-      if (!data || data.length === 0) {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      } else {
-        res.status(HttpCode.OK).json(data);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/`,
+      passNotNullData(articleService.findAll.bind(articleService), Empty.ARTICLES),
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
+  );
 
 
-  route.get(`/mostDiscussed`, async (req, res) => {
-    try {
-      const data = await articleService.findMostDiscussed();
-
-      if (!data || data.length === 0) {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      } else {
-        res.status(HttpCode.OK).json(data);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/mostDiscussed`,
+      passNotNullData(articleService.findMostDiscussed.bind(articleService), Empty.ARTICLES),
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
+  );
 
 
-  route.get(`/fresh/page=:pageNumber`, async (req, res) => {
-    try {
-      let data = null;
-      const pageNumber = parseInt(req.params.pageNumber, 10);
-
-      if (pageNumber > 0) {
-        data = await await articleService.findFresh(pageNumber);
-      }
-
-      if (!data) {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      } else {
-        res.status(HttpCode.OK).json(data);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/fresh`,
+      (req, res) => res.redirect(`/api/articles/fresh/page=1`)
+  );
 
 
-  route.get(`/byAuthor/:id`, async (req, res) => {
-    try {
-      let data = null;
-      const userId = parseInt(req.params.id, 10);
-
-      if (userId) {
-        data = await articleService.findAllByAuthor(userId);
-      }
-
-      if (data) {
-        res.status(HttpCode.OK).json(data);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLES);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLES);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/fresh/page=:pageNumber`,
+      passProperParam(`pageNumber`, Empty.ARTICLES),
+      passNotNullData(articleService.findFresh.bind(articleService), Empty.ARTICLES, `pageNumber`),
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
+  );
 
 
-  route.get(`/:articleId`, async (req, res) => {
-    try {
-      let data = null;
-      const articleId = parseInt(req.params.articleId, 10);
-
-      if (articleId) {
-        data = await articleService.findOne(articleId);
-      }
-
-      if (data) {
-        res.status(HttpCode.OK).json(data);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).json(Empty.ARTICLE);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(Empty.ARTICLE);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/byAuthor/:authorId`,
+      passProperParam(`authorId`, Empty.ARTICLES),
+      passNotNullData(articleService.findAllByAuthor.bind(articleService), Empty.ARTICLES, `authorId`),
+      tryToResponse(HttpCode.OK, Empty.ARTICLES)
+  );
 
 
-  route.post(`/`, async (req, res) => {
-    try {
-      const auth = await authService.get();
-
-      if (!validateArticle() || !auth.status) {
-        res.status(HttpCode.BAD_REQUEST).send(`Incorrect article format`);
-      } else {
-        await articleService.add(req.body, auth.user.id);
-        res.status(HttpCode.OK).send(req.body);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.get(
+      `/:articleId`,
+      passProperParam(`articleId`, Empty.ARTICLE),
+      passNotNullData(articleService.findOne.bind(articleService), Empty.ARTICLE, `articleId`),
+      tryToResponse(HttpCode.OK, Empty.ARTICLE)
+  );
 
 
-  route.put(`/:articleId`, async (req, res) => {
-    try {
-      let data = null;
-      const articleId = parseInt(req.params.articleId, 10);
-
-      if (articleId) {
-        data = await articleService.findOne(articleId);
-      }
-
-      if (data) {
-        await articleService.update(req.body, articleId);
-        res.status(HttpCode.OK).send(req.body);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.post(
+      `/`,
+      isAuth(authService.get.bind(authService)),
+      validateArticle(articleSchema),
+      async (req, res, next) => {
+        await articleService.add(req.body, res.auth.user.id);
+        res.body = `Article is added`;
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
 
 
-  route.post(`/:articleId/comments`, async (req, res) => {
-    try {
-      const articleId = parseInt(req.params.articleId, 10);
-      const auth = await authService.get();
-
-      if (validateComment() && auth.status && Number.isInteger(articleId)) {
-        await commentService.add(req.body, articleId, auth.user.id);
-        res.status(HttpCode.OK).send(req.body);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).send(Empty.COMMENT);
-      }
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.put(
+      `/:articleId`,
+      isAuth(authService.get.bind(authService)),
+      passProperParam(`articleId`, `Incorrect id`),
+      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
+      validateArticle(articleSchema),
+      async (req, res, next) => {
+        await articleService.update(req.body, req.params.articleId);
+        res.body = `Article is changed`;
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
 
 
-  route.delete(`/:articleId`, async (req, res) => {
-    try {
-      let data = null;
-      const articleId = parseInt(req.params.articleId, 10);
+  route.post(
+      `/:articleId/comments`,
+      isAuth(authService.get.bind(authService)),
+      passProperParam(`articleId`, `Incorrect id`),
+      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
+      validateComment(commentSchema),
+      async (req, res, next) => {
+        await commentService.add(req.body, req.params.articleId, res.auth.user.id);
+        res.body = `Comment is added`;
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
 
-      if (articleId) {
-        data = await articleService.findOne(articleId);
-      }
 
-      if (data) {
-        await articleService.delete(articleId);
-        res.status(HttpCode.OK).send(`Article is deleted`);
-
-      } else {
-        res.status(HttpCode.BAD_REQUEST).send(Empty.ARTICLE);
-      }
-
-      logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-    } catch (error) {
-      res.status(HttpCode.INTERNAL_SERVER_ERROR).json(`${error}`);
-      logger.error(`Error occurs: ${error}`);
-    }
-  });
+  route.delete(
+      `/:articleId`,
+      isAuth(authService.get.bind(authService)),
+      passProperParam(`articleId`, `Incorrect id`),
+      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
+      async (req, res, next) => {
+        await articleService.delete(req.params.articleId);
+        res.body = `Article is deleted`;
+        next();
+      },
+      tryToResponse(HttpCode.OK)
+  );
 };

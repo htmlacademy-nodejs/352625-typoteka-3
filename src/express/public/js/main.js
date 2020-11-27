@@ -1,5 +1,21 @@
 'use strict';
 
+// обработчик удаления имени файла из формы по клику на "Удалить"
+
+let pictureForm = document.querySelector('.form__field--post-image');
+
+if (pictureForm) {
+  const pictureInput = pictureForm.querySelector('#image-field');
+  const pictureNameInput = pictureForm.querySelector('#image-name-field');
+  const deleteButton = pictureForm.querySelector('.button--delete');
+
+  deleteButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    pictureInput.value = '';
+    pictureNameInput.value = '';
+  });
+}
+
 // логика выбора даты в календаре
 
 let calendar = document.querySelector('.calendar');

@@ -21,32 +21,45 @@ block content
             .new-publication__form.form
               .form__wrapper.form__wrapper--intro
                 .form__field
+                  - const titleError = errors ? errors.find((error) => error.label === "title") : null
+                  span(style={color: `red`})= titleError ? titleError.message : ""
                   label
-                    input(type="text" placeholder="Заголовок" name="title" value=`${article.title}` required="")
+                    input(type="text" placeholder="Заголовок" name="title" value=`${data ? data[`title`] : article.title}` required="")
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type="text" value=`${article.picture}` name="picture_filename" placeholder="Фотография" readonly="")
+                    input#image-name-field(type="text" value=`${article.picture ? article.picture : ``}` name="picture_filename" placeholder="Фотография" readonly="")
                   .form__image-loader.form__image-loader--publication
                     label
-                      input.visually-hidden(type="file" name="picture")
+                      input#image-field.visually-hidden(type="file" name="picture" accept="image/jpeg,image/x-png")
                       | Обзор
-                  button.button.button--transparent Удалить
+                  button.button.button--transparent.button--delete Удалить
                 each category in categories
                   .new-publication__checkbox.new-publication__checkbox--auto
                     input(
                       id=`${category.id}`
                       type="checkbox"
-                      name=`category-${category.name}`
+                      name=`categories`
                       value=`${category.id}`
-                      checked=article.categories.find((item) => item.id === category.id))
+                      checked=(
+                        data
+                          ? (data.categories ? data.categories.find((item) => item === category.id) : false)
+                          : (article.categories ? article.categories.find((item) => item.id === category.id) : false)
+                      )
+                    )
                     label(for=`${category.id}`)= category.name
                 a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
+              - const categoriesError = errors ? errors.find((error) => error.label === "categories") : null
+              span(style={color: `red`})= categoriesError ? categoriesError.message : ""
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
+                  - const announceError = errors ? errors.find((error) => error.label === "announce") : null
+                  span(style={color: `red`})= announceError ? announceError.message : ""
                   label
-                    textarea(rows="2" placeholder="Анонс публикации" name="announce")= article.announce
+                    textarea(rows="2" placeholder="Анонс публикации" name="announce" required="")= data ? data[`announce`] : article.announce
                 .form__field.form__field--publication-text
+                  - const fullTextError = errors ? errors.find((error) => error.label === "full_text") : null
+                  span(style={color: `red`})= fullTextError ? fullTextError.message : ""
                   label
-                    textarea(rows="5" placeholder="Полный текст публикации" name="full_text")= article.full_text
+                    textarea(rows="5" placeholder="Полный текст публикации" name="full_text")= data ? data[`full_text`] : article.full_text ? article.full_text : ""
       .modal__overlay
 
