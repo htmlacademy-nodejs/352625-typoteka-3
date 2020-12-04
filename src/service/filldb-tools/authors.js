@@ -2,11 +2,11 @@
 
 const nanoid = require(`nanoid`);
 
-const {PASSWORD_LENGTH} = require(`./constants.js`);
+const {PASSWORD_LENGTH, ADMIN_USER_ID} = require(`./constants.js`);
 
 const getAuthors = (users) => {
   return users
-    .map((user) => {
+    .map((user, index) => {
       const [name, emailPrefix] = user.split(`, `);
       const [firstName, lastName] = name.split(` `);
 
@@ -18,6 +18,7 @@ const getAuthors = (users) => {
         [`lastname`]: lastName,
         [`email`]: email,
         [`password`]: password,
+        [`is_admin`]: index + 1 === ADMIN_USER_ID,
       };
     });
 };
