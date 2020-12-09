@@ -21,6 +21,7 @@ myRouter.get(`/`, async (req, res) => {
       const myArticles = await api.getMyArticles(auth.user.id);
 
       res.render(`my-tickets`, {
+        auth,
         myArticles,
         getHumanDate,
       });
@@ -44,6 +45,7 @@ myRouter.get(`/comments`, async (req, res) => {
       const myComments = await api.getMyComments(auth.user.id);
 
       res.render(`comments`, {
+        auth,
         myComments,
         getHumanDate,
       });

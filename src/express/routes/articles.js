@@ -19,9 +19,10 @@ const articlesRouter = new Router();
 
 articlesRouter.get(`/add`, checkApiReply(), async (req, res) => {
   try {
-    const categories = await api.getCategories();
+    const [auth, categories] = await Promise.all([api.getAuth(), api.getCategories()]);
 
     res.status(req.apiStatus).render(`new-ticket`, {
+      auth,
       categories,
       getHumanDate,
       data: req.apiData,
@@ -108,9 +109,10 @@ articlesRouter.get(`/:articleId`, checkApiReply(), async (req, res) => {
 
 articlesRouter.get(`/edit/:articleId`, checkApiReply(), async (req, res) => {
   try {
-    const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
+    const [auth, article, categories] = await Promise.all([api.getAuth(), api.getArticle(req.params.articleId), api.getCategories()]);
 
     res.status(req.apiStatus).render(`ticket-edit`, {
+      auth,
       article,
       categories,
       data: req.apiData,
