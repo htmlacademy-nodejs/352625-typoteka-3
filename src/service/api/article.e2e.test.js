@@ -234,7 +234,7 @@ describe(`When POST invalid data '/${PathName.ARTICLES}' in login mode`, () => {
 
   const mockArticle = {
     [`title`]: `Невалидный заголовок`,
-    [`created_date`]: `14.10.2020`,
+    [`created_date`]: `14 ноября 2020 года`,
     [`announce`]: `Невалидный анонс`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`categories`]: [],
@@ -243,6 +243,10 @@ describe(`When POST invalid data '/${PathName.ARTICLES}' in login mode`, () => {
   const expectedReply = {
     data: mockArticle,
     errors: [
+      {
+        label: `created_date`,
+        message: `Требуемый формат даты: 'DD.MM.YYYY, HH:mm'`
+      },
       {
         label: `title`,
         message: `Длина должна быть не менее 30 символов`
@@ -274,7 +278,7 @@ describe(`When POST invalid data '/${PathName.ARTICLES}' in login mode`, () => {
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
-  test(`Response is 'Article is added'`, () => {
+  test(`Response should be an object with special structure`, () => {
     expect(response.body).toStrictEqual(expectedReply);
   });
 
@@ -288,7 +292,7 @@ describe(`When POST valid data '/${PathName.ARTICLES}' in login mode`, () => {
 
   const mockArticle = {
     [`title`]: `Заголовок должен быть не менее 30 символов`,
-    [`created_date`]: `14.10.2020`,
+    [`created_date`]: `14.10.2020, 09:27`,
     [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`picture`]: `forest`,
@@ -355,7 +359,7 @@ describe(`When PUT invalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in l
 
   const mockArticle = {
     [`title`]: `Невалидный заголовок`,
-    [`created_date`]: `14.10.2020`,
+    [`created_date`]: `14 января 2019 г.`,
     [`announce`]: `Невалидный анонс`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`categories`]: []
@@ -364,6 +368,10 @@ describe(`When PUT invalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in l
   const expectedReply = {
     data: mockArticle,
     errors: [
+      {
+        label: `created_date`,
+        message: `Требуемый формат даты: 'DD.MM.YYYY, HH:mm'`
+      },
       {
         label: `title`,
         message: `Длина должна быть не менее 30 символов`
@@ -395,7 +403,7 @@ describe(`When PUT invalid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in l
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
-  test(`Response is 'Article is changed'`, () => {
+  test(`Response should be an object with special structure`, () => {
     expect(response.body).toStrictEqual(expectedReply);
   });
 });
@@ -408,7 +416,7 @@ describe(`When PUT valid data '/${PathName.ARTICLES}/${Article.RIGHT_ID}' in log
 
   const mockArticle = {
     [`title`]: `Заголовок должен быть не менее 30 символов`,
-    [`created_date`]: `14.10.2020`,
+    [`created_date`]: `14.10.2020, 09:27`,
     [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
     [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
     [`picture`]: `forest`,

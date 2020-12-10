@@ -23,6 +23,7 @@ module.exports = (schema) => (
   async (req, res, next) => {
     const {body} = req;
     const data = makeCategoriesValid(body);
+    console.log(data);
 
     try {
       await schema.validateAsync(body, {
@@ -30,6 +31,7 @@ module.exports = (schema) => (
       });
     } catch (err) {
       const {details} = err;
+      console.log(details);
 
       res.status(HttpCode.BAD_REQUEST).json({
         status: HttpCode.BAD_REQUEST,

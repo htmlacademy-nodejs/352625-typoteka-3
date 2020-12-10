@@ -35,6 +35,7 @@ const initModels = (orm) => {
   Article.hasMany(Comment, {
     foreignKey: `article_id`,
     as: `comments`,
+    onDelete: `cascade`,
   });
 
   Article.belongsToMany(Category, {

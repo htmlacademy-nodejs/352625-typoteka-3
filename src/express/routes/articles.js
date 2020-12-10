@@ -115,6 +115,7 @@ articlesRouter.get(`/edit/:articleId`, checkApiReply(), async (req, res) => {
       auth,
       article,
       categories,
+      getHumanDate,
       data: req.apiData,
       errors: req.apiErrors,
     });

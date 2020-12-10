@@ -4,10 +4,11 @@ const Joi = require(`joi`).extend(require(`@hapi/joi-date`));
 
 module.exports = Joi.object({
   [`created_date`]: Joi.date()
-    .format(`DD.MM.YYYY`)
+    .format(`DD.MM.YYYY, HH:mm`)
     .required()
     .messages({
-      'any.required': `Это обязательное поле`
+      'any.required': `Это обязательное поле`,
+      'date.format': `Требуемый формат даты: '{#format}'`
     }),
 
   title: Joi.string()

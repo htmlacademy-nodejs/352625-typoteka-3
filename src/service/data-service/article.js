@@ -151,7 +151,7 @@ class ArticleService {
       [`announce`]: formData[`announce`],
       [`full_text`]: formData[`full_text`],
       [`picture`]: formData[`picture`],
-      [`created_date`]: moment(formData[`created_date`], `DD.MM.YYYY`).toISOString(),
+      [`created_date`]: moment(formData[`created_date`], `DD.MM.YYYY, HH:mm`).toISOString(),
       [`author_id`]: authorId,
     });
 
@@ -169,7 +169,7 @@ class ArticleService {
     article[`announce`] = formData[`announce`];
     article[`full_text`] = formData[`full_text`];
     article[`picture`] = formData[`picture`] || formData[`picture_filename`];
-    article[`created_date`] = moment(formData[`created_date`], `DD.MM.YYYY`).toISOString();
+    article[`created_date`] = moment(formData[`created_date`], `DD.MM.YYYY, HH:mm`).toISOString();
 
     if (formData[`categories`]) {
       article.setCategories(formData[`categories`]);
