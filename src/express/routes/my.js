@@ -3,29 +3,26 @@
 const {Router} = require(`express`);
 
 const {getHumanDate} = require(`./../utils.js`);
-const {render404Page, render500Page} = require(`./render.js`);
+const {render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
+const {isAuth, isAdmin} = require(`../middlewares`);
+
 const myRouter = new Router();
 
-myRouter.get(`/`, async (req, res) => {
+myRouter.get(`/`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
   try {
-    const auth = await api.getAuth();
+    const myArticles = await api.getMyArticles(res.auth.user.id);
 
-    if (!auth.status || typeof auth.user.id !== `number`) {
-      render404Page(req, res);
-    } else {
-      const myArticles = await api.getMyArticles(auth.user.id);
+    res.render(`my-tickets`, {
+      auth: res.auth,
+      myArticles,
+      getHumanDate,
+    });
 
-      res.render(`my-tickets`, {
-        auth,
-        myArticles,
-        getHumanDate,
-      });
-    }
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -35,21 +32,15 @@ myRouter.get(`/`, async (req, res) => {
 });
 
 
-myRouter.get(`/comments`, async (req, res) => {
+myRouter.get(`/comments`, isAuth(api.getAuth.bind(api)), async (req, res) => {
   try {
-    const auth = await api.getAuth();
+    const myComments = await api.getMyComments(res.auth.user.id);
 
-    if (!auth.status) {
-      render404Page(req, res);
-    } else {
-      const myComments = await api.getMyComments(auth.user.id);
-
-      res.render(`comments`, {
-        auth,
-        myComments,
-        getHumanDate,
-      });
-    }
+    res.render(`comments`, {
+      auth: res.auth,
+      myComments,
+      getHumanDate,
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
@@ -59,7 +50,7 @@ myRouter.get(`/comments`, async (req, res) => {
 });
 
 
-myRouter.post(`/comments/delete/:commentId`, async (req, res) => {
+myRouter.post(`/comments/delete/:commentId`, isAuth(api.getAuth.bind(api)), async (req, res) => {
   try {
     const commentId = parseInt(req.params.commentId, 10);
 
@@ -75,7 +66,7 @@ myRouter.post(`/comments/delete/:commentId`, async (req, res) => {
 });
 
 
-myRouter.post(`/articles/delete/:articleId`, async (req, res) => {
+myRouter.post(`/articles/delete/:articleId`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
   try {
     const articleId = parseInt(req.params.articleId, 10);
 

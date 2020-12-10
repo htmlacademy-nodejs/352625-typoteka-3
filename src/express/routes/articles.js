@@ -13,16 +13,18 @@ const {
   checkApiReply,
   uploadFile,
   saveFileNameToBody,
+  isAuth,
+  isAdmin,
 } = require(`../middlewares`);
 
 const articlesRouter = new Router();
 
-articlesRouter.get(`/add`, checkApiReply(), async (req, res) => {
+articlesRouter.get(`/add`, checkApiReply(), isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
   try {
-    const [auth, categories] = await Promise.all([api.getAuth(), api.getCategories()]);
+    const [categories] = await Promise.all([api.getCategories()]);
 
     res.status(req.apiStatus).render(`new-ticket`, {
-      auth,
+      auth: res.auth,
       categories,
       getHumanDate,
       data: req.apiData,
@@ -37,7 +39,7 @@ articlesRouter.get(`/add`, checkApiReply(), async (req, res) => {
 });
 
 
-articlesRouter.post(`/add`, uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
+articlesRouter.post(`/add`, isAuth(api.getAuth.bind(api)), isAdmin(), uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
   try {
     await api.postArticle(req.body);
     res.redirect(`/my`);
@@ -107,12 +109,12 @@ articlesRouter.get(`/:articleId`, checkApiReply(), async (req, res) => {
 });
 
 
-articlesRouter.get(`/edit/:articleId`, checkApiReply(), async (req, res) => {
+articlesRouter.get(`/edit/:articleId`, checkApiReply(), isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
   try {
-    const [auth, article, categories] = await Promise.all([api.getAuth(), api.getArticle(req.params.articleId), api.getCategories()]);
+    const [article, categories] = await Promise.all([api.getArticle(req.params.articleId), api.getCategories()]);
 
     res.status(req.apiStatus).render(`ticket-edit`, {
-      auth,
+      auth: res.auth,
       article,
       categories,
       getHumanDate,
@@ -128,7 +130,7 @@ articlesRouter.get(`/edit/:articleId`, checkApiReply(), async (req, res) => {
 });
 
 
-articlesRouter.post(`/edit/:articleId`, uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
+articlesRouter.post(`/edit/:articleId`, isAuth(api.getAuth.bind(api)), isAdmin(), uploadFile.single(`picture`), saveFileNameToBody(`picture`), async (req, res) => {
   try {
     await api.editArticle(req.body, req.params.articleId);
     res.redirect(`/articles/${req.params.articleId}`);
@@ -142,7 +144,7 @@ articlesRouter.post(`/edit/:articleId`, uploadFile.single(`picture`), saveFileNa
 });
 
 
-articlesRouter.post(`/:articleId/comments`, async (req, res) => {
+articlesRouter.post(`/:articleId/comments`, isAuth(api.getAuth.bind(api)), async (req, res) => {
   try {
     const articleId = parseInt(req.params.articleId, 10);
 
