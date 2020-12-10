@@ -89,6 +89,11 @@ articlesRouter.get(`/category/id=:categoryId&page=:pageNumber`, async (req, res)
 });
 
 
+articlesRouter.get(`/category/:categoryId`, async (req, res) => {
+  res.redirect(`/articles/category/id=${req.params.categoryId}&page=1`);
+});
+
+
 articlesRouter.get(`/:articleId`, checkApiReply(), async (req, res) => {
   try {
     const [auth, article] = await Promise.all([api.getAuth(), api.getArticle(req.params.articleId)]);
