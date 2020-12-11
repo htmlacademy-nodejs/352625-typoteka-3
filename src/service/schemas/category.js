@@ -2,15 +2,21 @@
 
 const Joi = require(`joi`);
 
+const {
+  Category,
+  ErrorMessages,
+} = require(`./constants.js`);
+
+
 module.exports = Joi.object({
   category: Joi.string()
-    .min(2)
-    .max(30)
+    .min(Category.MIN)
+    .max(Category.MAX)
     .required()
     .empty(``)
     .messages({
-      'string.min': `Длина должна быть не менее {#limit} символов`,
-      'string.max': `Длина не должна превышать {#limit} символов`,
-      'any.required': `Категория не может быть пустой`,
+      'string.min': ErrorMessages.STRING_MIN,
+      'string.max': ErrorMessages.STRING_MAX,
+      'any.required': ErrorMessages.REQUIRED,
     }),
 });

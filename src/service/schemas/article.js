@@ -2,23 +2,32 @@
 
 const Joi = require(`joi`).extend(require(`@hapi/joi-date`));
 
+const {
+  Title,
+  Announce,
+  FullText,
+  Categories,
+  ErrorMessages,
+} = require(`./constants.js`);
+
+
 module.exports = Joi.object({
   [`created_date`]: Joi.date()
     .format(`DD.MM.YYYY, HH:mm`)
     .required()
     .messages({
-      'any.required': `Это обязательное поле`,
-      'date.format': `Требуемый формат даты: '{#format}'`
+      'any.required': ErrorMessages.REQUIRED,
+      'date.format': ErrorMessages.DATE_FORMAT,
     }),
 
   title: Joi.string()
-    .min(30)
-    .max(250)
+    .min(Title.MIN)
+    .max(Title.MAX)
     .required()
     .messages({
-      'string.min': `Длина должна быть не менее {#limit} символов`,
-      'string.max': `Длина не должна превышать {#limit} символов`,
-      'any.required': `Это обязательное поле`
+      'string.min': ErrorMessages.STRING_MIN,
+      'string.max': ErrorMessages.STRING_MAX,
+      'any.required': ErrorMessages.REQUIRED
     }),
 
   [`picture_filename`]: Joi.string()
@@ -28,26 +37,26 @@ module.exports = Joi.object({
 
   categories: Joi.array()
     .items(Joi.number().integer())
-    .min(1)
+    .min(Categories.MIN)
     .required()
     .messages({
-      'array.min': `Выберите хотя бы одну категорию`
+      'array.min': ErrorMessages.MIN_CATEGORIES,
     }),
 
   announce: Joi.string()
-    .min(30)
-    .max(250)
+    .min(Announce.MIN)
+    .max(Announce.MAX)
     .required()
     .messages({
-      'string.min': `Длина должна быть не менее {#limit} символов`,
-      'string.max': `Длина не должна превышать {#limit} символов`,
-      'any.required': `Это обязательное поле`
+      'string.min': ErrorMessages.STRING_MIN,
+      'string.max': ErrorMessages.STRING_MAX,
+      'any.required': ErrorMessages.REQUIRED,
     }),
 
   [`full_text`]: Joi.string()
-    .max(1000)
+    .max(FullText.MAX)
     .empty(``)
     .messages({
-      'string.max': `Длина не должна превышать {#limit} символов`,
+      'string.max': ErrorMessages.STRING_MAX,
     }),
 });

@@ -2,15 +2,21 @@
 
 const Joi = require(`joi`).extend(require(`@hapi/joi-date`));
 
+const {
+  Comment,
+  ErrorMessages,
+} = require(`./constants.js`);
+
+
 module.exports = Joi.object({
   text: Joi.string()
-    .min(20)
-    .max(150)
+    .min(Comment.MIN)
+    .max(Comment.MAX)
     .required()
     .empty(``)
     .messages({
-      'string.min': `Длина должна быть не менее {#limit} символов`,
-      'string.max': `Длина не должна превышать {#limit} символов`,
-      'any.required': `Комментарий не может быть пустым`,
+      'string.min': ErrorMessages.STRING_MIN,
+      'string.max': ErrorMessages.STRING_MAX,
+      'any.required': ErrorMessages.REQUIRED,
     }),
 });
