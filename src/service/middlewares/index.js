@@ -6,6 +6,7 @@ const tryToResponse = require(`./try-to-response.js`);
 const isAuth = require(`./is-auth.js`);
 const validateArticle = require(`./validate-article.js`);
 const validateComment = require(`./validate-comment.js`);
+const validateCategory = require(`./validate-category.js`);
 
 module.exports = {
   passNotNullData,
@@ -14,4 +15,5 @@ module.exports = {
   isAuth,
   validateArticle,
   validateComment,
+  validateCategory,
 };

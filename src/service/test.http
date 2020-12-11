@@ -148,3 +148,25 @@ DELETE http://localhost:3000/api/articles/1000000/comments/1
 ### 20. Delete non-existing comment in existing article (Response code: 400)
 DELETE http://localhost:3000/api/articles/1/comments/1000000
 
+
+### 21. Add new category to database (Response code: 201)
+POST http://localhost:3000/api/categories/add
+Content-Type: application/json
+
+{
+  "category": "Приключения"
+}
+
+### 22. Edit existing category (Response code: 201)
+PUT http://localhost:3000/api/categories/1
+Content-Type: application/json
+
+{
+  "category": "Приключения"
+}
+
+### 23. Delete existing category (Response code: 200)
+DELETE http://localhost:3000/api/categories/
+Content-Type: application/json
+
+###

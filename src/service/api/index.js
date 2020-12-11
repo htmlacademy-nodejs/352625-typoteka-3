@@ -20,7 +20,7 @@ const app = new Router();
 
 (async () => {
   auth(app, new AuthService());
-  category(app, new CategoryService());
+  category(app, new CategoryService(), new AuthService());
   comment(app, new CommentService(), new AuthService());
   search(app, new SearchService());
   article(app, new ArticleService(), new AuthService(), new CommentService());

@@ -47,7 +47,7 @@ block content
                       )
                     )
                     label(for=`${category.id}`)= category.name
-                a.new-publication__form-link.button.button--transparent(href="#") Добавить категорию
+                a.new-publication__form-link.button.button--transparent(href="/my/categories") Добавить категорию
               - const categoriesError = errors ? errors.find((error) => error.label === "categories") : null
               span(style={color: `red`})= categoriesError ? categoriesError.message : ""
               .form__wrapper.form__wrapper--text

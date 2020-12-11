@@ -4,7 +4,7 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const category = require(`./category.js`);
-const CategoryService = require(`../data-service/category.js`);
+const {CategoryService, AuthService} = require(`../data-service`);
 
 const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
@@ -19,11 +19,12 @@ const Page = {
 };
 
 const categoryService = new CategoryService(fakeDb, fakeSequelize);
+const authService = new AuthService(fakeDb);
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  category(app, categoryService);
+  category(app, categoryService, authService);
   return app;
 };
 

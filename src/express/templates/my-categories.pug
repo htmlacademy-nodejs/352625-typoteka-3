@@ -1,0 +1,29 @@
+extends blocks/layout
+
+block content
+  main.main-page.main-page--padding
+    section.main-page__category.category
+      h1.category__title Категории
+      .category__add-form
+        form(action=`/my/categories` method="POST")
+          input#add-form-add-category(type="text" name="category" placeholder="Новая категория" value=`${!updatingCategoryId && data ? data.category : ""}`)
+          label(for="add-form-add-category")
+            span.visually-hidden Добавить категорию
+          button.category__button.button.button--category(type="submit") Добавить
+        if !updatingCategoryId
+          - const categoryError = errors ? errors.find((error) => error.label === "category") : null
+          span(style={color: `red`})= categoryError ? categoryError.message : ""
+      ul.category__list
+        each category in categories
+          li.category__list-item
+            form(action=`/my/categories/edit/${category.id}` method="POST")
+              input(id=`modify-form-category-${category.id}` type="text" name="category" value=`${updatingCategoryId && updatingCategoryId === category.id ? data.category : category.name}`)
+              label(for=`modify-form-category-${category.id}`)
+                span.visually-hidden Редактировать категорию
+              button.category__button.button.button--category(type="submit") Сохранить
+            div
+              form(action=`/my/categories/delete/${category.id}` method="POST")
+                button.category__button.button.button--category(type="submit") Удалить
+          if updatingCategoryId && updatingCategoryId === category.id
+            - const updatingCategoryError = errors ? errors.find((error) => error.label === "category") : null
+            span(style={color: `red`})= updatingCategoryError ? updatingCategoryError.message : ""

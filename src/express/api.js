@@ -97,6 +97,27 @@ class Api {
   search(query) {
     return this._load(`/${PathName.SEARCH}`, {params: {query}});
   }
+
+  postCategory(data) {
+    return this._load(`/${PathName.CATEGORIES}/add`, {
+      method: `POST`,
+      data
+    });
+  }
+
+  updateCategory(data, categoryId) {
+    return this._load(`/${PathName.CATEGORIES}/${categoryId}`, {
+      method: `PUT`,
+      data
+    });
+  }
+
+  deleteCategory(categoryId) {
+    return this._load(`/${PathName.CATEGORIES}/${categoryId}`, {
+      method: `DELETE`
+    });
+  }
+
 }
 
 const defaultApi = new Api(defaultURL, TIMEOUT);

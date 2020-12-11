@@ -3,10 +3,18 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
-const {passNotNullData, passProperParam, tryToResponse} = require(`../middlewares`);
+const {
+  isAuth,
+  passNotNullData,
+  passProperParam,
+  tryToResponse,
+  validateCategory,
+} = require(`../middlewares`);
+
+const categorySchema = require(`../schemas/category.js`);
 
 
-module.exports = (app, categoryService) => {
+module.exports = (app, categoryService, authService) => {
   const route = new Router();
 
   app.use(`/api/categories`, route);
@@ -23,6 +31,45 @@ module.exports = (app, categoryService) => {
       passProperParam(`id`, Empty.CATEGORY),
       passProperParam(`pageNumber`, Empty.CATEGORY),
       passNotNullData(categoryService.findOne.bind(categoryService), Empty.CATEGORY, `id`, `pageNumber`),
+      tryToResponse(HttpCode.OK)
+  );
+
+  route.post(
+      `/add`,
+      isAuth(authService.get.bind(authService)),
+      validateCategory(categorySchema),
+      async (req, res, next) => {
+        await categoryService.add(req.body);
+        res.body = `Category is added`;
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
+
+
+  route.put(
+      `/:categoryId`,
+      isAuth(authService.get.bind(authService)),
+      passProperParam(`categoryId`, `Incorrect id`),
+      validateCategory(categorySchema),
+      async (req, res, next) => {
+        await categoryService.update(req.body, req.params[`categoryId`]);
+        res.body = `Category is updated`;
+        next();
+      },
+      tryToResponse(HttpCode.CREATED)
+  );
+
+
+  route.delete(
+      `/:categoryId`,
+      isAuth(authService.get.bind(authService)),
+      passProperParam(`categoryId`, `Incorrect id`),
+      async (req, res, next) => {
+        await categoryService.delete(req.params[`categoryId`]);
+        res.body = `Category is deleted`;
+        next();
+      },
       tryToResponse(HttpCode.OK)
   );
 };

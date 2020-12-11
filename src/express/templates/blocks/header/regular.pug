@@ -11,6 +11,9 @@ header.header
           a(href="/my") Публикации
         li.navigation__item
           a(href="/my/comments") Комментарии
+        li.navigation__item
+          a(href="/my/categories") Категории
+
 
   if auth.status && !auth.user[`is_admin`]
     nav.header__nav
