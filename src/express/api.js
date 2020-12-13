@@ -118,6 +118,16 @@ class Api {
     });
   }
 
+  register(data) {
+    return this._load(`/${PathName.USER}`, {
+      method: `POST`,
+      data
+    });
+  }
+
+  login() {}
+
+  logout() {}
 }
 
 const defaultApi = new Api(defaultURL, TIMEOUT);

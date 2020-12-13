@@ -31,7 +31,7 @@ block content
         ul.last__list
           each comment in lastComments
             li.last__list-item
-              img.last__list-image(src=`img/${comment.author.avatar.small}.png` width="20" height="20" alt="Аватар пользователя")
+              img.last__list-image(src=`img/${comment.author.avatar.small}` width="20" height="20" alt="Аватар пользователя")
               b.last__list-name= `${comment.author.firstname} ${comment.author.lastname}`
               a.last__list-link(href=`/articles/${comment.author.id}`)= comment.text
     section.main-page__list.preview

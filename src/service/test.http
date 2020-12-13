@@ -169,4 +169,34 @@ Content-Type: application/json
 DELETE http://localhost:3000/api/categories/
 Content-Type: application/json
 
+
+### 24. Get users list (Response code: 200)
+GET http://localhost:3000/api/user/
+Content-Type: application/json
+
+
+### 25. Get existing user by integer id (Response code: 200)
+GET http://localhost:3000/api/user/1
+Content-Type: application/json
+
+
+### 26. Get non-existing user by integer id (Response code: 400)
+GET http://localhost:3000/api/user/qwerty
+Content-Type: application/json
+
+
+### 27. Post new user (Response code: 201)
+POST http://localhost:3000/api/user
+Content-Type: application/json
+
+{
+  "firstname": "Иван",
+  "lastname": "Петров",
+  "email": "ivan_petrov@local.com",
+  "password": "qwerty",
+  "repeat_password": "qwerty"
+}
+
+
 ###
+

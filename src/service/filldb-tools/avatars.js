@@ -8,8 +8,8 @@ const getAvatars = (users) => {
   return users
     .map((user, index) => ({
       [`author_id`]: getUniqueItem(usersIds),
-      regular: `avatar-${index + 1}`,
-      small: `avatar-small-${index + 1}`,
+      regular: `avatar-${index + 1}.png`,
+      small: `avatar-small-${index + 1}.png`,
     }));
 };
 

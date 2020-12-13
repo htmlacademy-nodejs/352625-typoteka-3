@@ -5,7 +5,7 @@ block content
     h1.visually-hidden Регистрация пользователя
     section.modal
       .popup.popup--registration
-        button.popup__button.button.button--popup-close(type="button" aria-label="Закрыть окно")
+        a.popup__button.button.button--popup-close(href="/" aria-label="Закрыть окно")
           | Закрыть
           | окно
         h2.visually-hidden Форма регистрации
@@ -15,36 +15,73 @@ block content
           li.popup__tab.popup__tab--log-in
             button.popup__tab-switcher.button(type="button") Войти
         .popup__form.form.form--register.popup__form--active
-          form(action="#" method="get")
+          form(action="/register" method="POST" enctype="multipart/form-data")
             .form__field
               label
-                input(type="email" placeholder="Электронная почта" required="")
+                input(
+                  type="email"
+                  name="email"
+                  value=`${data ? data[`email`] : ""}`
+                  placeholder="Электронная почта"
+                  required=""
+                )
+              - const emailError = errors ? errors.find((error) => error.label === "email") : null
+              span(style={color: `red`})= emailError ? emailError.message : ""
             .form__field
               label
-                input(type="text" placeholder="Имя" required="")
+                input(
+                  type="text"
+                  name="firstname"
+                  value=`${data ? data[`firstname`] : ""}`
+                  placeholder="Имя"
+                  required=""
+                )
+              - const firstnameError = errors ? errors.find((error) => error.label === "firstname") : null
+              span(style={color: `red`})= firstnameError ? firstnameError.message : ""
             .form__field
               label
-                input(type="text" placeholder="Фамилия")
+                input(
+                  type="text"
+                  name="lastname"
+                  value=`${data ? data[`lastname`] : ""}`
+                  placeholder="Фамилия"
+                )
+              - const lastnameError = errors ? errors.find((error) => error.label === "lastname") : null
+              span(style={color: `red`})= lastnameError ? lastnameError.message : ""
             .form__field
               label
-                input(type="password" placeholder="Пароль" required="")
+                input(
+                  type="password"
+                  name="password"
+                  value=`${data ? data[`password`] : ""}`
+                  placeholder="Пароль"
+                )
+              - const passwordError = errors ? errors.find((error) => error.label === "password") : null
+              span(style={color: `red`})= passwordError ? passwordError.message : ""
             .form__field
               label
-                input(type="password" placeholder="Повтор пароля" required="")
+                input(
+                  type="password"
+                  name="repeat_password"
+                  value=`${data ? data[`repeat_password`] : ""}`
+                  placeholder="Повтор пароля"
+                )
+              - const repeatPasswordError = errors ? errors.find((error) => error.label === "repeat_password") : null
+              span(style={color: `red`})= repeatPasswordError ? repeatPasswordError.message : ""
             .form__image-loader
               a.form__avatar.avatar
                 img(src="img/icons/smile.svg" alt="аватар пользователя")
               label
-                input.visually-hidden(type="file")
+                input.visually-hidden(type="file" name="avatar" accept="image/jpeg,image/x-png")
                 | Загрузить фото профиля
             button.form__submit-btn.form__submit-btn--register.button.button--colored(type="submit") Зарегистрироваться
         .popup__form.form.form--log-in.popup__form--hidden
-          form(action="#" method="get")
+          form(action="/login" method="POST")
             .form__field
               label
-                input(type="email" placeholder="Электронная почта" required="")
+                input(type="email" name="email" placeholder="Электронная почта" required="")
             .form__field
               label
-                input(type="password" placeholder="Пароль" required="")
+                input(type="password" name="password" placeholder="Пароль" required="")
             button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type="submit") Войти
       .modal__overlay
