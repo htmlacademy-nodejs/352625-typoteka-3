@@ -7,12 +7,14 @@ const mocks = {
       [`lastname`]: `Иванов`,
       [`email`]: `d_ivanov@local.com`,
       [`password`]: `qwerty321`,
+      [`is_admin`]: true,
     },
     {
       [`firstname`]: `Людмила`,
       [`lastname`]: `Нефедова`,
       [`email`]: `nefedova_l@local.com`,
       [`password`]: `asdfgh456`,
+      [`is_admin`]: false,
     },
   ],
   avatars: [

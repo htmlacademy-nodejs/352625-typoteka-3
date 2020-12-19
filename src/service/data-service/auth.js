@@ -18,7 +18,7 @@ class AuthService {
       include: {
         model: this._database.Author,
         as: `user`,
-        attributes: [`id`, `firstname`, `lastname`],
+        attributes: [`id`, `firstname`, `lastname`, `is_admin`],
 
         include: {
           model: this._database.Avatar,

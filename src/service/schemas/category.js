@@ -1,17 +1,17 @@
 'use strict';
 
-const Joi = require(`joi`).extend(require(`@hapi/joi-date`));
+const Joi = require(`joi`);
 
 const {
-  Comment,
+  Category,
   ErrorMessages,
 } = require(`./constants.js`);
 
 
 module.exports = Joi.object({
-  text: Joi.string()
-    .min(Comment.MIN)
-    .max(Comment.MAX)
+  category: Joi.string()
+    .min(Category.MIN)
+    .max(Category.MAX)
     .required()
     .empty(``)
     .messages({

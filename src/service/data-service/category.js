@@ -83,6 +83,26 @@ class CategoryService {
       }
     };
   }
+
+  async add(formData) {
+    return await this._database.Category.create({
+      name: formData[`category`],
+    });
+  }
+
+  async update(formData, categoryId) {
+    const category = await this._database.Category.findByPk(categoryId);
+    category[`name`] = formData[`category`];
+    await category.save();
+  }
+
+  async delete(categoryId) {
+    await this._database.Category.destroy({
+      where: {
+        id: categoryId
+      }
+    });
+  }
 }
 
 module.exports = CategoryService;

@@ -5,37 +5,26 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const makeCategoriesValid = (article) => {
-  switch (article.categories) {
-    case false:
-      article.categories = [];
-      break;
-    case article.categories.length === 1:
-      article.categories = [parseInt(article.categories, 10)];
-      break;
-    default:
-      article.categories = article.categories.map((item) => parseInt(item, 10));
-  }
-  return article;
-};
-
-module.exports = (schema) => (
+module.exports = (schema, isUserExist) => (
   async (req, res, next) => {
     const {body} = req;
-    const data = makeCategoriesValid(body);
-    console.log(data);
+    let existEmail = null;
+    const user = await isUserExist(body.email);
+
+    if (user) {
+      existEmail = user.dataValues.email;
+    }
 
     try {
-      await schema.validateAsync(body, {
+      await schema(existEmail).validateAsync(body, {
         abortEarly: false
       });
     } catch (err) {
       const {details} = err;
-      console.log(details);
 
       res.status(HttpCode.BAD_REQUEST).json({
         status: HttpCode.BAD_REQUEST,
-        data,
+        data: body,
         errors: details.map((errorDescription) => ({
           label: errorDescription.context.label,
           message: errorDescription.message,

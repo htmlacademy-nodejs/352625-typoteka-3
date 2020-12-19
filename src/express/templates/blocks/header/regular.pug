@@ -1,26 +1,40 @@
 header.header
   include ../logo/image-only
 
-  nav.header__nav
-    ul.header__nav-list
-      if auth.status
-        li.header__list-item
-          p= `${auth.user.firstname} ${auth.user.lastname}`
-        li.header__list-item
-          a.header__exit(href="#") Выйти
-      else
-        li.header__list-item
-          a.header__registration(href="/register") Регистрация
-        li.header__list-item
-          a.header__enter(href="/login") Вход с паролем
-  if auth.status
+  if auth.status && auth.user[`is_admin`]
+    a.button.button--colored.header__button-new(href="/articles/add") Новая запись
     div.header__dropdown
-      a.header__avatar.avatar.button.button--burger.header__burger
-        img(src=`/img/${auth.user.avatar.regular}.png` alt="аватар пользователя")
+      a.button.button--burger.header__burger Открыть меню
+
       ul.navigation.header__navigation
         li.navigation__item
           a(href="/my") Публикации
         li.navigation__item
           a(href="/my/comments") Комментарии
+        li.navigation__item
+          a(href="/my/categories") Категории
+
+
+  if auth.status && !auth.user[`is_admin`]
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          p= `${auth.user.firstname} ${auth.user.lastname}`
+        li.header__list-item
+          a.header__exit(href="#") Выйти
+    div.header__dropdown
+      a.header__avatar.avatar.button.button--burger.header__burger
+        img(src=`/img/${auth.user.avatar.regular}` alt="аватар пользователя")
+      ul.navigation.header__navigation
+        li.navigation__item
+          a(href="/my/comments") Комментарии
+
+  if !auth.status
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          a.header__registration(href="/register") Регистрация
+        li.header__list-item
+          a.header__enter(href="/login") Вход с паролем
 
   include ../search

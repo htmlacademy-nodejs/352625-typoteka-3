@@ -1,11 +1,11 @@
-extends blocks/layout/regular
+extends blocks/layout
 
 block content
   main
     h1.visually-hidden Вход пользователя
     section.modal
       .popup.popup--registration
-        button.popup__button.button.button--popup-close(type="button" aria-label="Закрыть окно")
+        a.popup__button.button.button--popup-close(href="/" aria-label="Закрыть окно")
           | Закрыть
           | окно
         h2.visually-hidden Форма входа
