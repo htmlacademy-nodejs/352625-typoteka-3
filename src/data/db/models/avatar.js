@@ -13,11 +13,9 @@ module.exports = (sequelize) => {
     },
     [`regular`]: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     [`small`]: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
   }, {
     sequelize,

@@ -27,13 +27,11 @@ class UserService {
       [`author_id`]: user[`id`],
     });
 
-    if (formData[`avatar`] !== ``) {
-      await this._database.Avatar.create({
-        regular: formData[`avatar`],
-        small: formData[`avatar`],
-        [`author_id`]: user[`id`],
-      });
-    }
+    await this._database.Avatar.create({
+      regular: formData[`avatar`] === `` ? null : formData[`avatar`],
+      small: formData[`avatar`] === `` ? null : formData[`avatar`],
+      [`author_id`]: user[`id`],
+    });
 
     return user;
   }
