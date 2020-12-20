@@ -6,15 +6,14 @@ const {getLogger} = require(`./../../service/logger.js`);
 const logger = getLogger();
 
 const makeCategoriesValid = (article) => {
-  switch (article.categories) {
-    case false:
-      article.categories = [];
-      break;
-    case article.categories.length === 1:
-      article.categories = [parseInt(article.categories, 10)];
-      break;
-    default:
-      article.categories = article.categories.map((item) => parseInt(item, 10));
+  if (!article.categories) {
+    article.categories = [];
+  }
+  if (article.categories && article.categories.length === 1) {
+    article.categories = [parseInt(article.categories, 10)];
+  }
+  if (article.categories && article.categories.length > 1) {
+    article.categories = article.categories.map((item) => parseInt(item, 10));
   }
   return article;
 };
