@@ -9,7 +9,7 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const {isAuth, isAdmin, checkApiReply, checkCategoryId} = require(`../middlewares`);
+const {isAuth, isAdmin} = require(`../middlewares`);
 
 const myRouter = new Router();
 
@@ -50,16 +50,14 @@ myRouter.get(`/comments`, isAuth(api.getAuth.bind(api)), async (req, res) => {
 });
 
 
-myRouter.get(`/categories`, isAuth(api.getAuth.bind(api)), isAdmin(), checkApiReply(), checkCategoryId(), async (req, res) => {
+myRouter.get(`/categories`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
   try {
-    const categories = await api.getCategories();
-
     res.render(`my-categories`, {
       auth: res.auth,
-      categories,
-      data: req.apiData,
-      errors: req.apiErrors,
-      updatingCategoryId: req.categoryId,
+      categories: await api.getCategories(),
+      data: null,
+      errors: null,
+      updatingCategoryId: null,
     });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
@@ -110,8 +108,14 @@ myRouter.post(`/categories`, isAuth(api.getAuth.bind(api)), isAdmin(), async (re
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.status(error.response.data[`status`]).render(`my-categories`, {
+      auth: res.auth,
+      categories: await api.getCategories(),
+      data: error.response.data[`data`],
+      errors: error.response.data[`errors`],
+      updatingCategoryId: null,
+    });
     logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/categories?data=${JSON.stringify(error.response.data)}`);
   }
 });
 
@@ -124,8 +128,14 @@ myRouter.post(`/categories/edit/:categoryId`, isAuth(api.getAuth.bind(api)), isA
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
+    res.status(error.response.data[`status`]).render(`my-categories`, {
+      auth: res.auth,
+      categories: await api.getCategories(),
+      data: error.response.data[`data`],
+      errors: error.response.data[`errors`],
+      updatingCategoryId: parseInt(req.params[`categoryId`], 10),
+    });
     logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/categories?id=${req.params[`categoryId`]}&data=${JSON.stringify(error.response.data)}`);
   }
 });
 
