@@ -9,8 +9,14 @@ class UserService {
     this._database = database;
   }
 
-  async findOneByEmail(email) {
-    return await this._database.Author.findOne({where: {email}});
+  async getExistingEmail(email) {
+    let existingEmail = null;
+    const user = await this._database.Author.findOne({where: {email}});
+
+    if (user) {
+      existingEmail = email;
+    }
+    return existingEmail;
   }
 
   async add(formData) {

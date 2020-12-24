@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
-const {tryToResponse, validateUser} = require(`../middlewares`);
+const {tryToResponse, schemaValidator} = require(`../middlewares`);
 
 const userSchema = require(`../schemas/user.js`);
 
@@ -14,7 +14,7 @@ module.exports = (app, userService) => {
 
   route.post(
       `/`,
-      validateUser(userSchema, userService.findOneByEmail.bind(userService)),
+      schemaValidator(userSchema, userService.getExistingEmail.bind(userService)),
       async (req, res, next) => {
         await userService.add(req.body);
         res.body = `User is registered`;

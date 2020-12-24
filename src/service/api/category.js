@@ -8,7 +8,7 @@ const {
   passNotNullData,
   passProperParam,
   tryToResponse,
-  validateCategory,
+  schemaValidator,
 } = require(`../middlewares`);
 
 const categorySchema = require(`../schemas/category.js`);
@@ -37,7 +37,7 @@ module.exports = (app, categoryService, authService) => {
   route.post(
       `/add`,
       isAuth(authService.get.bind(authService)),
-      validateCategory(categorySchema),
+      schemaValidator(categorySchema),
       async (req, res, next) => {
         await categoryService.add(req.body);
         res.body = `Category is added`;
@@ -51,7 +51,7 @@ module.exports = (app, categoryService, authService) => {
       `/:categoryId`,
       isAuth(authService.get.bind(authService)),
       passProperParam(`categoryId`, `Incorrect id`),
-      validateCategory(categorySchema),
+      schemaValidator(categorySchema),
       async (req, res, next) => {
         await categoryService.update(req.body, req.params[`categoryId`]);
         res.body = `Category is updated`;

@@ -9,8 +9,8 @@ const {
   passProperParam,
   tryToResponse,
   isAuth,
-  validateArticle,
-  validateComment,
+  makeCategoriesValid,
+  schemaValidator,
 } = require(`../middlewares`);
 
 const articleSchema = require(`../schemas/article.js`);
@@ -69,7 +69,8 @@ module.exports = (app, articleService, authService, commentService) => {
   route.post(
       `/`,
       isAuth(authService.get.bind(authService)),
-      validateArticle(articleSchema),
+      makeCategoriesValid(),
+      schemaValidator(articleSchema),
       async (req, res, next) => {
         await articleService.add(req.body, res.auth.user.id);
         res.body = `Article is added`;
@@ -84,7 +85,8 @@ module.exports = (app, articleService, authService, commentService) => {
       isAuth(authService.get.bind(authService)),
       passProperParam(`articleId`, `Incorrect id`),
       passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
-      validateArticle(articleSchema),
+      makeCategoriesValid(),
+      schemaValidator(articleSchema),
       async (req, res, next) => {
         await articleService.update(req.body, req.params.articleId);
         res.body = `Article is changed`;
@@ -99,7 +101,7 @@ module.exports = (app, articleService, authService, commentService) => {
       isAuth(authService.get.bind(authService)),
       passProperParam(`articleId`, `Incorrect id`),
       passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
-      validateComment(commentSchema),
+      schemaValidator(commentSchema),
       async (req, res, next) => {
         await commentService.add(req.body, req.params.articleId, res.auth.user.id);
         res.body = `Comment is added`;

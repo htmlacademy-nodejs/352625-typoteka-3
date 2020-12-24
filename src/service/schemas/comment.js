@@ -8,7 +8,7 @@ const {
 } = require(`./constants.js`);
 
 
-module.exports = Joi.object({
+module.exports = () => Joi.object({
   text: Joi.string()
     .min(Comment.MIN)
     .max(Comment.MAX)
