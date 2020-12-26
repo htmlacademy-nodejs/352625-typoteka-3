@@ -3,7 +3,7 @@
 // AUTH_USER_ID = 0 --> Не авторизован ни один пользователь;
 // AUTH_USER_ID === ADMIN_USER_ID --> Авторизован Админ блога;
 // AUTH_USER_ID = 2 --> Авторизован Читатель блога;
-const AUTH_USER_ID = 1;
+const AUTH_USER_ID = 0;
 const ADMIN_USER_ID = 1; // ID администратора блога
 
 const Comments = {
@@ -16,7 +16,7 @@ const Categories = {
   MAX: 5,
 };
 
-const PASSWORD_LENGTH = 8;
+const DEFAULT_MOCK_PASSWORD = `qwerty1234`;
 
 
 module.exports = {
@@ -24,5 +24,5 @@ module.exports = {
   ADMIN_USER_ID,
   Comments,
   Categories,
-  PASSWORD_LENGTH,
+  DEFAULT_MOCK_PASSWORD,
 };

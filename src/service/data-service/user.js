@@ -9,9 +9,13 @@ class UserService {
     this._database = database;
   }
 
+  async findByEmail(email) {
+    return await this._database.Author.findOne({where: {email}});
+  }
+
   async getExistingEmail(email) {
     let existingEmail = null;
-    const user = await this._database.Author.findOne({where: {email}});
+    const user = await this.findByEmail(email);
 
     if (user) {
       existingEmail = email;
@@ -40,6 +44,30 @@ class UserService {
     });
 
     return user;
+  }
+
+  async checkUser(user, formData) {
+    const match = await bcrypt.compare(formData[`password`], user[`password`]);
+
+    if (match) {
+      await this._database.Auth.update({[`is_auth`]: false}, {where: {[`is_auth`]: true}});
+
+      const auth = await this._database.Auth.findOne(
+          {
+            where: {
+              [`author_id`]: user[`id`]
+            }
+          }
+      );
+      auth[`is_auth`] = true;
+      await auth.save();
+    }
+
+    return match;
+  }
+
+  async logout() {
+    await this._database.Auth.update({[`is_auth`]: false}, {where: {[`is_auth`]: true}});
   }
 }
 

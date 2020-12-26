@@ -1,5 +1,8 @@
 'use strict';
 
+const bcrypt = require(`bcrypt`);
+const saltRounds = 10;
+
 const mocks = {
   authors: [
     {
@@ -128,5 +131,13 @@ const mocks = {
     },
   ],
 };
+
+const convertPasswordsToHashes = (users) => {
+  users.map(async (user) => {
+    user[`password`] = await bcrypt.hash(user[`password`], saltRounds);
+  });
+};
+
+convertPasswordsToHashes(mocks.authors);
 
 module.exports = {mocks};
