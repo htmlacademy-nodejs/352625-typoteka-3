@@ -152,6 +152,21 @@ describe(`When try to login by existing user and correct password '/${PathName.U
     password: `123456`, // correct password
   };
 
+  const expectedReply = {
+    status: true,
+    user: {
+      id: 1,
+      firstname: `Victor`,
+      lastname: `Smith`,
+      [`is_admin`]: false,
+      avatar: {
+        regular: `example.jpg`,
+        small: `example.jpg`,
+      }
+    }
+  };
+
+
   beforeAll(async () => {
     response = await request(app)
       .post(`/${PathName.USER}/login`)
@@ -162,8 +177,8 @@ describe(`When try to login by existing user and correct password '/${PathName.U
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be 'User is authenticated'`, () => {
-    expect(response.body).toBe(`User is authenticated`);
+  test(`response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });
 

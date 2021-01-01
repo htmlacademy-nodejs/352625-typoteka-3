@@ -33,7 +33,7 @@ module.exports = (service) => (
       });
       return;
     }
-    await service.getAuth(email);
+    res.body = await service.getAuth(email);
 
     next();
   }

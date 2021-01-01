@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require(`express`);
-const expressSession = require(`express-session`);
+const sessionMiddleware = require(`./session-store.js`);
 const path = require(`path`);
 require(`dotenv`).config();
 
@@ -30,12 +30,7 @@ const logger = getLogger();
 
 const app = express();
 
-app.use(expressSession({
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-  name: `session_id`,
-}));
+app.use(sessionMiddleware);
 
 app.set(`views`, `./src/express/templates`);
 app.set(`view engine`, `pug`);

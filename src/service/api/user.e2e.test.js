@@ -198,12 +198,26 @@ describe(`When try to login by existing user and correct password '/${PathName.U
       .send(mockUser);
   });
 
+  const expectedReply = {
+    status: true,
+    user: {
+      id: 2,
+      firstname: `Людмила`,
+      lastname: `Нефедова`,
+      [`is_admin`]: false,
+      avatar: {
+        regular: `avatar-2`,
+        small: `avatar-small-2`,
+      }
+    }
+  };
+
   test(`status code should be ${HttpCode.OK}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be 'User is authenticated'`, () => {
-    expect(response.body).toBe(`User is authenticated`);
+  test(`response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });
 

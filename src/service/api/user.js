@@ -29,10 +29,6 @@ module.exports = (app, userService) => {
       `/login`,
       schemaValidator(loginUserSchema),
       authenticate(userService),
-      (req, res, next) => {
-        res.body = `User is authenticated`;
-        next();
-      },
       tryToResponse(HttpCode.OK)
   );
 };

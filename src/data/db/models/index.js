@@ -7,6 +7,7 @@ const initModels = (orm) => {
   const Comment = require(`./comment.js`)(orm);
   const Category = require(`./category.js`)(orm);
   const ArticleCategory = require(`./article-category.js`)(orm);
+  const Session = require(`./session.js`)(orm);
 
   Author.hasOne(Avatar, {
     foreignKey: `author_id`,
@@ -68,6 +69,7 @@ const initModels = (orm) => {
     Comment,
     Category,
     ArticleCategory,
+    Session,
   };
 };
 
