@@ -13,7 +13,7 @@ const {
 
 module.exports = () => {
   return Joi.object({
-    [`created_date`]: Joi.date()
+    createdDate: Joi.date()
       .format(`DD.MM.YYYY, HH:mm`)
       .required()
       .messages({
@@ -31,7 +31,7 @@ module.exports = () => {
         'any.required': ErrorMessages.REQUIRED
       }),
 
-    [`picture_filename`]: Joi.string()
+    pictureFilename: Joi.string()
       .empty(``),
 
     picture: Joi.string(),
@@ -54,11 +54,20 @@ module.exports = () => {
         'any.required': ErrorMessages.REQUIRED,
       }),
 
-    [`full_text`]: Joi.string()
+    fullText: Joi.string()
       .max(FullText.MAX)
       .empty(``)
       .messages({
         'string.max': ErrorMessages.STRING_MAX,
       }),
+
+    userId: Joi.number()
+      .required()
+      .integer()
+      .messages({
+        'any.required': ErrorMessages.REQUIRED,
+      }),
+
+    articleId: Joi.number().integer(),
   });
 };

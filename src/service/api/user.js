@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
-const {tryToResponse, schemaValidator, authenticate} = require(`../middlewares`);
+const {tryToResponse, schemaValidator, authenticate, alreadyRegister} = require(`../middlewares`);
 
 const registerUserSchema = require(`../schemas/user-register.js`);
 const loginUserSchema = require(`../schemas/user-login.js`);
@@ -14,9 +14,11 @@ module.exports = (app, userService) => {
 
   route.post(
       `/`,
-      schemaValidator(registerUserSchema, userService.getExistingEmail.bind(userService)),
+      alreadyRegister(userService),
+      schemaValidator(registerUserSchema),
       async (req, res, next) => {
-        await userService.add(req.body);
+        const {firstname, lastname, email, password, avatar} = req.body;
+        await userService.add({firstname, lastname, email, password, avatar});
         res.body = `User is registered`;
         next();
       },
@@ -27,14 +29,8 @@ module.exports = (app, userService) => {
       `/login`,
       schemaValidator(loginUserSchema),
       authenticate(userService),
-      tryToResponse(HttpCode.OK)
-  );
-
-  route.post(
-      `/logout`,
-      async (req, res, next) => {
-        await userService.logout();
-        res.body = `User is logged out`;
+      (req, res, next) => {
+        res.body = `User is authenticated`;
         next();
       },
       tryToResponse(HttpCode.OK)

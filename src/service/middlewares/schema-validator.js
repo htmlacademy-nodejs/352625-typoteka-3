@@ -5,12 +5,12 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-module.exports = (schema, cb = (value = null) => value) => (
+module.exports = (schema) => (
   async (req, res, next) => {
     const {body} = req;
 
     try {
-      await schema(await cb(body[`email`] || null))
+      await schema()
         .validateAsync(body, {
           abortEarly: false
         });

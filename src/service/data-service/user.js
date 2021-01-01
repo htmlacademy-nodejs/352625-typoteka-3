@@ -9,8 +9,46 @@ class UserService {
     this._database = database;
   }
 
+  async findOne(id) {
+    return await this._database.Author.findByPk(id);
+  }
+
+  async isAdmin(userId) {
+    const admin = await this._database.Author.findOne({
+      where: {
+        [`is_admin`]: true
+      },
+      attributes: [`id`],
+    });
+
+    return admin[`id`] === userId;
+  }
+
+  async isUser(userId) {
+    const user = await this._database.Author.findByPk(userId);
+    return !!user;
+  }
+
   async findByEmail(email) {
-    return await this._database.Author.findOne({where: {email}});
+    return await this._database.Author.findOne({where: {email}, attributes: [`id`, `email`, `password`]});
+  }
+
+  async getAuth(email) {
+    return {
+      status: true,
+      user: await this._database.Author.findOne({
+        where: {
+          email
+        },
+        attributes: [`id`, `firstname`, `lastname`, `is_admin`],
+
+        include: {
+          model: this._database.Avatar,
+          as: `avatar`,
+          attributes: [`regular`, `small`],
+        }
+      })
+    };
   }
 
   async getExistingEmail(email) {
@@ -23,23 +61,18 @@ class UserService {
     return existingEmail;
   }
 
-  async add(formData) {
+  async add({firstname, lastname, email, password, avatar}) {
     const user = await this._database.Author.create({
-      firstname: formData[`firstname`],
-      lastname: formData[`lastname`],
-      email: formData[`email`],
-      password: await bcrypt.hash(formData[`password`], saltRounds),
+      firstname,
+      lastname,
+      email,
+      [`password`]: await bcrypt.hash(password, saltRounds),
       [`is_admin`]: false,
     });
 
-    await this._database.Auth.create({
-      [`is_auth`]: false,
-      [`author_id`]: user[`id`],
-    });
-
     await this._database.Avatar.create({
-      regular: formData[`avatar`] === `` ? null : formData[`avatar`],
-      small: formData[`avatar`] === `` ? null : formData[`avatar`],
+      regular: avatar === `` ? null : avatar,
+      small: avatar === `` ? null : avatar,
       [`author_id`]: user[`id`],
     });
 
@@ -47,28 +80,9 @@ class UserService {
   }
 
   async checkUser(user, formData) {
-    const match = await bcrypt.compare(formData[`password`], user[`password`]);
-
-    if (match) {
-      await this._database.Auth.update({[`is_auth`]: false}, {where: {[`is_auth`]: true}});
-
-      const auth = await this._database.Auth.findOne(
-          {
-            where: {
-              [`author_id`]: user[`id`]
-            }
-          }
-      );
-      auth[`is_auth`] = true;
-      await auth.save();
-    }
-
-    return match;
+    return await bcrypt.compare(formData[`password`], user[`password`]);
   }
 
-  async logout() {
-    await this._database.Auth.update({[`is_auth`]: false}, {where: {[`is_auth`]: true}});
-  }
 }
 
 module.exports = UserService;

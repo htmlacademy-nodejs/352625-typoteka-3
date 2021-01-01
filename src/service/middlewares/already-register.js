@@ -8,32 +8,17 @@ module.exports = (service) => (
     const {email} = req.body;
     const existsUser = await service.findByEmail(email);
 
-    if (!existsUser) {
+    if (existsUser) {
       res.status(HttpCode.UNAUTHORIZED).json({
         status: HttpCode.UNAUTHORIZED,
         data: req.body,
         errors: [{
           label: `email`,
-          message: ErrorMessages.USER_NOT_EXIST,
+          message: ErrorMessages.EMAIL_EXIST,
         }],
       });
       return;
     }
-
-    const match = await service.checkUser(existsUser, req.body);
-
-    if (!match) {
-      res.status(HttpCode.UNAUTHORIZED).json({
-        status: HttpCode.UNAUTHORIZED,
-        data: req.body,
-        errors: [{
-          label: `password`,
-          message: ErrorMessages.INVALID_PASSWORD,
-        }],
-      });
-      return;
-    }
-    await service.getAuth(email);
 
     next();
   }

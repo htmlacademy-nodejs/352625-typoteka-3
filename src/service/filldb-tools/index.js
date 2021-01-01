@@ -4,8 +4,6 @@ const getAvatars = require(`./avatars.js`);
 
 const getAuthors = require(`./authors.js`);
 
-const getAuth = require(`./auths.js`);
-
 const getArticles = require(`./articles.js`);
 
 const getComments = require(`./comments.js`);
@@ -17,7 +15,6 @@ const getArticlesCategories = require(`./articles-categories.js`);
 const getContent = async (count, users, authUserId, sentences, titles, pictures, commentsSentences, categoriesSentences) => {
   const authors = await getAuthors(users);
   const avatars = getAvatars(users);
-  const auths = getAuth(users, authUserId);
   const articles = getArticles(count, sentences, titles, pictures);
   const comments = getComments(articles, authors, commentsSentences);
   const categories = getCategories(categoriesSentences);
@@ -26,7 +23,6 @@ const getContent = async (count, users, authUserId, sentences, titles, pictures,
   return {
     avatars,
     authors,
-    auths,
     articles,
     comments,
     categories,

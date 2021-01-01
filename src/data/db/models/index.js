@@ -3,7 +3,6 @@
 const initModels = (orm) => {
   const Avatar = require(`./avatar.js`)(orm);
   const Author = require(`./author.js`)(orm);
-  const Auth = require(`./auth.js`)(orm);
   const Article = require(`./article.js`)(orm);
   const Comment = require(`./comment.js`)(orm);
   const Category = require(`./category.js`)(orm);
@@ -20,11 +19,6 @@ const initModels = (orm) => {
 
   Author.hasMany(Comment, {
     foreignKey: `author_id`,
-  });
-
-  Auth.belongsTo(Author, {
-    foreignKey: `author_id`,
-    as: `user`,
   });
 
   Article.belongsTo(Author, {
@@ -55,6 +49,11 @@ const initModels = (orm) => {
     as: `article`,
   });
 
+  Category.belongsTo(Author, {
+    foreignKey: `author_id`,
+    as: `author`,
+  });
+
   Category.belongsToMany(Article, {
     as: `articles`,
     foreignKey: `category_id`,
@@ -65,7 +64,6 @@ const initModels = (orm) => {
   return {
     Avatar,
     Author,
-    Auth,
     Article,
     Comment,
     Category,

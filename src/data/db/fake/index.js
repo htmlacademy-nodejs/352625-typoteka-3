@@ -16,7 +16,6 @@ const fakeSequelize = getDbConnection(FAKE_DB_NAME);
 const {
   Avatar,
   Author,
-  Auth,
   Article,
   Comment,
   Category,
@@ -34,7 +33,6 @@ const initDb = async (content, orm) => {
 
     await Author.bulkCreate(content.authors);
     await Avatar.bulkCreate(content.avatars);
-    await Auth.bulkCreate(content.auths);
     await Article.bulkCreate(content.articles);
     await Comment.bulkCreate(content.comments);
     await Category.bulkCreate(content.categories);
@@ -73,7 +71,6 @@ module.exports = {
   fakeDb: {
     Avatar,
     Author,
-    Auth,
     Article,
     Comment,
     Category,

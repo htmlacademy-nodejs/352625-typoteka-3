@@ -14,8 +14,7 @@ class SearchService {
       limit: count,
       where: {
         title: {
-          // TODO сделать поиск регистронезависимым
-          [Op.like]: `%${typingData}%`,
+          [Op.iLike]: `%${typingData}%`,
         }
       },
     });

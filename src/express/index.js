@@ -1,7 +1,9 @@
 'use strict';
 
 const express = require(`express`);
+const expressSession = require(`express-session`);
 const path = require(`path`);
+require(`dotenv`).config();
 
 const pino = require(`pino`)(`./src/express/logs/express.log`);
 const expressPino = require(`express-pino-logger`)({
@@ -27,6 +29,13 @@ const {getLogger} = require(`./../service/logger.js`);
 const logger = getLogger();
 
 const app = express();
+
+app.use(expressSession({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: false,
+  name: `session_id`,
+}));
 
 app.set(`views`, `./src/express/templates`);
 app.set(`view engine`, `pug`);

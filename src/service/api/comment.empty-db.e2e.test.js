@@ -4,27 +4,26 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const comment = require(`./comment.js`);
-const {CommentService, AuthService} = require(`../data-service`);
+const {CommentService} = require(`../data-service`);
 
 const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
 const {fakeDb, initEmptyDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
 
-const Author = {
-  ID: `randomId`,
+const User = {
+  ID: 1,
 };
 
 const Comment = {
-  ID: `randomId`,
+  ID: 1,
 };
 
 const commentService = new CommentService(fakeDb);
-const authService = new AuthService(fakeDb);
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  comment(app, commentService, authService);
+  comment(app, commentService);
   return app;
 };
 
@@ -59,14 +58,14 @@ describe(`When GET '/${PathName.COMMENTS}/fresh' to empty database '${fakeSequel
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${Author.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${Author.ID}`);
+      .get(`/${PathName.COMMENTS}/byAuthor/${User.ID}`);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
@@ -79,18 +78,34 @@ describe(`When GET '/${PathName.COMMENTS}/byAuthor/${Author.ID}' to empty databa
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
+  const data = {
+    commentId: Comment.ID,
+    userId: User.ID,
+  };
+
+  const expectedReply = {
+    data,
+    status: HttpCode.UNAUTHORIZED,
+    errors: [{
+      message: `Действие не авторизовано`
+    }]
+  };
+
   beforeAll(async () => {
     response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.ID}`);
+      .delete(`/${PathName.COMMENTS}`).send(data);
   });
 
-  test(`status code should be ${HttpCode.UNAUTHORIZED} and response is 'Unauthorized access'`, () => {
+  test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
-    expect(response.body).toBe(`Unauthorized access`);
+  });
+
+  test(`response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });

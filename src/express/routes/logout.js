@@ -3,17 +3,18 @@
 const {Router} = require(`express`);
 
 const {render500Page} = require(`./render.js`);
-const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
+const {setDefaultAuthStatus} = require(`../middlewares`);
 
 const logger = getLogger();
 
 const logoutRouter = new Router();
 
-logoutRouter.post(`/`, async (req, res) => {
+logoutRouter.post(`/`, setDefaultAuthStatus(), async (req, res) => {
   try {
-    await api.logout();
-    res.redirect(`/login`);
+    req.session.destroy(() => {
+      res.redirect(`/login`);
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {

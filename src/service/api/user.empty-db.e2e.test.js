@@ -8,8 +8,7 @@ const {UserService} = require(`../data-service`);
 
 const {PathName} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
-const {mocks} = require(`../../data/db/fake/mocks.js`);
-const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
+const {fakeDb, initEmptyDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
 
 const userService = new UserService(fakeDb);
 
@@ -21,7 +20,7 @@ const createAPI = () => {
 };
 
 beforeAll(async () => {
-  await initDb(mocks, fakeSequelize);
+  await initEmptyDb(fakeSequelize);
 });
 
 afterAll(async () => {
@@ -55,45 +54,6 @@ describe(`When try to register with valid data '/${PathName.USER}'`, () => {
 
   test(`response should be 'User is registered'`, () => {
     expect(response.body).toBe(`User is registered`);
-  });
-});
-
-
-describe(`When try to register with valid data '/${PathName.USER}' but email already exist`, () => {
-  const app = createAPI();
-
-  let response;
-
-  const mockUser = {
-    email: `d_ivanov@local.com`, // exist in fake database
-    firstname: `Дмитрий`,
-    lastname: `Иванов`,
-    password: `123456`,
-    [`repeat_password`]: `123456`,
-    avatar: `example.jpg`,
-  };
-
-  const expectedReply = {
-    data: mockUser,
-    errors: [{
-      label: `email`,
-      message: `Этот email занят`,
-    }],
-    status: HttpCode.UNAUTHORIZED,
-  };
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/${PathName.USER}`)
-      .send(mockUser);
-  });
-
-  test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
-    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
-  });
-
-  test(`response should be an object with special structure`, () => {
-    expect(response.body).toStrictEqual(expectedReply);
   });
 });
 
@@ -188,8 +148,8 @@ describe(`When try to login by existing user and correct password '/${PathName.U
   let response;
 
   const mockUser = {
-    email: `nefedova_l@local.com`, // exist in fake database
-    password: `asdfgh456`, // correct password
+    email: `example@mail.org`, // exist in fake database
+    password: `123456`, // correct password
   };
 
   beforeAll(async () => {
@@ -214,9 +174,15 @@ describe(`When try to login by existing user and incorrect password '/${PathName
   let response;
 
   const mockUser = {
-    email: `nefedova_l@local.com`, // exist in fake database
-    password: `incorrect 123456`, // incorrect password
+    email: `example@mail.org`, // exist in fake database
+    password: `12345678910`, // incorrect password
   };
+
+  beforeAll(async () => {
+    response = await request(app)
+      .post(`/${PathName.USER}/login`)
+      .send(mockUser);
+  });
 
   const expectedReply = {
     data: mockUser,
@@ -224,126 +190,12 @@ describe(`When try to login by existing user and incorrect password '/${PathName
       label: `password`,
       message: `Невалидный пароль`,
     }],
-    status: 401,
+    status: HttpCode.UNAUTHORIZED,
   };
 
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/${PathName.USER}/login`)
-      .send(mockUser);
-  });
 
   test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
-  });
-
-  test(`response should be an object with special structure`, () => {
-    expect(response.body).toStrictEqual(expectedReply);
-  });
-});
-
-
-describe(`When try to login by existing user and incorrect too short password '/${PathName.USER}/login'`, () => {
-  const app = createAPI();
-
-  let response;
-
-  const mockUser = {
-    email: `nefedova_l@local.com`, // exist in fake database
-    password: `456`, // incorrect too short password
-  };
-
-  const expectedReply = {
-    data: mockUser,
-    errors: [{
-      label: `password`,
-      message: `Длина должна быть не менее 6 символов`,
-    }],
-    status: 400,
-  };
-
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/${PathName.USER}/login`)
-      .send(mockUser);
-  });
-
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-
-  test(`response should be an object with special structure`, () => {
-    expect(response.body).toStrictEqual(expectedReply);
-  });
-});
-
-
-describe(`When try to login by existing user and incorrect too long password '/${PathName.USER}/login'`, () => {
-  const app = createAPI();
-
-  let response;
-
-  const mockUser = {
-    email: `nefedova_l@local.com`, // exist in fake database
-    password: `incorrect long password 123456`, // incorrect too long password
-  };
-
-  const expectedReply = {
-    data: mockUser,
-    errors: [{
-      label: `password`,
-      message: `Длина не должна превышать 20 символов`,
-    }],
-    status: 400,
-  };
-
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/${PathName.USER}/login`)
-      .send(mockUser);
-  });
-
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-
-  test(`response should be an object with special structure`, () => {
-    expect(response.body).toStrictEqual(expectedReply);
-  });
-});
-
-
-describe(`When try to login by invalid username '/${PathName.USER}/login'`, () => {
-  const app = createAPI();
-
-  let response;
-
-  const mockUser = {
-    email: `invalid@username.123`, // incorrect username
-    password: `random 123`, // incorrect password
-  };
-
-  const expectedReply = {
-    data: mockUser,
-    errors: [{
-      label: `email`,
-      message: `Невалидный email`,
-    }],
-    status: 400,
-  };
-
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/${PathName.USER}/login`)
-      .send(mockUser);
-  });
-
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
   });
 
   test(`response should be an object with special structure`, () => {

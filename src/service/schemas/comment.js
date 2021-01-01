@@ -19,4 +19,14 @@ module.exports = () => Joi.object({
       'string.max': ErrorMessages.STRING_MAX,
       'any.required': ErrorMessages.REQUIRED,
     }),
+
+  userId: Joi.number()
+    .required()
+    .integer()
+    .messages({
+      'any.required': ErrorMessages.REQUIRED,
+    }),
+
+  articleId: Joi.number()
+    .integer(),
 });

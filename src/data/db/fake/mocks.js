@@ -32,16 +32,6 @@ const mocks = {
       [`small`]: `avatar-small-2`,
     },
   ],
-  auths: [
-    {
-      [`author_id`]: 1,
-      [`is_auth`]: false,
-    },
-    {
-      [`author_id`]: 2,
-      [`is_auth`]: false,
-    },
-  ],
   articles: [
     {
       [`title`]: `Бороться с прокрастинацией несложно.`,
@@ -96,16 +86,20 @@ const mocks = {
   ],
   categories: [
     {
-      [`name`]: `Деревья`
+      [`name`]: `Деревья`,
+      [`author_id`]: 1,
     },
     {
-      [`name`]: `Музыка`
+      [`name`]: `Музыка`,
+      [`author_id`]: 1,
     },
     {
-      [`name`]: `Кино`
+      [`name`]: `Кино`,
+      [`author_id`]: 1,
     },
     {
-      [`name`]: `Разное`
+      [`name`]: `Разное`,
+      [`author_id`]: 1,
     },
   ],
   articlesCategories: [

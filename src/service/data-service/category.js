@@ -84,22 +84,35 @@ class CategoryService {
     };
   }
 
-  async add(formData) {
-    return await this._database.Category.create({
-      name: formData[`category`],
+  async checkAuthorship(categoryId, userId) {
+    return await this._database.Category.findOne({
+      where: {
+        [`author_id`]: userId,
+        id: categoryId,
+      },
+      attributes: [`id`],
     });
   }
 
-  async update(formData, categoryId) {
-    const category = await this._database.Category.findByPk(categoryId);
-    category[`name`] = formData[`category`];
-    await category.save();
+  async add({userId, category}) {
+    await this._database.Category.create({
+      name: category,
+      [`author_id`]: userId,
+    });
   }
 
-  async delete(categoryId) {
+  async update({userId, categoryId, category}) {
+    const item = await this._database.Category.findByPk(categoryId);
+    item[`name`] = category;
+    item[`author_id`] = userId;
+    await item.save();
+  }
+
+  async delete({userId, categoryId}) {
     await this._database.Category.destroy({
       where: {
-        id: categoryId
+        [`author_id`]: userId,
+        id: categoryId,
       }
     });
   }

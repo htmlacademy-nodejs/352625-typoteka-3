@@ -8,14 +8,14 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const {uploadFile, saveFileNameToBody} = require(`../middlewares`);
+const {setDefaultAuthStatus, uploadFile, saveFileNameToBody} = require(`../middlewares`);
 
 const registerRouter = new Router();
 
-registerRouter.get(`/`, async (req, res) => {
+registerRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
   try {
     res.render(`sign-up`, {
-      auth: await api.getAuth(),
+      auth: req.session[`auth`],
       data: null,
       errors: null,
     });
@@ -26,7 +26,7 @@ registerRouter.get(`/`, async (req, res) => {
   }
 });
 
-registerRouter.post(`/`, uploadFile.single(`avatar`), saveFileNameToBody(`avatar`), async (req, res) => {
+registerRouter.post(`/`, setDefaultAuthStatus(), uploadFile.single(`avatar`), saveFileNameToBody(`avatar`), async (req, res) => {
   try {
     await api.register(req.body);
     res.redirect(`/login`);
@@ -34,7 +34,7 @@ registerRouter.post(`/`, uploadFile.single(`avatar`), saveFileNameToBody(`avatar
 
   } catch (error) {
     res.status(error.response.data[`status`]).render(`sign-up`, {
-      auth: await api.getAuth(),
+      auth: req.session[`auth`],
       data: error.response.data[`data`],
       errors: error.response.data[`errors`],
     });
