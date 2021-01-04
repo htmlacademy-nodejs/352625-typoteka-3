@@ -60,19 +60,30 @@ class CommentService {
     return await this._database.Comment.findByPk(commentId);
   }
 
-  async add(formData, articleId, authorId) {
+  async checkAuthorship(commentId, userId) {
+    return await this._database.Comment.findOne({
+      where: {
+        [`author_id`]: userId,
+        id: commentId,
+      },
+      attributes: [`id`],
+    });
+  }
+
+  async add({userId, articleId, text}) {
     return await this._database.Comment.create({
-      [`text`]: formData[`text`],
+      text,
       [`created_date`]: moment().toISOString(),
-      [`author_id`]: authorId,
+      [`author_id`]: userId,
       [`article_id`]: articleId,
     });
   }
 
-  async delete(commentId) {
+  async delete(commentId, userId) {
     await this._database.Comment.destroy({
       where: {
-        id: commentId
+        [`author_id`]: userId,
+        id: commentId,
       }
     });
   }

@@ -5,19 +5,19 @@ const request = require(`supertest`);
 
 const article = require(`./article.js`);
 const DataService = require(`../data-service/article.js`);
-const AuthService = require(`../data-service/auth.js`);
 const CommentService = require(`../data-service/comment.js`);
+const UserService = require(`../data-service/user.js`);
 
 const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
 const {fakeDb, initEmptyDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
 
 const dataService = new DataService(fakeDb, fakeSequelize);
-const authService = new AuthService(fakeDb);
 const commentService = new CommentService(fakeDb);
+const userService = new UserService(fakeDb);
 
 const Author = {
-  ID: `randomId`,
+  ID: 1,
 };
 
 const Page = {
@@ -25,13 +25,13 @@ const Page = {
 };
 
 const Article = {
-  ID: `randomId`,
+  ID: 1,
 };
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  article(app, dataService, authService, commentService);
+  article(app, dataService, commentService, userService);
   return app;
 };
 
@@ -152,101 +152,151 @@ describe(`When POST '/${PathName.ARTICLES}' to empty database '${fakeSequelize.c
 
   let response;
 
-  const mockArticle = {
-    [`title`]: `text`,
-    [`created_date`]: `14.10.2020`,
-    [`announce`]: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
-    [`full_text`]: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
-    [`picture`]: `forest`,
-    [`category-1`]: 1,
-    [`category-2`]: 2,
+  const data = {
+    title: `Заголовок должен быть не менее 30 символов`,
+    createdDate: `14.10.2020, 09:27`,
+    announce: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    fullText: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    picture: `forest.jpg`,
+    categories: [1, 3],
+    userId: Author.ID,
+  };
+
+  const expectedReply = {
+    data,
+    errors: [
+      {
+        message: `Такого пользователя не существует`
+      },
+    ],
+    status: HttpCode.UNAUTHORIZED
   };
 
   beforeAll(async () => {
     response = await request(app)
       .post(`/${PathName.ARTICLES}`)
-      .send(mockArticle);
+      .send(data);
   });
 
   test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`Response is 'Unauthorized access'`, () => {
-    expect(response.body).toBe(`Unauthorized access`);
+  test(`Response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });
 
 
-describe(`When PUT '/${PathName.ARTICLES}/${Article.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When PUT '/${PathName.ARTICLES}' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
-  const mockArticle = {
-    [`title`]: `Название нового заголовка`,
-    [`created_date`]: `14.10.2020`,
-    [`announce`]: `Исправленная аннотация поста`,
-    [`full_text`]: `Исправленный полный текст публикации`,
-    [`picture`]: `picture`,
+  const data = {
+    title: `Заголовок должен быть не менее 30 символов`,
+    createdDate: `14.10.2020, 09:27`,
+    announce: `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    fullText: `Из под его пера вышло 8 платиновых альбомов. Как начать действовать? Для начала просто соберитесь.`,
+    picture: `forest`,
+    categories: [1, 3],
+    userId: Author.ID,
+    articleId: Article.ID,
+  };
+
+  const expectedReply = {
+    data,
+    errors: [
+      {
+        message: `Такого пользователя не существует`
+      },
+    ],
+    status: HttpCode.UNAUTHORIZED
   };
 
   beforeAll(async () => {
     response = await request(app)
-      .put(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`)
-      .send(mockArticle);
+      .put(`/${PathName.ARTICLES}`)
+      .send(data);
   });
 
   test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`Response is 'Unauthorized access'`, () => {
-    expect(response.body).toBe(`Unauthorized access`);
+  test(`Response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });
 
 
-describe(`When POST '/${PathName.ARTICLES}/${Article.ID}/comments' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When POST '/${PathName.ARTICLES}/comments' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
-  const mockComment = {
-    text: `Текст нового комментария`
+  const data = {
+    text: `Текст нового комментария`,
+    articleId: Article.ID,
+    userId: Author.ID,
   };
 
   beforeAll(async () => {
     response = await request(app)
-      .post(`/${PathName.ARTICLES}/${Article.RIGHT_ID}/comments`)
-      .send(mockComment);
+      .post(`/${PathName.ARTICLES}/comments`)
+      .send(data);
   });
+
+  const expectedReply = {
+    data,
+    errors: [
+      {
+        message: `Такого пользователя не существует`
+      },
+    ],
+    status: HttpCode.UNAUTHORIZED
+  };
 
   test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`Response is 'Unauthorized access'`, () => {
-    expect(response.body).toBe(`Unauthorized access`);
+  test(`Response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });
 
 
-describe(`When DELETE '/${PathName.ARTICLES}/${Article.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When DELETE '/${PathName.ARTICLES}' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
+  const data = {
+    userId: Author.ID,
+    articleId: Article.ID,
+  };
+
+  const expectedReply = {
+    data,
+    errors: [
+      {
+        message: `Действие не авторизовано`
+      },
+    ],
+    status: HttpCode.UNAUTHORIZED
+  };
+
   beforeAll(async () => {
     response = await request(app)
-      .delete(`/${PathName.ARTICLES}/${Article.RIGHT_ID}`);
+      .delete(`/${PathName.ARTICLES}`).send(data);
   });
 
   test(`status code should be ${HttpCode.UNAUTHORIZED}`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
   });
 
-  test(`Response is 'Unauthorized access'`, () => {
-    expect(response.body).toBe(`Unauthorized access`);
+  test(`Response should be an object with special structure`, () => {
+    expect(response.body).toStrictEqual(expectedReply);
   });
 });

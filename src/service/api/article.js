@@ -8,15 +8,18 @@ const {
   passNotNullData,
   passProperParam,
   tryToResponse,
-  isAuth,
-  validateArticle,
-  validateComment,
+  makeCategoriesValid,
+  schemaValidator,
+  isArticle,
+  isAdmin,
+  isOwner,
+  isUser,
 } = require(`../middlewares`);
 
 const articleSchema = require(`../schemas/article.js`);
 const commentSchema = require(`../schemas/comment.js`);
 
-module.exports = (app, articleService, authService, commentService) => {
+module.exports = (app, articleService, commentService, userService) => {
   const route = new Router();
 
   app.use(`/api/articles`, route);
@@ -68,10 +71,13 @@ module.exports = (app, articleService, authService, commentService) => {
 
   route.post(
       `/`,
-      isAuth(authService.get.bind(authService)),
-      validateArticle(articleSchema),
+      isUser(userService),
+      isAdmin(userService),
+      makeCategoriesValid(),
+      schemaValidator(articleSchema),
       async (req, res, next) => {
-        await articleService.add(req.body, res.auth.user.id);
+        const {createdDate, title, categories, announce, fullText, picture, pictureFilename, userId} = req.body;
+        await articleService.add({createdDate, title, categories, announce, fullText, picture, pictureFilename, userId});
         res.body = `Article is added`;
         next();
       },
@@ -80,13 +86,14 @@ module.exports = (app, articleService, authService, commentService) => {
 
 
   route.put(
-      `/:articleId`,
-      isAuth(authService.get.bind(authService)),
-      passProperParam(`articleId`, `Incorrect id`),
-      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
-      validateArticle(articleSchema),
+      `/`,
+      isUser(userService),
+      isOwner(articleService, `articleId`),
+      makeCategoriesValid(),
+      schemaValidator(articleSchema),
       async (req, res, next) => {
-        await articleService.update(req.body, req.params.articleId);
+        const {createdDate, title, categories, announce, fullText, picture, pictureFilename, userId, articleId} = req.body;
+        await articleService.update({createdDate, title, categories, announce, fullText, picture, pictureFilename, userId, articleId});
         res.body = `Article is changed`;
         next();
       },
@@ -95,13 +102,13 @@ module.exports = (app, articleService, authService, commentService) => {
 
 
   route.post(
-      `/:articleId/comments`,
-      isAuth(authService.get.bind(authService)),
-      passProperParam(`articleId`, `Incorrect id`),
-      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
-      validateComment(commentSchema),
+      `/comments`,
+      isUser(userService),
+      isArticle(articleService),
+      schemaValidator(commentSchema),
       async (req, res, next) => {
-        await commentService.add(req.body, req.params.articleId, res.auth.user.id);
+        const {userId, articleId, text} = req.body;
+        await commentService.add({userId, articleId, text});
         res.body = `Comment is added`;
         next();
       },
@@ -110,12 +117,11 @@ module.exports = (app, articleService, authService, commentService) => {
 
 
   route.delete(
-      `/:articleId`,
-      isAuth(authService.get.bind(authService)),
-      passProperParam(`articleId`, `Incorrect id`),
-      passNotNullData(articleService.findOne.bind(articleService), `Article doesn't exist`, `articleId`),
+      `/`,
+      isOwner(articleService, `articleId`),
       async (req, res, next) => {
-        await articleService.delete(req.params.articleId);
+        const {articleId, userId} = req.body;
+        await articleService.delete(articleId, userId);
         res.body = `Article is deleted`;
         next();
       },

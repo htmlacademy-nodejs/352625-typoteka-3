@@ -1,5 +1,8 @@
 'use strict';
 
+const bcrypt = require(`bcrypt`);
+const saltRounds = 10;
+
 const mocks = {
   authors: [
     {
@@ -27,16 +30,6 @@ const mocks = {
       [`author_id`]: 2,
       [`regular`]: `avatar-2`,
       [`small`]: `avatar-small-2`,
-    },
-  ],
-  auths: [
-    {
-      [`author_id`]: 1,
-      [`is_auth`]: false,
-    },
-    {
-      [`author_id`]: 2,
-      [`is_auth`]: false,
     },
   ],
   articles: [
@@ -93,16 +86,20 @@ const mocks = {
   ],
   categories: [
     {
-      [`name`]: `Деревья`
+      [`name`]: `Деревья`,
+      [`author_id`]: 1,
     },
     {
-      [`name`]: `Музыка`
+      [`name`]: `Музыка`,
+      [`author_id`]: 1,
     },
     {
-      [`name`]: `Кино`
+      [`name`]: `Кино`,
+      [`author_id`]: 1,
     },
     {
-      [`name`]: `Разное`
+      [`name`]: `Разное`,
+      [`author_id`]: 1,
     },
   ],
   articlesCategories: [
@@ -128,5 +125,13 @@ const mocks = {
     },
   ],
 };
+
+const convertPasswordsToHashes = (users) => {
+  users.map(async (user) => {
+    user[`password`] = await bcrypt.hash(user[`password`], saltRounds);
+  });
+};
+
+convertPasswordsToHashes(mocks.authors);
 
 module.exports = {mocks};

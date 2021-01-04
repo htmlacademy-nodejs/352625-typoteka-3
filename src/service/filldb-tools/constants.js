@@ -16,7 +16,7 @@ const Categories = {
   MAX: 5,
 };
 
-const PASSWORD_LENGTH = 8;
+const DEFAULT_MOCK_PASSWORD = `qwerty1234`;
 
 
 module.exports = {
@@ -24,5 +24,5 @@ module.exports = {
   ADMIN_USER_ID,
   Comments,
   Categories,
-  PASSWORD_LENGTH,
+  DEFAULT_MOCK_PASSWORD,
 };

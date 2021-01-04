@@ -8,7 +8,7 @@ const {
 } = require(`./constants.js`);
 
 
-module.exports = Joi.object({
+module.exports = () => Joi.object({
   text: Joi.string()
     .min(Comment.MIN)
     .max(Comment.MAX)
@@ -19,4 +19,14 @@ module.exports = Joi.object({
       'string.max': ErrorMessages.STRING_MAX,
       'any.required': ErrorMessages.REQUIRED,
     }),
+
+  userId: Joi.number()
+    .required()
+    .integer()
+    .messages({
+      'any.required': ErrorMessages.REQUIRED,
+    }),
+
+  articleId: Joi.number()
+    .integer(),
 });

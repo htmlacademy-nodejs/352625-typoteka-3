@@ -4,32 +4,30 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const comment = require(`./comment.js`);
-const {CommentService, AuthService} = require(`../data-service`);
+const {CommentService} = require(`../data-service`);
 
 const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
 const {mocks} = require(`../../data/db/fake/mocks.js`);
 const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
-const {loginByAuthorId, logoutByAuthorId} = require(`./test-utils.js`);
 
 const User = {
-  RIGHT_ID: 1,
-  WRONG_ID: `sdmf`
+  AUTHOR_ID: 1,
+  NOT_AUTHOR_ID: 2,
+  NON_EXIST_ID: 1000,
 };
 
 const Comment = {
   RIGHT_ID: 1,
-  WRONG_ID: `lksdn`,
-  NON_EXIST_ID: 10000,
+  WRONG_ID: 10000,
 };
 
 const commentService = new CommentService(fakeDb);
-const authService = new AuthService(fakeDb);
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  comment(app, commentService, authService);
+  comment(app, commentService);
   return app;
 };
 
@@ -65,16 +63,16 @@ describe(`When GET '/${PathName.COMMENTS}/fresh'`, () => {
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.RIGHT_ID}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}'`, () => {
   const app = createAPI();
 
   let response;
   let result;
 
   beforeAll(async () => {
-    const data = await commentService.findAllByAuthor(User.RIGHT_ID);
+    const data = await commentService.findAllByAuthor(User.AUTHOR_ID);
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.RIGHT_ID}`);
+      .get(`/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
@@ -88,7 +86,7 @@ describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.RIGHT_ID}'`, () => {
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.NON_EXIST_ID}'`, () => {
   const app = createAPI();
 
   let response;
@@ -108,23 +106,36 @@ describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}'`, () => {
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.RIGHT_ID}' in logout mode`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment exists but User not exists`, () => {
   const app = createAPI();
 
   let response;
   let commentBeforeAction;
   let commentAfterAction;
 
+  const data = {
+    commentId: Comment.RIGHT_ID,
+    userId: User.NON_EXIST_ID,
+  };
+
+  const expectedReply = {
+    data,
+    errors: [{
+      message: `Действие не авторизовано`,
+    }],
+    status: HttpCode.UNAUTHORIZED,
+  };
+
   beforeAll(async () => {
     commentBeforeAction = await commentService.findOne(Comment.RIGHT_ID);
     response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.RIGHT_ID}`);
+      .delete(`/${PathName.COMMENTS}`).send(data);
     commentAfterAction = await commentService.findOne(Comment.RIGHT_ID);
   });
 
   test(`status code should be ${HttpCode.UNAUTHORIZED} and response is 'Unauthorized access'`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
-    expect(response.body).toBe(`Unauthorized access`);
+    expect(response.body).toStrictEqual(expectedReply);
   });
 
   test(`Comment with id ${Comment.RIGHT_ID} is not deleted`, () => {
@@ -133,28 +144,67 @@ describe(`When DELETE '/${PathName.COMMENTS}/${Comment.RIGHT_ID}' in logout mode
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.RIGHT_ID}' in login mode`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists but User isn't an Author of Comment`, () => {
+  const app = createAPI();
+
+  let response;
+  let commentBeforeAction;
+  let commentAfterAction;
+
+  const data = {
+    commentId: Comment.RIGHT_ID,
+    userId: User.NOT_AUTHOR_ID,
+  };
+
+  const expectedReply = {
+    data,
+    errors: [{
+      message: `Действие не авторизовано`,
+    }],
+    status: HttpCode.UNAUTHORIZED,
+  };
+
+  beforeAll(async () => {
+    commentBeforeAction = await commentService.findOne(Comment.RIGHT_ID);
+    response = await request(app)
+      .delete(`/${PathName.COMMENTS}`).send(data);
+    commentAfterAction = await commentService.findOne(Comment.RIGHT_ID);
+  });
+
+  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be an object with special structure`, () => {
+    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+    expect(response.body).toStrictEqual(expectedReply);
+  });
+
+  test(`Comment with id ${Comment.RIGHT_ID} is not deleted`, () => {
+    expect(commentBeforeAction).toStrictEqual(commentAfterAction);
+  });
+});
+
+
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists and User is an Author`, () => {
   const app = createAPI();
 
   let response;
   let commentAfterAction;
 
-  beforeAll(async () => {
-    await loginByAuthorId(User.RIGHT_ID, fakeDb);
+  const data = {
+    commentId: Comment.RIGHT_ID,
+    userId: User.AUTHOR_ID,
+  };
 
+  const expectedReply = `Comment is deleted`;
+
+  beforeAll(async () => {
     response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.RIGHT_ID}`);
+      .delete(`/${PathName.COMMENTS}`).send(data);
 
     commentAfterAction = await commentService.findOne(Comment.RIGHT_ID);
   });
 
-  afterAll(async () => {
-    await logoutByAuthorId(User.RIGHT_ID, fakeDb);
-  });
-
-  test(`status code should be ${HttpCode.OK} and response is 'Comment is deleted'`, () => {
+  test(`status code should be ${HttpCode.OK} and response is ${expectedReply}`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
-    expect(response.body).toBe(`Comment is deleted`);
+    expect(response.body).toBe(expectedReply);
   });
 
   test(`Comment with id ${Comment.RIGHT_ID} is deleted`, () => {
@@ -163,79 +213,39 @@ describe(`When DELETE '/${PathName.COMMENTS}/${Comment.RIGHT_ID}' in login mode`
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.WRONG_ID}' in login mode`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment doesn't exist but User exists`, () => {
   const app = createAPI();
 
   let response;
+  let item;
+
+  const data = {
+    commentId: Comment.WRONG_ID,
+    userId: User.AUTHOR_ID,
+  };
+
+  const expectedReply = {
+    data,
+    errors: [{
+      message: `Действие не авторизовано`,
+    }],
+    status: HttpCode.UNAUTHORIZED,
+  };
+
 
   beforeAll(async () => {
-    await loginByAuthorId(User.RIGHT_ID, fakeDb);
+    item = await commentService.findOne(Comment.WRONG_ID);
     response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.WRONG_ID}`);
+      .delete(`/${PathName.COMMENTS}`).send(data);
   });
 
-  afterAll(async () => {
-    await logoutByAuthorId(User.RIGHT_ID, fakeDb);
-  });
-
-  test(`status code should be ${HttpCode.BAD_REQUEST} and response is 'Incorrect id'`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-    expect(response.body).toBe(`Incorrect id`);
-  });
-});
-
-
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.WRONG_ID}' in logout mode`, () => {
-  const app = createAPI();
-
-  let response;
-
-  beforeAll(async () => {
-    response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.WRONG_ID}`);
-  });
-
-  test(`status code should be ${HttpCode.UNAUTHORIZED} and response is 'Unauthorized access'`, () => {
+  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be an object with special structure`, () => {
     expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
-    expect(response.body).toBe(`Unauthorized access`);
-  });
-});
-
-
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.NON_EXIST_ID}' in login mode`, () => {
-  const app = createAPI();
-
-  let response;
-
-  beforeAll(async () => {
-    await loginByAuthorId(User.RIGHT_ID, fakeDb);
-    response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.NON_EXIST_ID}`);
+    expect(response.body).toStrictEqual(expectedReply);
   });
 
-  afterAll(async () => {
-    await logoutByAuthorId(User.RIGHT_ID, fakeDb);
+  test(`Comment with id ${Comment.WRONG_ID} is not exist`, () => {
+    expect(item).toBeNull();
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST} and response is 'Comment doesn't exist'`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-    expect(response.body).toBe(`Comment doesn't exist`);
-  });
-});
-
-
-describe(`When DELETE '/${PathName.COMMENTS}/${Comment.NON_EXIST_ID}' in logout mode`, () => {
-  const app = createAPI();
-
-  let response;
-
-  beforeAll(async () => {
-    response = await request(app)
-      .delete(`/${PathName.COMMENTS}/${Comment.NON_EXIST_ID}`);
-  });
-
-  test(`status code should be ${HttpCode.UNAUTHORIZED} and response is 'Unauthorized access'`, () => {
-    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
-    expect(response.body).toBe(`Unauthorized access`);
-  });
 });

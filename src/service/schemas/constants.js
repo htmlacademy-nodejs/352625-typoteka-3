@@ -57,6 +57,10 @@ const ErrorMessages = {
   EMAIL_EXIST: `Этот email занят`,
   RETYPE_PASSWORDS: `Пароли не совпали - повторите еще раз`,
   EMPTY_STRING: `Пустая строка`,
+  USER_NOT_EXIST: `Такого пользователя не существует`,
+  ARTICLE_NOT_EXIST: `Такой публикации не существует`,
+  INVALID_PASSWORD: `Невалидный пароль`,
+  UNAUTHORIZED: `Действие не авторизовано`,
 };
 
 module.exports = {

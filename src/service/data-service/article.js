@@ -131,6 +131,16 @@ class ArticleService {
     });
   }
 
+  async checkAuthorship(articleId, userId) {
+    return await this._database.Article.findOne({
+      where: {
+        [`author_id`]: userId,
+        id: articleId,
+      },
+      attributes: [`id`],
+    });
+  }
+
   async findAllByAuthor(authorId) {
     return await this._database.Article.findAll({
       attributes: [`id`, `title`, `created_date`],
@@ -145,34 +155,39 @@ class ArticleService {
     });
   }
 
-  async add(formData, authorId) {
+  async add({createdDate, title, categories, announce, fullText, picture, userId}) {
     const article = await this._database.Article.create({
-      [`title`]: formData[`title`],
-      [`announce`]: formData[`announce`],
-      [`full_text`]: formData[`full_text`],
-      [`picture`]: formData[`picture`],
-      [`created_date`]: moment(formData[`created_date`], `DD.MM.YYYY, HH:mm`).toISOString(),
-      [`author_id`]: authorId,
+      title,
+      announce,
+      [`full_text`]: fullText,
+      picture,
+      [`created_date`]: moment(createdDate, `DD.MM.YYYY, HH:mm`).toISOString(),
+      [`author_id`]: userId,
     });
 
-    if (formData[`categories`]) {
-      article.setCategories(formData[`categories`]);
+    if (categories) {
+      article.setCategories(categories);
     }
 
     return article;
   }
 
-  async update(formData, articleId) {
-    const article = await this._database.Article.findByPk(articleId);
+  async update({createdDate, title, categories, announce, fullText, picture, pictureFilename, userId, articleId}) {
+    const article = await this._database.Article.findOne({
+      where: {
+        id: articleId,
+        [`author_id`]: userId,
+      }
+    });
 
-    article[`title`] = formData[`title`];
-    article[`announce`] = formData[`announce`];
-    article[`full_text`] = formData[`full_text`];
-    article[`picture`] = formData[`picture`] || formData[`picture_filename`];
-    article[`created_date`] = moment(formData[`created_date`], `DD.MM.YYYY, HH:mm`).toISOString();
+    article[`title`] = title;
+    article[`announce`] = announce;
+    article[`full_text`] = fullText;
+    article[`picture`] = picture || pictureFilename;
+    article[`created_date`] = moment(createdDate, `DD.MM.YYYY, HH:mm`).toISOString();
 
-    if (formData[`categories`]) {
-      article.setCategories(formData[`categories`]);
+    if (categories) {
+      article.setCategories(categories);
     } else {
       article.setCategories(Empty.CATEGORIES);
     }
@@ -180,10 +195,11 @@ class ArticleService {
     await article.save();
   }
 
-  async delete(articleId) {
-    return await this._database.Article.destroy({
+  async delete(articleId, userId) {
+    await this._database.Article.destroy({
       where: {
-        id: articleId
+        [`author_id`]: userId,
+        id: articleId,
       }
     });
   }

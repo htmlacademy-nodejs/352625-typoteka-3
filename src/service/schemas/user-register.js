@@ -8,18 +8,16 @@ const {
 } = require(`./constants.js`);
 
 
-module.exports = (existingEmail) => {
+module.exports = () => {
   return Joi.object({
     email: Joi.string()
       .min(User.Email.MIN)
       .max(User.Email.MAX)
       .required()
-      .invalid(existingEmail)
       .messages({
         'string.min': ErrorMessages.STRING_MIN,
         'string.max': ErrorMessages.STRING_MAX,
         'any.required': ErrorMessages.REQUIRED,
-        'any.invalid': ErrorMessages.EMAIL_EXIST,
       }).email().messages({
         'string.email': ErrorMessages.INVALID_EMAIL,
       }),

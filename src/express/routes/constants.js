@@ -5,6 +5,7 @@ const PathName = {
   MY: `my`,
   REGISTER: `register`,
   LOGIN: `login`,
+  LOGOUT: `logout`,
   SEARCH: `search`,
   ERROR: `error`,
 };

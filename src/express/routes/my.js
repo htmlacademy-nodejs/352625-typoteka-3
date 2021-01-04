@@ -9,139 +9,194 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const {isAuth, isAdmin, checkApiReply, checkCategoryId} = require(`../middlewares`);
+const {setDefaultAuthStatus, isAdmin, isUser} = require(`../middlewares`);
 
 const myRouter = new Router();
 
-myRouter.get(`/`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
-  try {
-    const myArticles = await api.getMyArticles(res.auth.user.id);
+myRouter.get(
+    `/`,
+    setDefaultAuthStatus(),
+    isAdmin(),
+    async (req, res) => {
+      try {
+        res.render(`my-tickets`, {
+          auth: req.session[`auth`],
+          myArticles: await api.getMyArticles(req.session[`auth`][`user`][`id`]),
+          getHumanDate,
+        });
 
-    res.render(`my-tickets`, {
-      auth: res.auth,
-      myArticles,
-      getHumanDate,
-    });
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-  } catch (error) {
-    render500Page(req, res);
-    logger.error(`Error occurs: ${error}`);
-  }
-});
-
-
-myRouter.get(`/comments`, isAuth(api.getAuth.bind(api)), async (req, res) => {
-  try {
-    const myComments = await api.getMyComments(res.auth.user.id);
-
-    res.render(`comments`, {
-      auth: res.auth,
-      myComments,
-      getHumanDate,
-    });
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-  } catch (error) {
-    render500Page(req, res);
-    logger.error(`Error occurs: ${error}`);
-  }
-});
+      } catch (error) {
+        render500Page(req, res);
+        logger.error(`Error occurs: ${error}`);
+      }
+    }
+);
 
 
-myRouter.get(`/categories`, isAuth(api.getAuth.bind(api)), isAdmin(), checkApiReply(), checkCategoryId(), async (req, res) => {
-  try {
-    const categories = await api.getCategories();
+myRouter.get(
+    `/comments`,
+    setDefaultAuthStatus(),
+    isUser(),
+    async (req, res) => {
+      try {
+        res.render(`comments`, {
+          auth: req.session[`auth`],
+          myComments: await api.getMyComments(req.session[`auth`][`user`][`id`]),
+          getHumanDate,
+        });
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-    res.render(`my-categories`, {
-      auth: res.auth,
-      categories,
-      data: req.apiData,
-      errors: req.apiErrors,
-      updatingCategoryId: req.categoryId,
-    });
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-  } catch (error) {
-    render500Page(req, res);
-    logger.error(`Error occurs: ${error}`);
-  }
-});
-
-
-myRouter.post(`/comments/delete/:commentId`, isAuth(api.getAuth.bind(api)), async (req, res) => {
-  try {
-    const commentId = parseInt(req.params.commentId, 10);
-
-    await api.deleteComment(commentId);
-
-    res.redirect(`/my/comments/`);
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-  } catch (error) {
-    logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/comments/`);
-  }
-});
+      } catch (error) {
+        render500Page(req, res);
+        logger.error(`Error occurs: ${error}`);
+      }
+    }
+);
 
 
-myRouter.post(`/articles/delete/:articleId`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
-  try {
-    const articleId = parseInt(req.params.articleId, 10);
+myRouter.get(
+    `/categories`,
+    setDefaultAuthStatus(),
+    isAdmin(),
+    async (req, res) => {
+      try {
+        res.render(`my-categories`, {
+          auth: req.session[`auth`],
+          categories: await api.getCategories(),
+          data: null,
+          errors: null,
+          updatingCategoryId: null,
+        });
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
-    await api.deleteArticle(articleId);
-
-    res.redirect(`/my/`);
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-  } catch (error) {
-    logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/`);
-  }
-});
-
-
-myRouter.post(`/categories`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
-  try {
-    await api.postCategory(req.body);
-
-    res.redirect(`/my/categories`);
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
-  } catch (error) {
-    logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/categories?data=${JSON.stringify(error.response.data)}`);
-  }
-});
+      } catch (error) {
+        render500Page(req, res);
+        logger.error(`Error occurs: ${error}`);
+      }
+    }
+);
 
 
-myRouter.post(`/categories/edit/:categoryId`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
-  try {
-    await api.updateCategory(req.body, req.params[`categoryId`]);
+myRouter.post(
+    `/comments/delete/:commentId`,
+    setDefaultAuthStatus(),
+    isUser(),
+    async (req, res) => {
+      try {
+        const commentId = parseInt(req.params[`commentId`], 10);
+        const userId = parseInt(req.body[`userId`], 10);
 
-    res.redirect(`/my/categories`);
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+        await api.deleteComment(commentId, userId);
 
-  } catch (error) {
-    logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/categories?id=${req.params[`categoryId`]}&data=${JSON.stringify(error.response.data)}`);
-  }
-});
+        res.redirect(`/my/comments/`);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+      } catch (error) {
+        logger.error(`Error occurs: ${error}`);
+        res.redirect(`/my/comments/`);
+      }
+    }
+);
 
 
-myRouter.post(`/categories/delete/:categoryId`, isAuth(api.getAuth.bind(api)), isAdmin(), async (req, res) => {
-  try {
-    await api.deleteCategory(req.params[`categoryId`]);
+myRouter.post(
+    `/articles/delete/:articleId`,
+    setDefaultAuthStatus(),
+    isAdmin(),
+    async (req, res) => {
+      try {
+        const articleId = parseInt(req.params[`articleId`], 10);
+        const userId = parseInt(req.body[`userId`], 10);
 
-    res.redirect(`/my/categories`);
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+        await api.deleteArticle(articleId, userId);
 
-  } catch (error) {
-    logger.error(`Error occurs: ${error}`);
-    res.redirect(`/my/categories`);
-  }
-});
+        res.redirect(`/my/`);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+      } catch (error) {
+        logger.error(`Error occurs: ${error}`);
+        res.redirect(`/my/`);
+      }
+    }
+);
+
+
+myRouter.post(
+    `/categories`,
+    setDefaultAuthStatus(),
+    isAdmin(),
+    async (req, res) => {
+      try {
+        const {userId, category} = req.body;
+        await api.postCategory({userId, category});
+
+        res.redirect(`/my/categories`);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+      } catch (error) {
+        res.status(error.response.data[`status`]).render(`my-categories`, {
+          auth: req.session[`auth`],
+          categories: await api.getCategories(),
+          data: error.response.data[`data`],
+          errors: error.response.data[`errors`],
+          updatingCategoryId: null,
+        });
+        logger.error(`Error occurs: ${error}`);
+      }
+    }
+);
+
+
+myRouter.post(
+    `/categories/edit/:categoryId`,
+    setDefaultAuthStatus(),
+    isAdmin(),
+    async (req, res) => {
+      try {
+        req.body[`categoryId`] = parseInt(req.params[`categoryId`], 10);
+        const {userId, categoryId, category} = req.body;
+
+        await api.updateCategory({userId, categoryId, category});
+
+        res.redirect(`/my/categories`);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+      } catch (error) {
+        res.status(error.response.data[`status`]).render(`my-categories`, {
+          auth: req.session[`auth`],
+          categories: await api.getCategories(),
+          data: error.response.data[`data`],
+          errors: error.response.data[`errors`],
+          updatingCategoryId: parseInt(req.params[`categoryId`], 10),
+        });
+        logger.error(`Error occurs: ${error}`);
+      }
+    }
+);
+
+
+myRouter.post(
+    `/categories/delete/:categoryId`,
+    setDefaultAuthStatus(),
+    isAdmin(),
+    async (req, res) => {
+      try {
+        const categoryId = parseInt(req.params[`categoryId`], 10);
+        const userId = parseInt(req.body[`userId`], 10);
+
+        await api.deleteCategory({userId, categoryId});
+
+        res.redirect(`/my/categories`);
+        logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
+
+      } catch (error) {
+        logger.error(`Error occurs: ${error}`);
+        res.redirect(`/my/categories`);
+      }
+    }
+);
 
 
 module.exports = myRouter;

@@ -8,35 +8,36 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const {checkApiReply, uploadFile, saveFileNameToBody} = require(`../middlewares`);
+const {setDefaultAuthStatus, uploadFile, saveFileNameToBody} = require(`../middlewares`);
 
 const registerRouter = new Router();
 
-registerRouter.get(`/`, checkApiReply(), async (req, res) => {
+registerRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
   try {
-    const auth = await api.getAuth();
-    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
-
     res.render(`sign-up`, {
-      auth,
-      data: req.apiData,
-      errors: req.apiErrors,
+      auth: req.session[`auth`],
+      data: null,
+      errors: null,
     });
+    logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
   } catch (error) {
     render500Page(req, res);
     logger.error(`Error occurs: ${error}`);
   }
 });
 
-registerRouter.post(`/`, uploadFile.single(`avatar`), saveFileNameToBody(`avatar`), async (req, res) => {
+registerRouter.post(`/`, setDefaultAuthStatus(), uploadFile.single(`avatar`), saveFileNameToBody(`avatar`), async (req, res) => {
   try {
     await api.register(req.body);
     res.redirect(`/login`);
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
-    console.log(error.response.data);
-    res.redirect(`/register?data=${JSON.stringify(error.response.data)}`);
+    res.status(error.response.data[`status`]).render(`sign-up`, {
+      auth: req.session[`auth`],
+      data: error.response.data[`data`],
+      errors: error.response.data[`errors`],
+    });
     logger.error(`Error occurs: ${error}`);
   }
 });

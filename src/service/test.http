@@ -41,7 +41,7 @@ Content-Type: application/json
   "title": "Заголовок должен быть более 30 символов.",
   "announce": "Анонс должен быть более 30 символов чтобы быть валидным.",
   "full_text": "Необязательное поле. Максимальная длина - 1000 символов.",
-  "created_date": "11.11.2020",
+  "created_date": "11.11.2020, 23:30",
   "picture": "picture_name.jpg",
   "categories": [1, 4]
 }
@@ -198,5 +198,15 @@ Content-Type: application/json
 }
 
 
+### 28. Login existing user (Response code: 201)
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "email": "example@mail.com",
+  "password": "123456"
+}
+
 ###
+
 

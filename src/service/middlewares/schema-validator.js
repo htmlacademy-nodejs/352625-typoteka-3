@@ -5,20 +5,15 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-module.exports = (schema, isUserExist) => (
+module.exports = (schema) => (
   async (req, res, next) => {
     const {body} = req;
-    let existEmail = null;
-    const user = await isUserExist(body.email);
-
-    if (user) {
-      existEmail = user.dataValues.email;
-    }
 
     try {
-      await schema(existEmail).validateAsync(body, {
-        abortEarly: false
-      });
+      await schema()
+        .validateAsync(body, {
+          abortEarly: false
+        });
     } catch (err) {
       const {details} = err;
 

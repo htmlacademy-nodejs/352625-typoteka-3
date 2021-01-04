@@ -13,7 +13,6 @@ const sequelize = getDbConnection(process.env.DB_NAME);
 const {
   Avatar,
   Author,
-  Auth,
   Article,
   Comment,
   Category,
@@ -27,7 +26,6 @@ const initDb = async (content, orm) => {
 
     await Author.bulkCreate(content.authors);
     await Avatar.bulkCreate(content.avatars);
-    await Auth.bulkCreate(content.auths);
     await Article.bulkCreate(content.articles);
     await Comment.bulkCreate(content.comments);
     await Category.bulkCreate(content.categories);
@@ -43,7 +41,6 @@ module.exports = {
   db: {
     Avatar,
     Author,
-    Auth,
     Article,
     Comment,
     Category,

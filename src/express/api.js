@@ -33,10 +33,6 @@ class Api {
     return this._load(`${PathName.CATEGORIES}/id=${categoryId}&page=${pageNumber}`);
   }
 
-  getAuth() {
-    return this._load(`${PathName.AUTH}`);
-  }
-
   getArticle(articleId) {
     return this._load(`/${PathName.ARTICLES}/${articleId}`);
   }
@@ -48,16 +44,18 @@ class Api {
     });
   }
 
-  editArticle(data, articleId) {
-    return this._load(`/${PathName.ARTICLES}/${articleId}`, {
+  editArticle(data) {
+    return this._load(`/${PathName.ARTICLES}`, {
       method: `PUT`,
       data
     });
   }
 
-  deleteArticle(articleId) {
-    return this._load(`/${PathName.ARTICLES}/${articleId}`, {
-      method: `DELETE`
+  deleteArticle(articleId, userId) {
+    const data = {articleId, userId};
+    return this._load(`/${PathName.ARTICLES}`, {
+      method: `DELETE`,
+      data,
     });
   }
 
@@ -81,16 +79,18 @@ class Api {
     return this._load(`${PathName.COMMENTS}/byAuthor/${authorId}`);
   }
 
-  postComment(data, articleId) {
-    return this._load(`/${PathName.ARTICLES}/${articleId}/comments`, {
+  postComment(data) {
+    return this._load(`/${PathName.ARTICLES}/comments`, {
       method: `POST`,
       data
     });
   }
 
-  deleteComment(commentId) {
-    return this._load(`/${PathName.COMMENTS}/${commentId}`, {
-      method: `DELETE`
+  deleteComment(commentId, userId) {
+    const data = {commentId, userId};
+    return this._load(`/${PathName.COMMENTS}`, {
+      method: `DELETE`,
+      data,
     });
   }
 
@@ -99,22 +99,23 @@ class Api {
   }
 
   postCategory(data) {
-    return this._load(`/${PathName.CATEGORIES}/add`, {
+    return this._load(`/${PathName.CATEGORIES}`, {
       method: `POST`,
       data
     });
   }
 
-  updateCategory(data, categoryId) {
-    return this._load(`/${PathName.CATEGORIES}/${categoryId}`, {
+  updateCategory(data) {
+    return this._load(`/${PathName.CATEGORIES}`, {
       method: `PUT`,
       data
     });
   }
 
-  deleteCategory(categoryId) {
-    return this._load(`/${PathName.CATEGORIES}/${categoryId}`, {
-      method: `DELETE`
+  deleteCategory(data) {
+    return this._load(`/${PathName.CATEGORIES}`, {
+      method: `DELETE`,
+      data,
     });
   }
 
@@ -125,9 +126,18 @@ class Api {
     });
   }
 
-  login() {}
+  login(data) {
+    return this._load(`/${PathName.USER}/login`, {
+      method: `POST`,
+      data
+    });
+  }
 
-  logout() {}
+  logout() {
+    return this._load(`/${PathName.USER}/logout`, {
+      method: `POST`,
+    });
+  }
 }
 
 const defaultApi = new Api(defaultURL, TIMEOUT);

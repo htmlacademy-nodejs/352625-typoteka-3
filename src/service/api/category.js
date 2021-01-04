@@ -4,17 +4,19 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
 const {
-  isAuth,
   passNotNullData,
   passProperParam,
   tryToResponse,
-  validateCategory,
+  schemaValidator,
+  isAdmin,
+  isOwner,
+  isUser,
 } = require(`../middlewares`);
 
 const categorySchema = require(`../schemas/category.js`);
 
 
-module.exports = (app, categoryService, authService) => {
+module.exports = (app, categoryService, userService) => {
   const route = new Router();
 
   app.use(`/api/categories`, route);
@@ -35,11 +37,13 @@ module.exports = (app, categoryService, authService) => {
   );
 
   route.post(
-      `/add`,
-      isAuth(authService.get.bind(authService)),
-      validateCategory(categorySchema),
+      `/`,
+      isUser(userService),
+      isAdmin(userService),
+      schemaValidator(categorySchema),
       async (req, res, next) => {
-        await categoryService.add(req.body);
+        const {userId, category} = req.body;
+        await categoryService.add({userId, category});
         res.body = `Category is added`;
         next();
       },
@@ -48,12 +52,13 @@ module.exports = (app, categoryService, authService) => {
 
 
   route.put(
-      `/:categoryId`,
-      isAuth(authService.get.bind(authService)),
-      passProperParam(`categoryId`, `Incorrect id`),
-      validateCategory(categorySchema),
+      `/`,
+      isUser(userService),
+      isOwner(categoryService, `categoryId`),
+      schemaValidator(categorySchema),
       async (req, res, next) => {
-        await categoryService.update(req.body, req.params[`categoryId`]);
+        const {userId, categoryId, category} = req.body;
+        await categoryService.update({userId, categoryId, category});
         res.body = `Category is updated`;
         next();
       },
@@ -62,11 +67,12 @@ module.exports = (app, categoryService, authService) => {
 
 
   route.delete(
-      `/:categoryId`,
-      isAuth(authService.get.bind(authService)),
-      passProperParam(`categoryId`, `Incorrect id`),
+      `/`,
+      isUser(userService),
+      isOwner(categoryService, `categoryId`),
       async (req, res, next) => {
-        await categoryService.delete(req.params[`categoryId`]);
+        const {userId, categoryId} = req.body;
+        await categoryService.delete({userId, categoryId});
         res.body = `Category is deleted`;
         next();
       },

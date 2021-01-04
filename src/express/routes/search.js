@@ -6,15 +6,14 @@ const {getHumanDate} = require(`./../utils.js`);
 const {render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
+const {setDefaultAuthStatus} = require(`../middlewares`);
 
 const logger = getLogger();
 
 const searchRouter = new Router();
 
-searchRouter.get(`/`, async (req, res) => {
+searchRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
   try {
-    const auth = await api.getAuth();
-
     const searchRequest = req.query.search;
     let result = null;
 
@@ -23,7 +22,7 @@ searchRouter.get(`/`, async (req, res) => {
     }
 
     res.render(`search`, {
-      auth,
+      auth: req.session[`auth`],
       result,
       searchRequest,
       getHumanDate,

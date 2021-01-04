@@ -11,7 +11,7 @@ const {HttpCode} = require(`../cli/constants.js`);
 const {mocks} = require(`../../data/db/fake/mocks.js`);
 const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
 
-const RIGHT_SEARCH = `несложно`;
+const RIGHT_SEARCH = `НеСлОжНо`;
 const RIGHT_SEARCH_URI = encodeURI(RIGHT_SEARCH);
 
 const WRONG_SEARCH = `ылдвапрдлорвап`;

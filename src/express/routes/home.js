@@ -6,23 +6,22 @@ const {getHumanDate, getPageNumbers} = require(`./../utils.js`);
 const {render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
+const {setDefaultAuthStatus} = require(`../middlewares`);
 
 const logger = getLogger();
 
 const homeRouter = new Router();
 
-homeRouter.get(`/page=:pageNumber`, async (req, res) => {
+homeRouter.get(`/page=:pageNumber`, setDefaultAuthStatus(), async (req, res) => {
   try {
     const pageNumber = req.params.pageNumber;
 
     const [
-      auth,
       categories,
       mostDiscussedItems,
       fresh,
       lastComments,
     ] = await Promise.all([
-      api.getAuth(),
       api.getCategories(),
       api.getMostDiscussed(),
       api.getFreshItems(pageNumber),
@@ -30,7 +29,7 @@ homeRouter.get(`/page=:pageNumber`, async (req, res) => {
     ]);
 
     res.render(`main`, {
-      auth,
+      auth: req.session[`auth`],
       categories,
       mostDiscussedItems,
       lastComments,
