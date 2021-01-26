@@ -21,10 +21,6 @@ class Api {
     return response.data;
   }
 
-  getArticles() {
-    return this._load(`/${PathName.ARTICLES}`);
-  }
-
   getCategories() {
     return this._load(`${PathName.CATEGORIES}`);
   }
@@ -130,12 +126,6 @@ class Api {
     return this._load(`/${PathName.USER}/login`, {
       method: `POST`,
       data
-    });
-  }
-
-  logout() {
-    return this._load(`/${PathName.USER}/logout`, {
-      method: `POST`,
     });
   }
 }
