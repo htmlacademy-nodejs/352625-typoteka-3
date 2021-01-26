@@ -71,8 +71,8 @@ class Api {
     return this._load(`${PathName.COMMENTS}/fresh`);
   }
 
-  getMyComments(authorId) {
-    return this._load(`${PathName.COMMENTS}/byAuthor/${authorId}`);
+  getAllComments() {
+    return this._load(`${PathName.COMMENTS}`);
   }
 
   postComment(data) {

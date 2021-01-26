@@ -58,14 +58,14 @@ describe(`When GET '/${PathName.COMMENTS}/fresh' to empty database '${fakeSequel
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.ID}`);
+      .get(`/${PathName.COMMENTS}`);
   });
 
   test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {

@@ -43,7 +43,7 @@ myRouter.get(
       try {
         res.render(`comments`, {
           auth: req.session[`auth`],
-          myComments: await api.getMyComments(req.session[`auth`][`user`][`id`]),
+          myComments: await api.getAllComments(),
           getHumanDate,
         });
         logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);

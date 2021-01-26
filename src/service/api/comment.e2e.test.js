@@ -6,7 +6,7 @@ const request = require(`supertest`);
 const comment = require(`./comment.js`);
 const {CommentService} = require(`../data-service`);
 
-const {PathName, Empty} = require(`./constants.js`);
+const {PathName} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
 const {mocks} = require(`../../data/db/fake/mocks.js`);
 const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
@@ -63,16 +63,16 @@ describe(`When GET '/${PathName.COMMENTS}/fresh'`, () => {
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}'`, () => {
   const app = createAPI();
 
   let response;
   let result;
 
   beforeAll(async () => {
-    const data = await commentService.findAllByAuthor(User.AUTHOR_ID);
+    const data = await commentService.findAll();
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}`);
+      .get(`/${PathName.COMMENTS}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
@@ -80,28 +80,8 @@ describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to comments from database`, () => {
+  test(`response should be equal to all comments from database`, () => {
     expect(response.body).toStrictEqual(result);
-  });
-});
-
-
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.NON_EXIST_ID}'`, () => {
-  const app = createAPI();
-
-  let response;
-
-  beforeAll(async () => {
-    response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}`);
-  });
-
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-
-  test(`response should be equal to ${Empty.COMMENTS}`, () => {
-    expect(response.body).toStrictEqual(Empty.COMMENTS);
   });
 });
 
