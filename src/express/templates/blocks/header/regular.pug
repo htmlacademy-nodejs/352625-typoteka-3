@@ -28,9 +28,6 @@ header.header
     div.header__dropdown
       a.header__avatar.avatar.button.button--burger.header__burger
         img(src=`/img/${auth.user.avatar.regular}` alt="аватар пользователя")
-      ul.navigation.header__navigation
-        li.navigation__item
-          a(href="/my/comments") Комментарии
 
   if !auth.status
     nav.header__nav
