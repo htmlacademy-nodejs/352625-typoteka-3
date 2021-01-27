@@ -15,7 +15,7 @@ const FullText = {
 };
 
 const Category = {
-  MIN: 2,
+  MIN: 5,
   MAX: 30,
 };
 
