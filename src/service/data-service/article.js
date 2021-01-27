@@ -151,7 +151,10 @@ class ArticleService {
           id: authorId
         },
         attributes: [`firstname`, `lastname`],
-      }
+      },
+      order: [
+        [`created_date`, `desc`]
+      ],
     });
   }
 

@@ -192,7 +192,6 @@ myRouter.post(
         logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
       } catch (error) {
-        console.log(error.response.data);
         res.status(error.response.data[`status`]).render(`my-categories`, {
           auth: req.session[`auth`],
           categories: await api.getCategories(),
@@ -202,7 +201,6 @@ myRouter.post(
         });
 
         logger.error(`Error occurs: ${error}`);
-        // res.redirect(`/my/categories`);
       }
     }
 );

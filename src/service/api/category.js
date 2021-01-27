@@ -27,13 +27,6 @@ module.exports = (app, categoryService, userService) => {
       passNotNullData(categoryService.findAll.bind(categoryService), Empty.CATEGORIES),
       tryToResponse(HttpCode.OK)
   );
-  // TODO удалить маршрут:
-  route.get(
-      `/test/:categoryId`,
-      passProperParam(`categoryId`, Empty.CATEGORY),
-      passNotNullData(categoryService.getArticlesCount.bind(categoryService), Empty.CATEGORY, `categoryId`),
-      tryToResponse(HttpCode.OK)
-  );
 
 
   route.get(
