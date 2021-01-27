@@ -9,6 +9,7 @@ const isComment = require(`./is-comment.js`);
 const isAdmin = require(`./is-admin.js`);
 const isOwner = require(`./is-owner.js`);
 const isUser = require(`./is-user.js`);
+const isCategoryIsEmpty = require(`./is-category-is-empty.js`);
 const alreadyRegister = require(`./already-register.js`);
 const makeCategoriesValid = require(`./make-categories-valid.js`);
 const schemaValidator = require(`./schema-validator.js`);
@@ -23,6 +24,7 @@ module.exports = {
   isAdmin,
   isOwner,
   isUser,
+  isCategoryIsEmpty,
   alreadyRegister,
   makeCategoriesValid,
   schemaValidator,

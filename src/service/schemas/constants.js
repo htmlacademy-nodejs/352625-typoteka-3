@@ -62,6 +62,7 @@ const ErrorMessages = {
   COMMENT_NOT_EXIST: `Такого комментария не существует`,
   INVALID_PASSWORD: `Невалидный пароль`,
   UNAUTHORIZED: `Действие не авторизовано`,
+  CATEGORY_IS_NOT_EMPTY: `Категория содержит публикации`
 };
 
 module.exports = {

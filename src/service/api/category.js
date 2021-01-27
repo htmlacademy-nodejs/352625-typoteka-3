@@ -11,6 +11,7 @@ const {
   isAdmin,
   isOwner,
   isUser,
+  isCategoryIsEmpty,
 } = require(`../middlewares`);
 
 const categorySchema = require(`../schemas/category.js`);
@@ -24,6 +25,13 @@ module.exports = (app, categoryService, userService) => {
   route.get(
       `/`,
       passNotNullData(categoryService.findAll.bind(categoryService), Empty.CATEGORIES),
+      tryToResponse(HttpCode.OK)
+  );
+  // TODO удалить маршрут:
+  route.get(
+      `/test/:categoryId`,
+      passProperParam(`categoryId`, Empty.CATEGORY),
+      passNotNullData(categoryService.getArticlesCount.bind(categoryService), Empty.CATEGORY, `categoryId`),
       tryToResponse(HttpCode.OK)
   );
 
@@ -70,6 +78,7 @@ module.exports = (app, categoryService, userService) => {
       `/`,
       isUser(userService),
       isOwner(categoryService, `categoryId`),
+      isCategoryIsEmpty(categoryService),
       async (req, res, next) => {
         const {userId, categoryId} = req.body;
         await categoryService.delete({userId, categoryId});
