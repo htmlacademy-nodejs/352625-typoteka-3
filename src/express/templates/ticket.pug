@@ -25,7 +25,7 @@ block content
             p= article.full_text ? article.full_text : ""
       .post__wrapper.post__wrapper--comments
         section.post__comments.comments
-          h2.comments__title.title.title--middle Комментарии
+          h2.comments__title.title.title--middle= article.comments.length === 0 ? `Комментарии отсутствуют` : `Комментарии`
           ul.comments__list
             each comment in article.comments
               li.comments__comment
