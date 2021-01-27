@@ -5,6 +5,7 @@ const passProperParam = require(`./pass-proper-param.js`);
 const tryToResponse = require(`./try-to-response.js`);
 const authenticate = require(`./authenticate.js`);
 const isArticle = require(`./is-article.js`);
+const isComment = require(`./is-comment.js`);
 const isAdmin = require(`./is-admin.js`);
 const isOwner = require(`./is-owner.js`);
 const isUser = require(`./is-user.js`);
@@ -18,6 +19,7 @@ module.exports = {
   tryToResponse,
   authenticate,
   isArticle,
+  isComment,
   isAdmin,
   isOwner,
   isUser,

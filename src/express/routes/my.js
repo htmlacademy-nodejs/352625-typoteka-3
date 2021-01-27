@@ -82,7 +82,7 @@ myRouter.get(
 myRouter.post(
     `/comments/delete/:commentId`,
     setDefaultAuthStatus(),
-    isUser(),
+    isAdmin(),
     async (req, res) => {
       try {
         const commentId = parseInt(req.params[`commentId`], 10);

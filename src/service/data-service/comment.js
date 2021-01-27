@@ -79,10 +79,9 @@ class CommentService {
     });
   }
 
-  async delete(commentId, userId) {
+  async delete(commentId) {
     await this._database.Comment.destroy({
       where: {
-        [`author_id`]: userId,
         id: commentId,
       }
     });

@@ -59,6 +59,7 @@ const ErrorMessages = {
   EMPTY_STRING: `Пустая строка`,
   USER_NOT_EXIST: `Такого пользователя не существует`,
   ARTICLE_NOT_EXIST: `Такой публикации не существует`,
+  COMMENT_NOT_EXIST: `Такого комментария не существует`,
   INVALID_PASSWORD: `Невалидный пароль`,
   UNAUTHORIZED: `Действие не авторизовано`,
 };

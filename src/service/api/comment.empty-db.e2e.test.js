@@ -4,7 +4,7 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const comment = require(`./comment.js`);
-const {CommentService} = require(`../data-service`);
+const {CommentService, UserService} = require(`../data-service`);
 
 const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
@@ -19,11 +19,12 @@ const Comment = {
 };
 
 const commentService = new CommentService(fakeDb);
+const userService = new UserService(fakeDb);
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  comment(app, commentService);
+  comment(app, commentService, userService);
   return app;
 };
 
@@ -92,7 +93,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' to empty database '${fakeSequelize
     data,
     status: HttpCode.UNAUTHORIZED,
     errors: [{
-      message: `Действие не авторизовано`
+      message: `Такого пользователя не существует`
     }]
   };
 
