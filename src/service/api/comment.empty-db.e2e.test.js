@@ -49,8 +49,8 @@ describe(`When GET '/${PathName.COMMENTS}/fresh' to empty database '${fakeSequel
       .get(`/${PathName.COMMENTS}/fresh`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.OK}`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
   });
 
   test(`response should be equal to ${Empty.COMMENTS}`, () => {
@@ -69,8 +69,8 @@ describe(`When GET '/${PathName.COMMENTS}' to empty database '${fakeSequelize.co
       .get(`/${PathName.COMMENTS}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.OK}`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
   });
 
   test(`response should be equal to ${Empty.COMMENTS}`, () => {

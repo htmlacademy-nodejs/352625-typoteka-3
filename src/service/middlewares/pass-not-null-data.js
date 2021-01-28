@@ -10,7 +10,7 @@ module.exports = (service, mock, param1 = null, param2 = null) => (
     try {
       const data = await service(req.params[`${param1}`], req.params[`${param2}`]);
 
-      if (!data || data.length === 0) {
+      if (!data) {
         res.status(HttpCode.BAD_REQUEST).json(mock);
         logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
         return;

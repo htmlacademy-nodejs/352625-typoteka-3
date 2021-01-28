@@ -47,25 +47,34 @@ class ArticleService {
   }
 
   async findMostDiscussed() {
-    return await this._database.Article.findAll({
-      attributes: {
-        include: [this._orm.fn(`count`, this._orm.col(`comments.id`)), `count`]
-      },
-      include: {
-        model: this._database.Comment,
-        as: `comments`,
-        attributes: [],
-        duplicating: false,
-        required: false,
-      },
-      group: [`Article.id`],
+    const comments = await this._database.Comment.findAll();
 
-      order: [
-        [`count`, `desc`]
-      ],
+    if (comments.length === 0) {
+      return Empty.ARTICLES;
 
-      limit: this._mostDiscussedCount,
-    });
+    } else {
+      return await this._database.Article.findAll({
+        attributes: [
+          `id`,
+          `announce`,
+          [this._orm.fn(`count`, this._orm.col(`comments.id`)), `count`],
+        ],
+        include: {
+          model: this._database.Comment,
+          as: `comments`,
+          attributes: [],
+          duplicating: false,
+          required: false,
+        },
+        group: [`Article.id`],
+
+        order: [
+          [`count`, `desc`]
+        ],
+
+        limit: this._mostDiscussedCount,
+      });
+    }
   }
 
   async findOne(articleId) {

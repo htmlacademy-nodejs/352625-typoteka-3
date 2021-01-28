@@ -5,74 +5,84 @@ block content
     h1.visually-hidden Главная страница личного блога Типотека
     p
       | Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
-    section.main-page__theme-list
-      h2.visually-hidden Список тем
-      ul.themes
-        each category in categories
-          li.themes__item
-            a.themes__item-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
-              |&#32;
-              sup= category.totalArticles
-    .main-page__section-flex
-      section.main-page__hot.hot
-        h2.hot__name
-          | Самое обсуждаемое
-          span.hot__icon.hot__icon--fire
-        ul.hot__list
-          each item in mostDiscussedItems
-            li.hot__list-item
-              a.hot__list-link(href=`/articles/${item.id}`)= item.announce
+    if fresh.items.length === 0
+      .main-page__empty-wrapper
+        p.main-page__empty-text Здесь пока пусто!
+    else
+      section.main-page__theme-list
+        h2.visually-hidden Список тем
+        ul.themes
+          each category in categories
+            li.themes__item
+              a.themes__item-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
                 |&#32;
-                sup.hot__link-sup= item[`count`]
-      section.main-page__last.last
-        h2.last__name
-          | Последние комментарии
-          span.last__icon.last__icon--cloud
-        ul.last__list
-          each comment in lastComments
-            li.last__list-item
-              img.last__list-image(src=`img/${comment.author.avatar.small}` width="20" height="20" alt="Аватар пользователя")
-              b.last__list-name= `${comment.author.firstname} ${comment.author.lastname}`
-              a.last__list-link(href=`/articles/${comment.author.id}`)= comment.text
-    section.main-page__list.preview
-      h2.visually-hidden Список превью статей
-      ul.preview__list
-        each item in fresh.items
-          li.preview__item
-            ul.preview__breadcrumbs
-              each category in item.categories
-                li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
-            .preview__background
-              if item.picture
-                img.preview__background-image(src=`/img/${item.picture}` width="460" height="240" srcset=`/img/${item.picture} 2x` alt=`Фотография ${item.picture}`)
-            time.preview__time(datetime=`${item.created_date}`)= getHumanDate(item.created_date)
-            h3.preview__name
-              a.preview__name-link(href=`/articles/${item.id}`)= item.title
-            p.preview__text= item.announce
-            a.preview__comment(href="#")
-              | Комментарии
-              span.preview__cloud
-              b.preview__comment-count= item.comments.length
-      if pageNumbers.length > 1
-        .preview__toggle-wrapper
-          ul.preview__pagination.pagination
-            li
-              a(
-                class= fresh.currentPage === 1
-                  ? "pagination__button button button--backwards button--disabled"
-                  : "pagination__button button button--backwards"
-                href=`/page=${fresh.currentPage - 1}`
-                aria-label="Страница назад"
-                ) Назад
-            each item in pageNumbers
-              li(class= item === fresh.currentPage ? "pagination__item pagination__item--active" : "pagination__item")
-                a(href=`/page=${item}`)= item
-            li
-              a(class= fresh.currentPage === fresh.totalPages
-                  ? "pagination__button button button--forward button--disabled"
-                  : "pagination__button button button--forward"
-                href=`/page=${fresh.currentPage + 1}`
-                aria-label="Страница вперед"
-                ) Вперед
+                sup= category.totalArticles
+      .main-page__section-flex
+        section.main-page__hot.hot
+          h2.hot__name
+            | Самое обсуждаемое
+            span.hot__icon.hot__icon--fire
+          if mostDiscussedItems.length > 0
+            ul.hot__list
+              each item in mostDiscussedItems
+                li.hot__list-item
+                  a.hot__list-link(href=`/articles/${item.id}`)= item.announce
+                    |&#32;
+                    sup.hot__link-sup= item[`count`]
+          else
+            p Здесь пока ничего нет
+        section.main-page__last.last
+          h2.last__name
+            | Последние комментарии
+            span.last__icon.last__icon--cloud
+          if lastComments.length > 0
+            ul.last__list
+              each comment in lastComments
+                li.last__list-item
+                  img.last__list-image(src=`img/${comment.author.avatar.small}` width="20" height="20" alt="Аватар пользователя")
+                  b.last__list-name= `${comment.author.firstname} ${comment.author.lastname}`
+                  a.last__list-link(href=`/articles/${comment.author.id}`)= comment.text
+          else
+            p Здесь пока ничего нет
+      section.main-page__list.preview
+        h2.visually-hidden Список превью статей
+        ul.preview__list
+          each item in fresh.items
+            li.preview__item
+              ul.preview__breadcrumbs
+                each category in item.categories
+                  li.preview__breadcrumbs-item
+                    a.preview__breadcrumbs-link(href=`/articles/category/id=${category.id}&page=1`)= category.name
+              .preview__background
+                if item.picture
+                  img.preview__background-image(src=`/img/${item.picture}` width="460" height="240" srcset=`/img/${item.picture} 2x` alt=`Фотография ${item.picture}`)
+              time.preview__time(datetime=`${item.created_date}`)= getHumanDate(item.created_date)
+              h3.preview__name
+                a.preview__name-link(href=`/articles/${item.id}`)= item.title
+              p.preview__text= item.announce
+              a.preview__comment(href="#")
+                | Комментарии
+                span.preview__cloud
+                b.preview__comment-count= item.comments.length
+        if pageNumbers.length > 1
+          .preview__toggle-wrapper
+            ul.preview__pagination.pagination
+              li
+                a(
+                  class= fresh.currentPage === 1
+                    ? "pagination__button button button--backwards button--disabled"
+                    : "pagination__button button button--backwards"
+                  href=`/page=${fresh.currentPage - 1}`
+                  aria-label="Страница назад"
+                  ) Назад
+              each item in pageNumbers
+                li(class= item === fresh.currentPage ? "pagination__item pagination__item--active" : "pagination__item")
+                  a(href=`/page=${item}`)= item
+              li
+                a(class= fresh.currentPage === fresh.totalPages
+                    ? "pagination__button button button--forward button--disabled"
+                    : "pagination__button button button--forward"
+                  href=`/page=${fresh.currentPage + 1}`
+                  aria-label="Страница вперед"
+                  ) Вперед
 
