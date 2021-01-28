@@ -28,7 +28,9 @@ loginRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
 loginRouter.post(`/`, async (req, res) => {
   try {
     req.session[`auth`] = await api.login(req.body);
-    res.redirect(`..`);
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {
