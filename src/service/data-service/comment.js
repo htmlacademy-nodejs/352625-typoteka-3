@@ -17,7 +17,7 @@ class CommentService {
         [`created_date`, `desc`]
       ],
 
-      include: {
+      include: [{
         model: this._database.Author,
         as: `author`,
         attributes: [`id`, `firstname`, `lastname`],
@@ -27,7 +27,11 @@ class CommentService {
           as: `avatar`,
           attributes: [`small`]
         }
-      },
+      }, {
+        model: this._database.Article,
+        as: `article`,
+        attributes: [`id`],
+      }],
       limit: count,
     });
   }
