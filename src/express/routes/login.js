@@ -5,13 +5,13 @@ const {Router} = require(`express`);
 const {render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
-const {setDefaultAuthStatus} = require(`../middlewares`);
+const {setDefaultAuthStatus, isLoggedIn} = require(`../middlewares`);
 
 const logger = getLogger();
 
 const loginRouter = new Router();
 
-loginRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
+loginRouter.get(`/`, setDefaultAuthStatus(), isLoggedIn(), async (req, res) => {
   try {
     res.render(`login`, {
       auth: req.session[`auth`],

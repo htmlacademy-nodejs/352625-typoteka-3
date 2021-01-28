@@ -8,11 +8,11 @@ const {getLogger} = require(`./../../service/logger.js`);
 
 const logger = getLogger();
 
-const {setDefaultAuthStatus, uploadFile, saveFileNameToBody} = require(`../middlewares`);
+const {setDefaultAuthStatus, uploadFile, saveFileNameToBody, isLoggedIn} = require(`../middlewares`);
 
 const registerRouter = new Router();
 
-registerRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
+registerRouter.get(`/`, setDefaultAuthStatus(), isLoggedIn(), async (req, res) => {
   try {
     res.render(`sign-up`, {
       auth: req.session[`auth`],
