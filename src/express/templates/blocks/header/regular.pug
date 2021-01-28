@@ -15,7 +15,14 @@ header.header
           a(href="/my/categories") Категории
         li.navigation__item
           form(action="/logout" method="POST")
-            button(type="submit") Выйти
+            button.header__exit(
+              style={
+                border: `none`,
+                background: `none`,
+                cursor: `pointer`,
+              }
+              type="submit"
+            ) Выйти
 
   if auth.status && !auth.user[`is_admin`]
     nav.header__nav
@@ -24,7 +31,15 @@ header.header
           p= `${auth.user.firstname} ${auth.user.lastname}`
         li.header__list-item
           form(action="/logout" method="POST")
-            button.header__exit(type="submit") Выйти
+            button.header__exit(
+              style={
+                border: `none`,
+                background: `none`,
+                cursor: `pointer`,
+              }
+              type="submit"
+            ) Выйти
+
     div.header__dropdown
       a.header__avatar.avatar.button.button--burger.header__burger
         img(src=`/img/${auth.user.avatar.regular}` alt="аватар пользователя")
