@@ -15,7 +15,7 @@ const FullText = {
 };
 
 const Category = {
-  MIN: 2,
+  MIN: 5,
   MAX: 30,
 };
 
@@ -59,8 +59,10 @@ const ErrorMessages = {
   EMPTY_STRING: `Пустая строка`,
   USER_NOT_EXIST: `Такого пользователя не существует`,
   ARTICLE_NOT_EXIST: `Такой публикации не существует`,
+  COMMENT_NOT_EXIST: `Такого комментария не существует`,
   INVALID_PASSWORD: `Невалидный пароль`,
   UNAUTHORIZED: `Действие не авторизовано`,
+  CATEGORY_IS_NOT_EMPTY: `Категория содержит публикации`
 };
 
 module.exports = {

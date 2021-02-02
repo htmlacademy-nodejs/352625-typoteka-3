@@ -17,7 +17,7 @@ block content
         each category in categories
           li.category__list-item
             form(action=`/my/categories/edit/${category.id}` method="POST")
-              input(id=`modify-form-category-${category.id}` type="text" name="category" value=`${updatingCategoryId && updatingCategoryId === category.id ? data.category : category.name}`)
+              input(id=`modify-form-category-${category.id}` type="text" name="category" value=`${updatingCategoryId && updatingCategoryId === category.id && data.category ? data.category : category.name}`)
               label(for=`modify-form-category-${category.id}`)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type="submit") Сохранить

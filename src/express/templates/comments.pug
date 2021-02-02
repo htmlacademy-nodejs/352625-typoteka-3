@@ -8,11 +8,11 @@ block content
         each comment in myComments
           li.publication__list-item
             .publication__header
-              img.publication__list-image(src=`/img/${comment.author.avatar.small}.png` width="20" height="20" alt="Аватар пользователя")
+              img.publication__list-image(src=`/img/${comment.author.avatar.small}` width="20" height="20" alt="Аватар пользователя")
               b.publication__list-name= `${comment.author.firstname} ${comment.author.lastname}`
               time.publication__item-time(datetime=`${comment.created_date}`)= getHumanDate(comment.created_date)
             a.publication__item-text(href=`/articles/${comment.article.id}`)= comment.article.title
-            p.publication__text-strong= comment.article.announce
+            p.publication__text-strong= comment.text
             form(action=`/my/comments/delete/${comment.id}` method=`post`)
               button.publication__button.button.button--close-item(type="submit")
                 span.visually-hidden Закрыть строку списка

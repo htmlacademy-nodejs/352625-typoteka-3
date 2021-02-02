@@ -11,6 +11,7 @@ const {
   isAdmin,
   isOwner,
   isUser,
+  isCategoryIsEmpty,
 } = require(`../middlewares`);
 
 const categorySchema = require(`../schemas/category.js`);
@@ -70,6 +71,7 @@ module.exports = (app, categoryService, userService) => {
       `/`,
       isUser(userService),
       isOwner(categoryService, `categoryId`),
+      isCategoryIsEmpty(categoryService),
       async (req, res, next) => {
         const {userId, categoryId} = req.body;
         await categoryService.delete({userId, categoryId});

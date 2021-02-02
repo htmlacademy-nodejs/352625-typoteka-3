@@ -84,6 +84,22 @@ class CategoryService {
     };
   }
 
+  async getArticlesCount(categoryId) {
+    return await this._database.Category.findOne({
+      where: {
+        id: categoryId,
+      },
+      attributes: [[this._orm.fn(`count`, this._orm.col(`articles.id`)), `totalArticles`]],
+      include: [{
+        model: this._database.Article,
+        as: `articles`,
+        attributes: [],
+        through: {attributes: []},
+      }],
+      group: [`Category.id`],
+    });
+  }
+
   async checkAuthorship(categoryId, userId) {
     return await this._database.Category.findOne({
       where: {

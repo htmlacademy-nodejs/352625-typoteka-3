@@ -5,13 +5,13 @@ const {Router} = require(`express`);
 const {render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
 const {getLogger} = require(`./../../service/logger.js`);
-const {setDefaultAuthStatus} = require(`../middlewares`);
+const {setDefaultAuthStatus, isLoggedIn} = require(`../middlewares`);
 
 const logger = getLogger();
 
 const loginRouter = new Router();
 
-loginRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
+loginRouter.get(`/`, setDefaultAuthStatus(), isLoggedIn(), async (req, res) => {
   try {
     res.render(`login`, {
       auth: req.session[`auth`],
@@ -28,7 +28,9 @@ loginRouter.get(`/`, setDefaultAuthStatus(), async (req, res) => {
 loginRouter.post(`/`, async (req, res) => {
   try {
     req.session[`auth`] = await api.login(req.body);
-    res.redirect(`/`);
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
     logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
   } catch (error) {

@@ -21,10 +21,6 @@ class Api {
     return response.data;
   }
 
-  getArticles() {
-    return this._load(`/${PathName.ARTICLES}`);
-  }
-
   getCategories() {
     return this._load(`${PathName.CATEGORIES}`);
   }
@@ -75,8 +71,8 @@ class Api {
     return this._load(`${PathName.COMMENTS}/fresh`);
   }
 
-  getMyComments(authorId) {
-    return this._load(`${PathName.COMMENTS}/byAuthor/${authorId}`);
+  getAllComments() {
+    return this._load(`${PathName.COMMENTS}`);
   }
 
   postComment(data) {
@@ -130,12 +126,6 @@ class Api {
     return this._load(`/${PathName.USER}/login`, {
       method: `POST`,
       data
-    });
-  }
-
-  logout() {
-    return this._load(`/${PathName.USER}/logout`, {
-      method: `POST`,
     });
   }
 }

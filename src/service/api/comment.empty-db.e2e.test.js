@@ -4,7 +4,7 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const comment = require(`./comment.js`);
-const {CommentService} = require(`../data-service`);
+const {CommentService, UserService} = require(`../data-service`);
 
 const {PathName, Empty} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
@@ -19,11 +19,12 @@ const Comment = {
 };
 
 const commentService = new CommentService(fakeDb);
+const userService = new UserService(fakeDb);
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  comment(app, commentService);
+  comment(app, commentService, userService);
   return app;
 };
 
@@ -48,8 +49,8 @@ describe(`When GET '/${PathName.COMMENTS}/fresh' to empty database '${fakeSequel
       .get(`/${PathName.COMMENTS}/fresh`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.OK}`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
   });
 
   test(`response should be equal to ${Empty.COMMENTS}`, () => {
@@ -58,18 +59,18 @@ describe(`When GET '/${PathName.COMMENTS}/fresh' to empty database '${fakeSequel
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.ID}' to empty database '${fakeSequelize.config.database}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}' to empty database '${fakeSequelize.config.database}'`, () => {
   const app = createAPI();
 
   let response;
 
   beforeAll(async () => {
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.ID}`);
+      .get(`/${PathName.COMMENTS}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.OK}`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
   });
 
   test(`response should be equal to ${Empty.COMMENTS}`, () => {
@@ -92,7 +93,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' to empty database '${fakeSequelize
     data,
     status: HttpCode.UNAUTHORIZED,
     errors: [{
-      message: `Действие не авторизовано`
+      message: `Такого пользователя не существует`
     }]
   };
 

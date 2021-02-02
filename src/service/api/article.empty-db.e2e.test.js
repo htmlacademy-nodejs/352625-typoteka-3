@@ -57,8 +57,8 @@ describe(`When GET '/${PathName.ARTICLES}' to empty database '${fakeSequelize.co
       .get(`/${PathName.ARTICLES}`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.OK}`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
   });
 
   test(`response should be equal to ${Empty.ARTICLES}`, () => {
@@ -97,8 +97,8 @@ describe(`When GET '/${PathName.ARTICLES}/mostDiscussed' to empty database '${fa
       .get(`/${PathName.ARTICLES}/mostDiscussed`);
   });
 
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+  test(`status code should be ${HttpCode.OK}`, () => {
+    expect(response.statusCode).toBe(HttpCode.OK);
   });
 
   test(`response should be equal to ${Empty.ARTICLES}`, () => {

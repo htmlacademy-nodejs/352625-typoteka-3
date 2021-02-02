@@ -4,16 +4,16 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const comment = require(`./comment.js`);
-const {CommentService} = require(`../data-service`);
+const {CommentService, UserService} = require(`../data-service`);
 
-const {PathName, Empty} = require(`./constants.js`);
+const {PathName} = require(`./constants.js`);
 const {HttpCode} = require(`../cli/constants.js`);
 const {mocks} = require(`../../data/db/fake/mocks.js`);
 const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
 
 const User = {
-  AUTHOR_ID: 1,
-  NOT_AUTHOR_ID: 2,
+  ADMIN_ID: 1,
+  NOT_ADMIN_ID: 2,
   NON_EXIST_ID: 1000,
 };
 
@@ -23,11 +23,12 @@ const Comment = {
 };
 
 const commentService = new CommentService(fakeDb);
+const userService = new UserService(fakeDb);
 
 const createAPI = () => {
   const app = express();
   app.use(express.json());
-  comment(app, commentService);
+  comment(app, commentService, userService);
   return app;
 };
 
@@ -63,16 +64,16 @@ describe(`When GET '/${PathName.COMMENTS}/fresh'`, () => {
 });
 
 
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}'`, () => {
+describe(`When GET '/${PathName.COMMENTS}'`, () => {
   const app = createAPI();
 
   let response;
   let result;
 
   beforeAll(async () => {
-    const data = await commentService.findAllByAuthor(User.AUTHOR_ID);
+    const data = await commentService.findAll();
     response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}`);
+      .get(`/${PathName.COMMENTS}`);
     result = JSON.parse(JSON.stringify(data));
   });
 
@@ -80,28 +81,8 @@ describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.AUTHOR_ID}'`, () => {
     expect(response.statusCode).toBe(HttpCode.OK);
   });
 
-  test(`response should be equal to comments from database`, () => {
+  test(`response should be equal to all comments from database`, () => {
     expect(response.body).toStrictEqual(result);
-  });
-});
-
-
-describe(`When GET '/${PathName.COMMENTS}/byAuthor/${User.NON_EXIST_ID}'`, () => {
-  const app = createAPI();
-
-  let response;
-
-  beforeAll(async () => {
-    response = await request(app)
-      .get(`/${PathName.COMMENTS}/byAuthor/${User.WRONG_ID}`);
-  });
-
-  test(`status code should be ${HttpCode.BAD_REQUEST}`, () => {
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
-  });
-
-  test(`response should be equal to ${Empty.COMMENTS}`, () => {
-    expect(response.body).toStrictEqual(Empty.COMMENTS);
   });
 });
 
@@ -121,7 +102,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment exists but User n
   const expectedReply = {
     data,
     errors: [{
-      message: `Действие не авторизовано`,
+      message: `Такого пользователя не существует`,
     }],
     status: HttpCode.UNAUTHORIZED,
   };
@@ -144,7 +125,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment exists but User n
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists but User isn't an Author of Comment`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists but User isn't an Admin`, () => {
   const app = createAPI();
 
   let response;
@@ -153,7 +134,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists b
 
   const data = {
     commentId: Comment.RIGHT_ID,
-    userId: User.NOT_AUTHOR_ID,
+    userId: User.NOT_ADMIN_ID,
   };
 
   const expectedReply = {
@@ -182,7 +163,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists b
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists and User is an Author`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists and User is an Admin`, () => {
   const app = createAPI();
 
   let response;
@@ -190,7 +171,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists a
 
   const data = {
     commentId: Comment.RIGHT_ID,
-    userId: User.AUTHOR_ID,
+    userId: User.ADMIN_ID,
   };
 
   const expectedReply = `Comment is deleted`;
@@ -213,7 +194,7 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment and User exists a
 });
 
 
-describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment doesn't exist but User exists`, () => {
+describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment doesn't exist but User is an Admin`, () => {
   const app = createAPI();
 
   let response;
@@ -221,15 +202,15 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment doesn't exist but
 
   const data = {
     commentId: Comment.WRONG_ID,
-    userId: User.AUTHOR_ID,
+    userId: User.ADMIN_ID,
   };
 
   const expectedReply = {
     data,
     errors: [{
-      message: `Действие не авторизовано`,
+      message: `Такого комментария не существует`,
     }],
-    status: HttpCode.UNAUTHORIZED,
+    status: HttpCode.BAD_REQUEST,
   };
 
 
@@ -239,8 +220,8 @@ describe(`When DELETE '/${PathName.COMMENTS}' in case: Comment doesn't exist but
       .delete(`/${PathName.COMMENTS}`).send(data);
   });
 
-  test(`status code should be ${HttpCode.UNAUTHORIZED} and response should be an object with special structure`, () => {
-    expect(response.statusCode).toBe(HttpCode.UNAUTHORIZED);
+  test(`status code should be ${HttpCode.BAD_REQUEST} and response should be an object with special structure`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
     expect(response.body).toStrictEqual(expectedReply);
   });
 

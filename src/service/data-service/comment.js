@@ -17,7 +17,7 @@ class CommentService {
         [`created_date`, `desc`]
       ],
 
-      include: {
+      include: [{
         model: this._database.Author,
         as: `author`,
         attributes: [`id`, `firstname`, `lastname`],
@@ -27,20 +27,21 @@ class CommentService {
           as: `avatar`,
           attributes: [`small`]
         }
-      },
+      }, {
+        model: this._database.Article,
+        as: `article`,
+        attributes: [`id`],
+      }],
       limit: count,
     });
   }
 
-  async findAllByAuthor(authorId) {
+  async findAll() {
     return await this._database.Comment.findAll({
-      attributes: [`id`, `created_date`],
+      attributes: [`id`, `created_date`, `text`],
       include: [{
         model: this._database.Author,
         as: `author`,
-        where: {
-          id: authorId
-        },
         attributes: [`firstname`, `lastname`],
 
         include: {
@@ -51,8 +52,11 @@ class CommentService {
       }, {
         model: this._database.Article,
         as: `article`,
-        attributes: [`id`, `title`, `announce`]
-      }]
+        attributes: [`id`, `title`]
+      }],
+      order: [
+        [`created_date`, `desc`]
+      ],
     });
   }
 
@@ -79,10 +83,9 @@ class CommentService {
     });
   }
 
-  async delete(commentId, userId) {
+  async delete(commentId) {
     await this._database.Comment.destroy({
       where: {
-        [`author_id`]: userId,
         id: commentId,
       }
     });

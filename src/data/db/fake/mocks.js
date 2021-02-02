@@ -101,6 +101,10 @@ const mocks = {
       [`name`]: `Разное`,
       [`author_id`]: 1,
     },
+    {
+      [`name`]: `Пустая категория`,
+      [`author_id`]: 1,
+    },
   ],
   articlesCategories: [
     {

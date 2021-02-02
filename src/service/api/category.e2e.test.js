@@ -13,6 +13,7 @@ const {fakeDb, initDb, dropDb, fakeSequelize} = require(`../../data/db/fake`);
 
 const Category = {
   RIGHT_ID: 1,
+  ID_WITHOUT_ARTICLES: 5,
   WRONG_ID: 10000,
 };
 
@@ -174,7 +175,7 @@ describe(`When POST invalid data '/${PathName.CATEGORIES}' in admin mode`, () =>
     errors: [
       {
         label: `category`,
-        message: `Длина должна быть не менее 2 символов`
+        message: `Длина должна быть не менее 5 символов`
       }
     ],
     status: 400
@@ -333,7 +334,7 @@ describe(`When PUT valid data '/${PathName.CATEGORIES}' in admin mode (incorrect
 });
 
 
-describe(`When DELETE '/${PathName.CATEGORIES}' in user mode`, () => {
+describe(`When DELETE '/${PathName.CATEGORIES}' in case: User is not Admin`, () => {
   const app = createAPI();
 
   const data = {
@@ -363,12 +364,43 @@ describe(`When DELETE '/${PathName.CATEGORIES}' in user mode`, () => {
 });
 
 
-describe(`When DELETE '/${PathName.CATEGORIES}' in admin mode`, () => {
+describe(`When DELETE '/${PathName.CATEGORIES}' in case: User is Admin, Category is not empty`, () => {
   const app = createAPI();
 
   const data = {
     userId: User.ADMIN_ID,
     categoryId: Category.RIGHT_ID,
+  };
+
+  let response;
+
+  const expectedReply = {
+    data,
+    errors: [{
+      label: `category`,
+      message: `Категория содержит публикации`,
+    }],
+    status: HttpCode.BAD_REQUEST,
+  };
+
+  beforeAll(async () => {
+    response = await request(app)
+      .delete(`/${PathName.CATEGORIES}`).send(data);
+  });
+
+  test(`status code should be ${HttpCode.BAD_REQUEST} and response should be an object with special structure`, () => {
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST);
+    expect(response.body).toStrictEqual(expectedReply);
+  });
+});
+
+
+describe(`When DELETE '/${PathName.CATEGORIES}' in case: User is Admin, Category is empty`, () => {
+  const app = createAPI();
+
+  const data = {
+    userId: User.ADMIN_ID,
+    categoryId: Category.ID_WITHOUT_ARTICLES,
   };
 
   let response;

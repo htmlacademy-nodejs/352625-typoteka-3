@@ -3,10 +3,10 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`./../cli/constants.js`);
 const {Empty} = require(`./constants.js`);
-const {passNotNullData, passProperParam, tryToResponse, isOwner} = require(`../middlewares`);
+const {passNotNullData, tryToResponse, isUser, isAdmin, isComment} = require(`../middlewares`);
 
 
-module.exports = (app, commentService) => {
+module.exports = (app, commentService, userService) => {
   const route = new Router();
 
   app.use(`/api/comments`, route);
@@ -19,19 +19,20 @@ module.exports = (app, commentService) => {
 
 
   route.get(
-      `/byAuthor/:id`,
-      passProperParam(`id`, Empty.COMMENTS),
-      passNotNullData(commentService.findAllByAuthor.bind(commentService), Empty.COMMENTS, `id`),
+      `/`,
+      passNotNullData(commentService.findAll.bind(commentService), Empty.COMMENTS),
       tryToResponse(HttpCode.OK),
   );
 
 
   route.delete(
       `/`,
-      isOwner(commentService, `commentId`),
+      isUser(userService),
+      isComment(commentService),
+      isAdmin(userService),
       async (req, res, next) => {
-        const {commentId, userId} = req.body;
-        commentService.delete(commentId, userId);
+        const {commentId} = req.body;
+        commentService.delete(commentId);
         res.body = `Comment is deleted`;
         next();
       },

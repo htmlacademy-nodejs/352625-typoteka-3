@@ -43,7 +43,7 @@ myRouter.get(
       try {
         res.render(`comments`, {
           auth: req.session[`auth`],
-          myComments: await api.getMyComments(req.session[`auth`][`user`][`id`]),
+          myComments: await api.getAllComments(),
           getHumanDate,
         });
         logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
@@ -82,7 +82,7 @@ myRouter.get(
 myRouter.post(
     `/comments/delete/:commentId`,
     setDefaultAuthStatus(),
-    isUser(),
+    isAdmin(),
     async (req, res) => {
       try {
         const commentId = parseInt(req.params[`commentId`], 10);
@@ -192,8 +192,15 @@ myRouter.post(
         logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);
 
       } catch (error) {
+        res.status(error.response.data[`status`]).render(`my-categories`, {
+          auth: req.session[`auth`],
+          categories: await api.getCategories(),
+          data: error.response.data[`data`],
+          errors: error.response.data[`errors`],
+          updatingCategoryId: parseInt(req.params[`categoryId`], 10),
+        });
+
         logger.error(`Error occurs: ${error}`);
-        res.redirect(`/my/categories`);
       }
     }
 );

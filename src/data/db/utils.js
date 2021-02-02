@@ -19,7 +19,7 @@ const getDbConnection = (dbName) => {
 
 const createDb = async (dbName, mainOrm) => {
   await mainOrm.query(`DROP DATABASE IF EXISTS ${dbName}`);
-  await mainOrm.query(`CREATE DATABASE ${dbName}`);
+  await mainOrm.query(`CREATE DATABASE ${dbName} WITH OWNER = postgres ENCODING = 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8' TEMPLATE template0;`);
   await mainOrm.close();
 };
 
