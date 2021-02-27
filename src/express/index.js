@@ -3,6 +3,8 @@
 const express = require(`express`);
 const sessionMiddleware = require(`./session-store.js`);
 const path = require(`path`);
+const http = require(`http`);
+const socketIO = require(`socket.io`);
 require(`dotenv`).config();
 
 const pino = require(`pino`)(`./src/express/logs/express.log`);
@@ -29,6 +31,8 @@ const {getLogger} = require(`./../service/logger.js`);
 const logger = getLogger();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 
 app.use(sessionMiddleware);
 
@@ -54,7 +58,17 @@ app.use((req, res) => {
 
 app.use(expressPino);
 
-app.listen(
+io.on(`connection`, (socket) => {
+  // TODO Не могу разобраться почему в консоль не выводятся соответсвующие сообщения. Наверное что-то не донастроил.
+  const {address: ip} = socket.handshake;
+  console.log(`Новое подключение: ${ip}`);
+
+  socket.on(`disconnect`, () => {
+    console.log(`Клиент отключён: ${ip}`);
+  });
+});
+
+server.listen(
     DEFAULT_PORT,
     () => logger.info(`Server starts on: ${DEFAULT_PORT}`))
     .on(`error`, (err) => {
