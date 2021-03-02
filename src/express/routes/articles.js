@@ -5,6 +5,7 @@ const {Router} = require(`express`);
 const {getHumanDate, getPageNumbers} = require(`./../utils.js`);
 const {render404Page, render500Page} = require(`./render.js`);
 const api = require(`../api.js`).getApi();
+const {io, EventNames} = require(`../server.js`);
 
 const {getLogger} = require(`./../../service/logger.js`);
 const logger = getLogger();
@@ -203,6 +204,9 @@ articlesRouter.post(
         const {userId, articleId, text} = req.body;
 
         await api.postComment({userId, articleId, text});
+
+        const [freshComments, hotArticles] = await Promise.all([api.getFreshComments(), api.getMostDiscussed()]);
+        io.emit(EventNames.COMMENT_ADD, JSON.stringify({freshComments, hotArticles}));
 
         res.redirect(`/articles/${articleId}`);
         logger.debug(`${req.method} ${req.originalUrl} --> res status code ${res.statusCode}`);

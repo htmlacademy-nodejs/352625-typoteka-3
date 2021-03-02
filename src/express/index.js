@@ -1,8 +1,8 @@
 'use strict';
 
-const express = require(`express`);
 const sessionMiddleware = require(`./session-store.js`);
 const path = require(`path`);
+const {express, app, server} = require(`./server.js`);
 require(`dotenv`).config();
 
 const pino = require(`pino`)(`./src/express/logs/express.log`);
@@ -28,8 +28,6 @@ const {getLogger} = require(`./../service/logger.js`);
 
 const logger = getLogger();
 
-const app = express();
-
 app.use(sessionMiddleware);
 
 app.set(`views`, `./src/express/templates`);
@@ -54,7 +52,7 @@ app.use((req, res) => {
 
 app.use(expressPino);
 
-app.listen(
+server.listen(
     DEFAULT_PORT,
     () => logger.info(`Server starts on: ${DEFAULT_PORT}`))
     .on(`error`, (err) => {
