@@ -26,4 +26,5 @@ module.exports = {
   Comments,
   Categories,
   DEFAULT_MOCK_PASSWORD,
+  SALT_ROUNDS,
 };

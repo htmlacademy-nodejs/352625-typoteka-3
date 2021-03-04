@@ -1,7 +1,7 @@
 'use strict';
 
 const bcrypt = require(`bcrypt`);
-const {SALT_ROUNDS} = require(`../../src/service/filldb-tools/constants.js`);
+const {SALT_ROUNDS} = require(`../../../service/filldb-tools/constants.js`);
 
 const mocks = {
   authors: [
