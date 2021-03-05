@@ -1,8 +1,7 @@
 'use strict';
 
 // обработчик удаления имени файла из формы по клику на "Удалить"
-
-let pictureForm = document.querySelector('.form__field--post-image');
+const pictureForm = document.querySelector('.form__field--post-image');
 
 if (pictureForm) {
   const pictureInput = pictureForm.querySelector('#image-field');
@@ -17,15 +16,14 @@ if (pictureForm) {
 }
 
 // логика выбора даты в календаре
-
-let calendar = document.querySelector('.calendar');
+const calendar = document.querySelector('.calendar');
 if (calendar) {
-  let dates = calendar.querySelector('.calendar__dates');
+  const dates = calendar.querySelector('.calendar__dates');
   let selectedDate = dates.querySelector('.calendar__date--selected');
 
-  let changeDateHandler = (evt) => { // переключает класс выбранной даты
+  const changeDateHandler = (evt) => { // переключает класс выбранной даты
     if (evt.target.classList.contains('calendar__date')) {
-      let date = evt.target;
+      const date = evt.target;
       if (!date.classList.contains('calendar__date--disabled')) {
         if (selectedDate) {
           selectedDate.classList.remove('calendar__date--selected');
@@ -42,17 +40,17 @@ if (calendar) {
 }
 
 // переключение формы по табу
-let popup = document.querySelector('.popup');
+const popup = document.querySelector('.popup');
 if (popup) {
-  let tabs = popup.querySelectorAll('.popup__tab');
+  const tabs = popup.querySelectorAll('.popup__tab');
 
   if (tabs) {
-    let tabForms = popup.querySelectorAll('.popup__form');
+    const tabForms = popup.querySelectorAll('.popup__form');
     let activeTab = popup.querySelector('.popup__tab--active');
     let activeForm = popup.querySelector('.popup__form--active');
     for (let i = 0; i < tabs.length; i++) {
-      let tab = tabs[i];
-      let form = tabForms[i];
+      const tab = tabs[i];
+      const form = tabForms[i];
       tab.addEventListener('click', (evt) => {
         if (evt.target.classList.contains('popup__tab-switcher') && evt.currentTarget !== activeTab) {
           activeTab.classList.remove('popup__tab--active');
@@ -70,9 +68,8 @@ if (popup) {
 }
 
 // меняет высоту поля textarea в блоке comments в зависимости от количества введенных в него строк.
-
-let comments = document.querySelector('.post__comments');
-let publication = document.querySelector('.new-publication');
+const comments = document.querySelector('.post__comments');
+const publication = document.querySelector('.new-publication');
 let textarea = null;
 
 if (comments || publication) {
@@ -157,10 +154,6 @@ function assign(ta) {
       // made available by removing the scrollbar. The following forces the necessary text reflow.
       const width = ta.style.width;
       ta.style.width = '0px';
-      // Force reflow:
-      /* jshint ignore:start */
-      // ta.offsetWidth;
-      /* jshint ignore:end */
       ta.style.width = width;
     }
 
