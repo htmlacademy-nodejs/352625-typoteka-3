@@ -21,7 +21,7 @@ const {
 
 const initDb = async (content, orm) => {
   try {
-    await orm.sync({force: true}); // TODO: delete {force: true} in production
+    await orm.sync({force: true});
     logger.info(`The database structure is created.`);
 
     await Author.bulkCreate(content.authors);

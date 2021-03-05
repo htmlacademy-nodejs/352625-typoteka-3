@@ -1,7 +1,7 @@
 'use strict';
 
 const bcrypt = require(`bcrypt`);
-const saltRounds = 10;
+const {SALT_ROUNDS} = require(`../../../service/filldb-tools/constants.js`);
 
 const mocks = {
   authors: [
@@ -132,7 +132,7 @@ const mocks = {
 
 const convertPasswordsToHashes = (users) => {
   users.map(async (user) => {
-    user[`password`] = await bcrypt.hash(user[`password`], saltRounds);
+    user[`password`] = await bcrypt.hash(user[`password`], SALT_ROUNDS);
   });
 };
 

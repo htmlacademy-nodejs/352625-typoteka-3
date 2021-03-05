@@ -2,7 +2,8 @@
 
 const {db} = require(`./../../data/db/db.js`);
 const bcrypt = require(`bcrypt`);
-const saltRounds = 10;
+
+const {SALT_ROUNDS} = require(`../filldb-tools/constants.js`);
 
 class UserService {
   constructor(database = db) {
@@ -66,7 +67,7 @@ class UserService {
       firstname,
       lastname,
       email,
-      [`password`]: await bcrypt.hash(password, saltRounds),
+      [`password`]: await bcrypt.hash(password, SALT_ROUNDS),
       [`is_admin`]: false,
     });
 

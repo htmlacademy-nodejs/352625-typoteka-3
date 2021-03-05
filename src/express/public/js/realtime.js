@@ -6,21 +6,21 @@ const commentList = document.querySelector(`.last__list`);
 const articleList = document.querySelector(`.hot__list`);
 
 const createCommentElem = (comment) => {
-  let item = document.createElement(`li`);
+  const item = document.createElement(`li`);
   item.classList.add(`last__list-item`);
 
-  let avatarElem = document.createElement(`img`);
+  const avatarElem = document.createElement(`img`);
   avatarElem.classList.add(`last__list-image`);
   avatarElem.src = `img/${comment.author.avatar.small}`;
   avatarElem.width = `20px`;
   avatarElem.height = `20px`;
   avatarElem.alt = `Аватар пользователя`;
 
-  let authorElem = document.createElement(`b`);
+  const authorElem = document.createElement(`b`);
   authorElem.classList.add(`last__list-name`);
   authorElem.innerHTML = `${comment.author.firstname} ${comment.author.lastname}`;
 
-  let textElem = document.createElement(`a`);
+  const textElem = document.createElement(`a`);
   textElem.classList.add(`last__list-link`);
   textElem.href = `/articles/${comment.article.id}`;
   textElem.innerHTML = comment.text;
@@ -35,15 +35,15 @@ const createCommentElem = (comment) => {
 const createArticleElem = (article) => {
   const {id, count, announce} = article;
 
-  let item = document.createElement(`li`);
+  const item = document.createElement(`li`);
   item.classList.add(`hot__list-item`);
 
-  let announceElem = document.createElement(`a`);
+  const announceElem = document.createElement(`a`);
   announceElem.classList.add(`hot__list-link`);
   announceElem.href = `/articles/${id}`;
   announceElem.innerHTML = announce;
 
-  let commentCounterElem = document.createElement(`sub`);
+  const commentCounterElem = document.createElement(`sub`);
   commentCounterElem.classList.add(`hot__link-sup`);
   commentCounterElem.innerHTML = count;
 

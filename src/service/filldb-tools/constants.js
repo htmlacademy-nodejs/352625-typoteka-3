@@ -18,6 +18,7 @@ const Categories = {
 
 const DEFAULT_MOCK_PASSWORD = `qwerty1234`;
 
+const SALT_ROUNDS = 10;
 
 module.exports = {
   AUTH_USER_ID,
@@ -25,4 +26,5 @@ module.exports = {
   Comments,
   Categories,
   DEFAULT_MOCK_PASSWORD,
+  SALT_ROUNDS,
 };

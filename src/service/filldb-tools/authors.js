@@ -1,9 +1,8 @@
 'use strict';
 
 const bcrypt = require(`bcrypt`);
-const saltRounds = 10;
 
-const {DEFAULT_MOCK_PASSWORD, ADMIN_USER_ID} = require(`./constants.js`);
+const {DEFAULT_MOCK_PASSWORD, ADMIN_USER_ID, SALT_ROUNDS} = require(`./constants.js`);
 
 const getAuthors = async (users) => {
   return await Promise.all(users
@@ -12,7 +11,7 @@ const getAuthors = async (users) => {
       const [firstName, lastName] = name.split(` `);
 
       const email = `${emailPrefix}@gmail.com`;
-      const password = await bcrypt.hash(DEFAULT_MOCK_PASSWORD, saltRounds);
+      const password = await bcrypt.hash(DEFAULT_MOCK_PASSWORD, SALT_ROUNDS);
 
       return {
         [`firstname`]: firstName,
